@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="676.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.food.FoodController">
+   <children>
+      <SplitPane dividerPositions="0.25" prefHeight="676.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+            <VBox prefHeight="674.0" prefWidth="315.0">
+               <children>
+                  <TextField promptText="Buscar" />
+                  <ListView prefHeight="646.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <TabPane prefHeight="604.0" prefWidth="714.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <tabs>
+                      <Tab text="General">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="635.0" prefWidth="714.0">
+                                 <children>
+                                    <TextField layoutX="276.0" layoutY="165.0" prefHeight="31.0" prefWidth="352.0" promptText="Nombre" />
+                                    <TextField layoutX="276.0" layoutY="234.0" prefHeight="31.0" prefWidth="163.0" promptText="Costo" />
+                                    <TextField layoutX="463.0" layoutY="234.0" prefHeight="31.0" prefWidth="163.0" promptText="Porcentaje ganancia" />
+                                    <TextField layoutX="463.0" layoutY="293.0" prefHeight="31.0" prefWidth="164.0" promptText="Precio" />
+                                    <ImageView fitHeight="235.0" fitWidth="235.0" layoutX="21.0" layoutY="88.0" pickOnBounds="true" smooth="false">
+                                       <image>
+                                          <Image url="@../../img/food_default.jpg" />
+                                       </image>
+                                    </ImageView>
+                                    <TextField layoutX="464.0" layoutY="97.0" prefHeight="31.0" prefWidth="164.0" promptText="ID" />
+                                    <Label alignment="CENTER" layoutX="403.0" layoutY="97.0" prefHeight="32.0" prefWidth="48.0" text="ID " />
+                                    <Label layoutX="277.0" layoutY="138.0" prefHeight="21.0" prefWidth="348.0" text="Nombre" />
+                                    <Label layoutX="277.0" layoutY="212.0" prefHeight="21.0" prefWidth="161.0" text="Costo" />
+                                    <Label layoutX="463.0" layoutY="211.0" prefHeight="21.0" prefWidth="163.0" text="Ganancia(%)" />
+                                    <Label layoutX="463.0" layoutY="272.0" prefHeight="21.0" prefWidth="163.0" text="Precio" />
+                                    <Button layoutX="21.0" layoutY="335.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="236.0" text="Elegir imagen.." />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                      </Tab>
+                      <Tab text="Ingredientes">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <TreeTableView fx:id="treeTableViewIngredients" layoutX="320.0" layoutY="14.0" prefHeight="380.0" prefWidth="340.0">
+                                      <columns>
+                                        <TreeTableColumn fx:id="columnQuantity" prefWidth="115.0" text="Cantidad" />
+                                        <TreeTableColumn prefWidth="224.0" text="Ingrediente" />
+                                      </columns>
+                                    </TreeTableView>
+                                    <TextField fx:id="textFieldSearchIngredients" layoutX="14.0" layoutY="18.0" prefHeight="31.0" prefWidth="255.0" promptText="Buscar" />
+                                    <ListView fx:id="listViewIngredients" editable="true" layoutX="14.0" layoutY="49.0" prefHeight="333.0" prefWidth="255.0" />
+                                    <Button layoutX="155.0" layoutY="406.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Agregar" />
+                                    <Button layoutX="545.0" layoutY="406.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Remover" />
+                                    <Button layoutX="14.0" layoutY="406.0" mnemonicParsing="false" onAction="#handleButtonNewIngredient" prefHeight="31.0" prefWidth="114.0" text="Nuevo Ingrediente">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+                  <AnchorPane layoutY="611.0" prefHeight="72.0" prefWidth="669.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Button layoutX="533.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Eliminar" />
+                        <Button layoutX="14.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Nuevo" />
+                        <Button layoutX="142.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Editar" />
+                        <Button layoutX="271.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Actualizar" />
+                        <Button layoutX="405.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Guardar" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

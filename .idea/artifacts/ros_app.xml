@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="ros_app">
+    <output-path>$PROJECT_DIR$/out/artifacts/ros_app</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="ar.com.doctatech.MainApp" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="exe" />
+        <option name="title" value="fapp" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="ros_app.jar">
+        <element id="module-output" name="ros_app" />
+      </element>
+      <element id="library" level="project" name="Maven: de.jensd:fontawesomefx:8.9" />
+    </root>
+  </artifact>
+</component>

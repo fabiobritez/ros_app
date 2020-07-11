@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="676.0" prefWidth="900.0" stylesheets="@../home/Home.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.stock.StockController">
+   <children>
+      <TabPane prefHeight="676.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="            General            ">
+               <content>
+                  <SplitPane dividerPositions="0.25" prefHeight="676.0" prefWidth="900.0">
+                     <items>
+                        <VBox prefHeight="674.0" prefWidth="221.0">
+                           <children>
+                              <TextField fx:id="textFieldSearchIngredients" promptText="Buscar" />
+                              <ListView fx:id="listViewIngredients" onMouseClicked="#handleClickedListIngredients" prefHeight="642.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="671.0">
+                           <children>
+                              <TextField fx:id="textfieldDescription" editable="false" layoutX="48.0" layoutY="116.0" prefHeight="31.0" prefWidth="252.0" promptText="Descripción" />
+                              <TextField fx:id="textfieldStockMin" layoutX="292.0" layoutY="195.0" promptText="Stock minimo" />
+                              <TextField fx:id="textfieldStock" layoutX="48.0" layoutY="195.0" prefHeight="31.0" prefWidth="150.0" promptText="Stock actual" />
+                              <ComboBox fx:id="comboboxUnit" layoutX="318.0" layoutY="116.0" prefHeight="31.0" prefWidth="150.0" promptText="Unidad de medida" />
+                              <Button layoutX="16.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleButtonNew" prefHeight="31.0" prefWidth="114.0" text="Nuevo" />
+                              <Button fx:id="buttonDelete" layoutX="541.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleButtonDelete" prefHeight="31.0" prefWidth="106.0" text="Eliminar" />
+                              <Button fx:id="buttonSave" layoutX="541.0" layoutY="587.0" mnemonicParsing="false" onAction="#handleButtonSave" prefHeight="31.0" prefWidth="106.0" text="Guardar" />
+                              <Button fx:id="buttonUpdate" layoutX="541.0" layoutY="587.0" mnemonicParsing="false" onAction="#handleButtonUpdate" prefHeight="31.0" prefWidth="106.0" text="Actualizar" />
+                              <Label fx:id="labelMessage" layoutX="56.0" layoutY="592.0" prefHeight="21.0" prefWidth="433.0" text="'DESCRIPTION' ACTUALIZADO EXITOSAMENTE!" textFill="#06a600" />
+                              <Label layoutX="50.0" layoutY="93.0" prefHeight="21.0" prefWidth="249.0" text="Descripción" />
+                              <Label layoutX="50.0" layoutY="170.0" prefHeight="21.0" prefWidth="151.0" text="Stock actual" />
+                              <Label layoutX="292.0" layoutY="170.0" text="Stock minimo" />
+                           </children>
+                        </AnchorPane>
+                     </items>
+                  </SplitPane>
+               </content>
+          </Tab>
+          <Tab text="Ingredientes faltantes">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tableViewLowStockIngredients" layoutX="35.0" layoutY="30.0" prefHeight="557.0" prefWidth="714.0">
+                          <columns>
+                            <TableColumn fx:id="columnDescription" prefWidth="354.0" text="Descripcion" />
+                            <TableColumn fx:id="columnUnit" minWidth="0.0" prefWidth="143.0" text="Unidad de medida" />
+                              <TableColumn fx:id="columnStock" prefWidth="104.0" text="Stock actual" />
+                              <TableColumn fx:id="columnStockMin" prefWidth="111.0" text="Stock Minimo" />
+                          </columns>
+                        </TableView>
+                        <Button layoutX="760.0" layoutY="62.0" mnemonicParsing="false" onAction="#handleButtonAddStock" text="Agregar stock" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

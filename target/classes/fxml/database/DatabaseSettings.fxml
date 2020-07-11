@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.shared.db.DatabaseSettingsController">
+   <children>
+      <BorderPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="450.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <Label prefHeight="21.0" prefWidth="322.0" text="Gestor de base de datos" />
+                  <ComboBox fx:id="comboDBMS" prefHeight="31.0" prefWidth="362.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </ComboBox>
+                  <Label prefHeight="21.0" prefWidth="323.0" text="Host del Servidor" />
+                  <ComboBox fx:id="comboHost" editable="true" prefHeight="31.0" prefWidth="367.0" />
+                  <Label prefHeight="21.0" prefWidth="323.0" text="Puerto" />
+                  <TextField fx:id="txtPort" />
+                  <Label prefHeight="21.0" prefWidth="320.0" text="Nombre de la base de datos" />
+                  <TextField fx:id="txtDatabase" />
+                  <Label prefHeight="21.0" prefWidth="323.0" text="Usuario" />
+                  <TextField fx:id="txtUser" />
+                  <Label prefHeight="21.0" prefWidth="323.0" text="Contraseña" />
+                  <PasswordField fx:id="txtPassword" />
+                  <Label layoutX="10.0" layoutY="270.0" prefHeight="21.0" prefWidth="323.0" text="Propiedades" />
+                  <TextField fx:id="txtProperties" />
+                  <Label text="Log" />
+                  <TextArea fx:id="txtAreaLog" editable="false" prefHeight="141.0" prefWidth="360.0" wrapText="true">
+                     <font>
+                        <Font size="12.0" />
+                     </font></TextArea>
+               </children>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </VBox>
+         </center>
+         <top>
+            <Label alignment="CENTER" prefHeight="41.0" prefWidth="254.0" text="Administrador de Conexión" textAlignment="CENTER" BorderPane.alignment="CENTER" />
+         </top>
+         <left>
+            <Pane prefHeight="507.0" prefWidth="45.0" BorderPane.alignment="CENTER" />
+         </left>
+         <bottom>
+            <HBox prefHeight="53.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label prefHeight="75.0" prefWidth="45.0" />
+                  <Button mnemonicParsing="false" onAction="#connect" prefHeight="31.0" prefWidth="180.0" text="Probar conexión" />
+                  <Button layoutX="50.0" layoutY="10.0" mnemonicParsing="false" onAction="#close" prefHeight="31.0" prefWidth="180.0" text="Cerrar" />
+               </children>
+            </HBox>
+         </bottom>
+         <right>
+            <Pane prefHeight="507.0" prefWidth="45.0" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+   </children>
+</AnchorPane>
