@@ -67,11 +67,18 @@ public class FoodDAOMySQL implements FoodDAO
     @Override
     public void update(Food food) throws SQLException {
         String query = "UPDATE food SET name = ? , cost = ?, profit = ?, price = ?, " +
-                "image = ? WHERE foodID = ?";
+                " image = ? WHERE foodID = ?";
 
         try (PreparedStatement preparedStatement =
                      connection.prepareStatement(query))
         {
+            System.out.println("NAME: "+ food.getName() );
+            System.out.println("COST: "+ food.getCost() );
+            System.out.println("PROFIT: "+ food.getProfit() );
+            System.out.println("PRICE: "+ food.getPrice() );
+            System.out.println("IMAGE: "+ food.getImage() );
+            System.out.println("ID: "+ food.getFoodID() );
+
             preparedStatement.setString(1, food.getName()  );
             preparedStatement.setDouble(2, food.getCost()  );
             preparedStatement.setDouble(3, food.getProfit());

@@ -35,6 +35,8 @@ import static ar.com.doctatech.shared.utilities.FileUtil.deleteFile;
 public class FoodController
         extends FoodServices implements Initializable
 {
+    //region FXML REFERENCES
+
     @FXML private ListView<String> listViewFood;
 
     @FXML private TextField textfieldSearchFood;
@@ -94,10 +96,14 @@ public class FoodController
         deleteFood();
     }
 
+    //endregion
+
+    private final String IMAGE_DEFAULT = getClass().getResource(IMAGE_FOOD_DEFAULT).getPath();
+
     private HashMap<String, Food> mapFood;
     private ObservableList<String> observableListFood;
     private ObservableList<ItemRecipe> observableListItemRecipe;
-    private final String IMAGE_DEFAULT = getClass().getResource(IMAGE_FOOD_DEFAULT).getPath();
+
     private void loadLists()
     {
         try {
@@ -120,7 +126,7 @@ public class FoodController
     /**
      * Obtiene el Food del HashMap y rellena el formulario.
      * Tambien la tabla de ingredientes.
-     * @param name AS
+     * @param name Nombre del plato de comida
      */
     private void selectFood(String name)
     {
@@ -132,9 +138,13 @@ public class FoodController
         textfieldProfit.setText( food.getProfit() + "");
         textfieldPrice.setText ( food.getPrice()  + "");
 
-        if(food.getImage() != null && !food.getImage().isEmpty() )
+        if(new File(removeProtocolImage(food.getImage())).exists())
         {
             imageView.setImage(new Image( food.getImage() ));
+        }
+        else
+        {
+           // imageView.setImage(new Image( addProtocolImage(IMAGE_DEFAULT) ));
         }
 
         observableListItemRecipe.clear();
@@ -153,9 +163,10 @@ public class FoodController
 
         if(fileSelected != null)
         {
-            labelPathImage.setText( fileSelected.getPath() );
+            String pathImage = addProtocolImage(fileSelected.getPath().trim());
+            labelPathImage.setText( pathImage );
             imageView.setImage (
-                    new Image(addProtocolImage( fileSelected.getPath() ))
+                    new Image(addProtocolImage( pathImage ))
             );
         }
     }
@@ -252,8 +263,9 @@ public class FoodController
                 food.setProfit( Double.parseDouble(profit) );
                 food.setPrice ( Double.parseDouble(price) );
 
-                String newImage = addProtocolImage( labelPathImage.getText() );
+                String newImage = labelPathImage.getText();
                 String currentImage = food.getImage();
+
                 if(!newImage.equals( currentImage ))
                 {
                     //TODO delete oldImage
@@ -264,7 +276,7 @@ public class FoodController
                         deleteFile(removeProtocolImage(currentImage));
 
                         food.setImage( addProtocolImage(copyNewImage) );
-                        labelPathImage.setText(copyNewImage);
+                        labelPathImage.setText(food.getImage());
                         imageView.setImage( new Image( food.getImage() ) );
                     }
                 }
@@ -319,7 +331,8 @@ public class FoodController
 
         listViewFood.getSelectionModel().selectedItemProperty().addListener((observable) ->
                 selectFood(listViewFood.getSelectionModel().getSelectedItem()));
-        listViewFood.getSelectionModel().select(0);
+
+        listViewFood.getSelectionModel().selectFirst();
         setProcess(PROCESS.VIEWING);
     }
 
