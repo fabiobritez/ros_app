@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -181,5 +182,26 @@ public class FXTool
     public static Parent getParent(String urlNode) throws IOException
     {
         return FXMLLoader.load(RosApp.class.getResource(urlNode));
+    }
+
+    public static void setTextFieldDouble(TextField textField)
+    {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.matches("^\\d*\\.?\\d*$"))
+            {
+                textField.setText(oldValue);
+            }
+        });
+
+    }
+
+    public static void setTextFieldInteger(TextField textField)
+    {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.matches("[0-9]*"))
+            {
+                textField.setText(oldValue);
+            }
+        });
     }
 }

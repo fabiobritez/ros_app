@@ -1,8 +1,13 @@
 package ar.com.doctatech.food.model;
 
 import ar.com.doctatech.stock.ingredient.Ingredient;
+import ar.com.doctatech.stock.ingredient.Unit;
 
+import javax.mail.FetchProfile;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class Food
 {
@@ -12,9 +17,9 @@ public class Food
     private double profit;
     private double price;
     private String image;
-    private HashMap<Ingredient, Integer> recipe;
+    private ArrayList<ItemRecipe> recipe;
 
-    public Food(int foodID,String name,double cost)
+    public Food(int foodID, String name, double cost)
     {
         this.foodID = foodID;
         this.name = name;
@@ -22,7 +27,21 @@ public class Food
         this.profit = 0;
         this.price = cost;
         this.image = "";
-        this.recipe = new HashMap<>();
+        this.recipe = new ArrayList<>();
+
+    }
+
+    public Food(int foodID, String name, double cost, double profit,
+                double price, String image, boolean exist)
+    {
+        this.foodID = foodID;
+        this.name = name;
+        this.cost = cost;
+        this.profit = profit;
+        this.price = price;
+        this.image = image;
+        this.recipe = new ArrayList<>();
+
     }
 
     public void setFoodID(int foodID)
@@ -87,28 +106,24 @@ public class Food
         this.image = image;
     }
 
-    public void addIngredient(Ingredient ingredient, int quantity)
+    public void addIngredient(ItemRecipe itemRecipe)
     {
-        recipe.put(ingredient, quantity);
+        if(!recipe.contains(itemRecipe))
+            recipe.add(itemRecipe);
     }
 
     public void removeIngredient(String description)
     {
-        for ( Ingredient ingredient : recipe.keySet() )
-            if(ingredient.getDescription().equals(description))
-            {
-                recipe.remove(ingredient);
-                return;
-            }
+        recipe.removeIf(itemRecipe -> itemRecipe.getDescription().equals(description));
     }
 
-    public HashMap<Ingredient, Integer> getRecipe()
+    public ArrayList<ItemRecipe> getRecipe()
     {
         return recipe;
     }
 
-    public void setRecipe(HashMap<Ingredient, Integer> recipe)
+    public void addRecipe(List<ItemRecipe> recipe)
     {
-        this.recipe = recipe;
+        this.recipe.addAll(recipe);
     }
 }

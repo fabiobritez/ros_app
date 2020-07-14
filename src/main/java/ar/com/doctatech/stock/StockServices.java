@@ -21,15 +21,6 @@ public class StockServices
         ingredientDAO = new IngredientDAOMySQL();
     }
 
-    protected void setOnlyNumbers(TextField textField)
-    {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("[0-9]*"))
-            {
-                textField.setText(oldValue);
-            }
-        });
-    }
 
     protected int getStockDialog(Ingredient ingredient)
     {

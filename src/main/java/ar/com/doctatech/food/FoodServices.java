@@ -1,5 +1,9 @@
 package ar.com.doctatech.food;
 
+import ar.com.doctatech.food.model.FoodDAO;
+import ar.com.doctatech.food.model.FoodDAOMySQL;
+import ar.com.doctatech.shared.utilities.FXTool;
+import ar.com.doctatech.shared.utilities.FileUtil;
 import ar.com.doctatech.stock.ingredient.Ingredient;
 import ar.com.doctatech.stock.ingredient.IngredientDAO;
 import ar.com.doctatech.stock.ingredient.IngredientDAOMySQL;
@@ -7,16 +11,23 @@ import ar.com.doctatech.stock.ingredient.Unit;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
+import static ar.com.doctatech.shared.utilities.FileUtil.createHomeFoodIfNoExists;
+import static ar.com.doctatech.shared.utilities.FileUtil.getExtension;
 import static javafx.collections.FXCollections.observableArrayList;
 
 public class FoodServices {
     IngredientDAO ingredientDAO;
+    FoodDAO foodDAO ;
 
     {
         ingredientDAO = new IngredientDAOMySQL();
+        foodDAO = new FoodDAOMySQL();
     }
     protected Ingredient getNewIngredient()
     {
@@ -67,11 +78,9 @@ public class FoodServices {
         Node saveButton = dialog.getDialogPane().lookupButton(buttonTypeGuardar);
         saveButton.setDisable(true);
 
-        textFieldDescription.textProperty().addListener((observable, oldValue, newValue) -> {
-            saveButton.setDisable(
-                    newValue.trim().isEmpty()
-            );
-        });
+        textFieldDescription.textProperty().addListener((observable, oldValue, newValue) -> saveButton.setDisable(
+                newValue.trim().isEmpty()
+        ));
 
         textFieldStock.textProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue.matches("[0-9]*")){
@@ -114,5 +123,46 @@ public class FoodServices {
         return result.orElse(null);
     }
 
+    protected File getFromImageChooser(Node node)
+    {
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter
+                ("Image Files", "*.jpg", "*.png", "*.jpeg");
+
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(imageFilter);
+
+        return chooser.showOpenDialog(node.getScene().getWindow());
+    }
+    protected String copyImageToHomeFood(String imagePath, String newName)
+    {
+        File fileOriginal = new File(imagePath);
+
+        String newImagePath = createHomeFoodIfNoExists() +
+                        File.separator + newName +
+             getExtension(fileOriginal.getName()).get();
+
+        File fileDestination = new File(newImagePath);
+
+        try
+        {
+            FileUtil.copyFile(fileOriginal, fileDestination);
+            return newImagePath;
+        }
+        catch (IOException exception)
+        {
+            FXTool.alertException(exception);
+        }
+        return null;
+    }
+
+    public String addProtocolImage(String imageWithoutProtocol)
+    {
+        return "file:"+imageWithoutProtocol;
+    }
+
+    public String removeProtocolImage(String imageWithProtocol)
+    {
+        return imageWithProtocol.substring(5);
+    }
 
 }

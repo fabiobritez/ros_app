@@ -937,6 +937,7 @@
     <column id="295" parent="285" name="image">
       <Position>6</Position>
       <DataType>varchar(140)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="296" parent="285" name="exist">
@@ -951,157 +952,168 @@
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="298" parent="285" name="PRIMARY">
+    <index id="298" parent="285" name="food_name_uindex">
+      <ColNames>name</ColNames>
+      <Unique>1</Unique>
+      <Type>btree</Type>
+    </index>
+    <key id="299" parent="285" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>foodID</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="299" parent="285" name="foodID_UNIQUE">
+    <key id="300" parent="285" name="foodID_UNIQUE">
       <ColNames>foodID</ColNames>
       <UnderlyingIndexName>foodID_UNIQUE</UnderlyingIndexName>
     </key>
-    <column id="300" parent="286" name="description">
+    <key id="301" parent="285" name="food_name_uindex">
+      <ColNames>name</ColNames>
+      <UnderlyingIndexName>food_name_uindex</UnderlyingIndexName>
+    </key>
+    <column id="302" parent="286" name="description">
       <Position>1</Position>
       <DataType>varchar(80)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="301" parent="286" name="stock">
+    <column id="303" parent="286" name="stock">
       <Position>2</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="302" parent="286" name="stockMin">
+    <column id="304" parent="286" name="stockMin">
       <Position>3</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>0</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="303" parent="286" name="unit">
+    <column id="305" parent="286" name="unit">
       <Position>4</Position>
       <DataType>enum(&apos;GRAMOS&apos;, &apos;MILILITROS&apos;, &apos;UNIDADES&apos;)|0e</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="304" parent="286" name="PRIMARY">
+    <key id="306" parent="286" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>description</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="305" parent="287" name="food_foodID">
+    <column id="307" parent="287" name="food_foodID">
       <Position>1</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="306" parent="287" name="ingredient_description">
+    <column id="308" parent="287" name="ingredient_description">
       <Position>2</Position>
       <DataType>varchar(80)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="307" parent="287" name="quantity">
+    <column id="309" parent="287" name="quantity">
       <Position>3</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="308" parent="287" name="fk_food_has_ingredient_food1_idx">
+    <index id="310" parent="287" name="fk_food_has_ingredient_food1_idx">
       <ColNames>food_foodID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="309" parent="287" name="fk_food_has_ingredient_ingredient1_idx">
+    <index id="311" parent="287" name="fk_food_has_ingredient_ingredient1_idx">
       <ColNames>ingredient_description</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="310" parent="287" name="PRIMARY">
+    <key id="312" parent="287" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>food_foodID
 ingredient_description</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="311" parent="287" name="fk_food_has_ingredient_food1">
+    <foreign-key id="313" parent="287" name="fk_food_has_ingredient_food1">
       <ColNames>food_foodID</ColNames>
       <RefTableName>food</RefTableName>
       <RefColNames>foodID</RefColNames>
     </foreign-key>
-    <foreign-key id="312" parent="287" name="fk_food_has_ingredient_ingredient1">
+    <foreign-key id="314" parent="287" name="fk_food_has_ingredient_ingredient1">
       <ColNames>ingredient_description</ColNames>
       <RefTableName>ingredient</RefTableName>
       <RefColNames>description</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="313" parent="288" name="role">
+    <column id="315" parent="288" name="role">
       <Position>1</Position>
       <DataType>enum(&apos;ADMINISTRADOR&apos;, &apos;REPOSITOR&apos;, &apos;CAJERO&apos;, &apos;ESPECTADOR&apos;, &apos;DEFAULT&apos;)|0e</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;DEFAULT&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="314" parent="288" name="user_username">
+    <column id="316" parent="288" name="user_username">
       <Position>2</Position>
       <DataType>varchar(25)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="315" parent="288" name="fk_userRole_user1_idx">
+    <index id="317" parent="288" name="fk_userRole_user1_idx">
       <ColNames>user_username</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="316" parent="288" name="fk_userRole_user1">
+    <foreign-key id="318" parent="288" name="fk_userRole_user1">
       <ColNames>user_username</ColNames>
       <RefTableName>user</RefTableName>
       <RefColNames>username</RefColNames>
       <OnUpdate>cascade</OnUpdate>
       <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="317" parent="289" name="username">
+    <column id="319" parent="289" name="username">
       <Position>1</Position>
       <DataType>varchar(25)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="318" parent="289" name="email">
+    <column id="320" parent="289" name="email">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="319" parent="289" name="password">
+    <column id="321" parent="289" name="password">
       <Position>3</Position>
       <DataType>varchar(64)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="320" parent="289" name="enabled">
+    <column id="322" parent="289" name="enabled">
       <Position>4</Position>
       <DataType>tinyint|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="321" parent="289" name="username_UNIQUE">
+    <index id="323" parent="289" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <index id="322" parent="289" name="email_UNIQUE">
+    <index id="324" parent="289" name="email_UNIQUE">
       <ColNames>email</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="323" parent="289" name="PRIMARY">
+    <key id="325" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>username</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="324" parent="289" name="username_UNIQUE">
+    <key id="326" parent="289" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <UnderlyingIndexName>username_UNIQUE</UnderlyingIndexName>
     </key>
-    <key id="325" parent="289" name="email_UNIQUE">
+    <key id="327" parent="289" name="email_UNIQUE">
       <ColNames>email</ColNames>
       <UnderlyingIndexName>email_UNIQUE</UnderlyingIndexName>
     </key>

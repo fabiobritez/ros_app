@@ -23,6 +23,6 @@ public interface FoodDAO {
 
     Food get(int foodID) throws NotFoundException, SQLException;
 
-    HashMap<Integer, Food> getAll() throws SQLException;
+    HashMap<String, Food> getAll() throws SQLException;
 
 }

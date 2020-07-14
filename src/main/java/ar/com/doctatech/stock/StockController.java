@@ -208,11 +208,9 @@ public class StockController extends StockServices
     {
         FilteredList<String> filteredList = new FilteredList<>(observableListIngredients, s -> true);
         textFieldSearchIngredients.textProperty().
-                addListener((observable, oldValue, newValue) -> {
-                        filteredList.setPredicate(ing ->
-                              ing.trim().toLowerCase().contains(newValue.trim().toLowerCase())
-                        );
-                });
+                addListener((observable, oldValue, newValue) -> filteredList.setPredicate(ing ->
+                      ing.trim().toLowerCase().contains(newValue.trim().toLowerCase())
+                ));
         listViewIngredients.setItems(filteredList);
     }
 
@@ -223,12 +221,10 @@ public class StockController extends StockServices
     {
         loadLists();
         listViewIngredients.getSelectionModel().selectedItemProperty().addListener(event ->
-        {
-            selectIngredient( listViewIngredients.getSelectionModel().getSelectedItem() );
-        });
+                selectIngredient( listViewIngredients.getSelectionModel().getSelectedItem() ));
 
-        setOnlyNumbers(textfieldStock);
-        setOnlyNumbers(textfieldStockMin);
+        FXTool.setTextFieldInteger(textfieldStock);
+        FXTool.setTextFieldInteger(textfieldStockMin);
         setSearchIngredients();
         loadTableView();
     }

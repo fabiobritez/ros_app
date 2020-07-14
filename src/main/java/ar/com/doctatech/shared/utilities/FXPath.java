@@ -29,4 +29,6 @@ public class FXPath {
    public static final String SETTINGS = "";
    public static final String REPORTS = "";
 
+
+   public static final String IMAGE_FOOD_DEFAULT = "/img/food_default.jpg";
 }

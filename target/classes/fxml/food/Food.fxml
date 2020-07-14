@@ -6,10 +6,9 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
@@ -21,72 +20,66 @@
         <items>
             <VBox prefHeight="674.0" prefWidth="315.0">
                <children>
-                  <TextField promptText="Buscar" />
-                  <ListView prefHeight="646.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+                  <TextField fx:id="textfieldSearchFood" onKeyPressed="#handleTextFieldSearchFood" promptText="Buscar" />
+                  <ListView fx:id="listViewFood" onMouseClicked="#handleClickedListFood" prefHeight="646.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <TabPane prefHeight="604.0" prefWidth="714.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TabPane prefHeight="674.0" prefWidth="669.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <tabs>
                       <Tab text="General">
                            <content>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="635.0" prefWidth="714.0">
                                  <children>
-                                    <TextField layoutX="276.0" layoutY="165.0" prefHeight="31.0" prefWidth="352.0" promptText="Nombre" />
-                                    <TextField layoutX="276.0" layoutY="234.0" prefHeight="31.0" prefWidth="163.0" promptText="Costo" />
-                                    <TextField layoutX="463.0" layoutY="234.0" prefHeight="31.0" prefWidth="163.0" promptText="Porcentaje ganancia" />
-                                    <TextField layoutX="463.0" layoutY="293.0" prefHeight="31.0" prefWidth="164.0" promptText="Precio" />
-                                    <ImageView fitHeight="235.0" fitWidth="235.0" layoutX="21.0" layoutY="88.0" pickOnBounds="true" smooth="false">
-                                       <image>
-                                          <Image url="@../../img/food_default.jpg" />
-                                       </image>
-                                    </ImageView>
-                                    <TextField layoutX="464.0" layoutY="97.0" prefHeight="31.0" prefWidth="164.0" promptText="ID" />
+                                    <TextField fx:id="textfieldName" layoutX="276.0" layoutY="165.0" prefHeight="31.0" prefWidth="352.0" promptText="Nombre" />
+                                    <TextField fx:id="textfieldCost" layoutX="276.0" layoutY="234.0" prefHeight="31.0" prefWidth="163.0" promptText="Costo" />
+                                    <TextField fx:id="textfieldProfit" layoutX="463.0" layoutY="234.0" prefHeight="31.0" prefWidth="163.0" promptText="Porcentaje ganancia" />
+                                    <TextField fx:id="textfieldPrice" layoutX="463.0" layoutY="293.0" prefHeight="31.0" prefWidth="164.0" promptText="Precio" />
+                                    <ImageView fx:id="imageView" fitHeight="235.0" fitWidth="235.0" layoutX="21.0" layoutY="88.0" pickOnBounds="true" smooth="false" />
+                                    <TextField fx:id="textfieldID" disable="true" editable="false" layoutX="464.0" layoutY="97.0" prefHeight="31.0" prefWidth="164.0" promptText="ID" />
                                     <Label alignment="CENTER" layoutX="403.0" layoutY="97.0" prefHeight="32.0" prefWidth="48.0" text="ID " />
                                     <Label layoutX="277.0" layoutY="138.0" prefHeight="21.0" prefWidth="348.0" text="Nombre" />
                                     <Label layoutX="277.0" layoutY="212.0" prefHeight="21.0" prefWidth="161.0" text="Costo" />
                                     <Label layoutX="463.0" layoutY="211.0" prefHeight="21.0" prefWidth="163.0" text="Ganancia(%)" />
                                     <Label layoutX="463.0" layoutY="272.0" prefHeight="21.0" prefWidth="163.0" text="Precio" />
-                                    <Button layoutX="21.0" layoutY="335.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="236.0" text="Elegir imagen.." />
+                                    <Button fx:id="buttonSelectImage" layoutX="21.0" layoutY="335.0" mnemonicParsing="false" onAction="#handleButtonSelectImage" prefHeight="31.0" prefWidth="236.0" text="Elegir imagen.." />
+                                    <Button fx:id="buttonNew" layoutX="21.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleButtonNew" prefHeight="31.0" prefWidth="114.0" text="Nuevo" />
+                                    <Button fx:id="buttonDelete" layoutX="512.0" layoutY="17.0" mnemonicParsing="false" onAction="#handleButtonDelete" prefHeight="31.0" prefWidth="114.0" text="Eliminar" />
+                                    <Button fx:id="buttonSave" layoutX="514.0" layoutY="587.0" mnemonicParsing="false" onAction="#handleButtonSave" prefHeight="31.0" prefWidth="114.0" text="Guardar" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="40.0" />
+                                    <Button fx:id="buttonUpdate" layoutX="379.0" layoutY="587.0" mnemonicParsing="false" onAction="#handleButtonUpdate" prefHeight="31.0" prefWidth="114.0" text="Actualizar" AnchorPane.bottomAnchor="16.0" />
+                                    <Button fx:id="buttonEdit" layoutX="236.0" layoutY="588.0" mnemonicParsing="false" onAction="#handleButtonEdit" prefHeight="31.0" prefWidth="114.0" text="Editar" AnchorPane.bottomAnchor="16.0" />
+                                    <Label fx:id="labelPathImage" layoutX="33.0" layoutY="67.0" prefHeight="21.0" prefWidth="604.0" />
                                  </children>
                               </AnchorPane>
                            </content>
                       </Tab>
-                      <Tab text="Ingredientes">
+                      <Tab fx:id="tabIngredient" text="Ingredientes">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <TreeTableView fx:id="treeTableViewIngredients" layoutX="320.0" layoutY="14.0" prefHeight="380.0" prefWidth="340.0">
-                                      <columns>
-                                        <TreeTableColumn fx:id="columnQuantity" prefWidth="115.0" text="Cantidad" />
-                                        <TreeTableColumn prefWidth="224.0" text="Ingrediente" />
-                                      </columns>
-                                    </TreeTableView>
-                                    <TextField fx:id="textFieldSearchIngredients" layoutX="14.0" layoutY="18.0" prefHeight="31.0" prefWidth="255.0" promptText="Buscar" />
-                                    <ListView fx:id="listViewIngredients" editable="true" layoutX="14.0" layoutY="49.0" prefHeight="333.0" prefWidth="255.0" />
-                                    <Button layoutX="155.0" layoutY="406.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Agregar" />
-                                    <Button layoutX="545.0" layoutY="406.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Remover" />
-                                    <Button layoutX="14.0" layoutY="406.0" mnemonicParsing="false" onAction="#handleButtonNewIngredient" prefHeight="31.0" prefWidth="114.0" text="Nuevo Ingrediente">
+                                    <TextField fx:id="textFieldSearchIngredients" layoutX="395.0" layoutY="21.0" prefHeight="31.0" prefWidth="255.0" promptText="Buscar" />
+                                    <ListView fx:id="listViewIngredients" editable="true" layoutX="395.0" layoutY="52.0" prefHeight="333.0" prefWidth="255.0" />
+                                    <Button layoutX="536.0" layoutY="409.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Agregar" />
+                                    <Button layoutX="14.0" layoutY="394.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Remover" />
+                                    <Button layoutX="395.0" layoutY="409.0" mnemonicParsing="false" onAction="#handleButtonNewIngredient" prefHeight="31.0" prefWidth="114.0" text="Nuevo Ingrediente">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
                                     </Button>
+                                    <Label layoutX="14.0" layoutY="482.0" prefHeight="21.0" prefWidth="534.0" text="ADVERTENCIA: Las listas se actualizan automaticamente en las bases de datos." />
+                                    <TableView fx:id="tableViewIngredients" layoutX="6.0" layoutY="18.0" prefHeight="364.0" prefWidth="339.0">
+                                      <columns>
+                                        <TableColumn fx:id="columnQuantity" prefWidth="112.0" text="Cantidad" />
+                                        <TableColumn fx:id="columnDescription" prefWidth="226.0" text="Ingrediente" />
+                                      </columns>
+                                    </TableView>
                                  </children>
                               </AnchorPane>
                         </content>
                       </Tab>
                     </tabs>
                   </TabPane>
-                  <AnchorPane layoutY="611.0" prefHeight="72.0" prefWidth="669.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                     <children>
-                        <Button layoutX="533.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Eliminar" />
-                        <Button layoutX="14.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Nuevo" />
-                        <Button layoutX="142.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Editar" />
-                        <Button layoutX="271.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Actualizar" />
-                        <Button layoutX="405.0" layoutY="21.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Guardar" />
-                     </children>
-                  </AnchorPane>
                </children>
             </AnchorPane>
         </items>
