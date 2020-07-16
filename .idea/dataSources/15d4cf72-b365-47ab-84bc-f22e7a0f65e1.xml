@@ -1047,9 +1047,8 @@ ingredient_description</ColNames>
     </foreign-key>
     <column id="315" parent="288" name="role">
       <Position>1</Position>
-      <DataType>enum(&apos;ADMINISTRADOR&apos;, &apos;REPOSITOR&apos;, &apos;CAJERO&apos;, &apos;ESPECTADOR&apos;, &apos;DEFAULT&apos;)|0e</DataType>
+      <DataType>enum(&apos;ADMINISTRADOR&apos;, &apos;REPOSITOR&apos;, &apos;CAJERO&apos;, &apos;ESPECTADOR&apos;)|0e</DataType>
       <NotNull>1</NotNull>
-      <DefaultExpression>&apos;DEFAULT&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="316" parent="288" name="user_username">
@@ -1094,13 +1093,15 @@ ingredient_description</ColNames>
       <DefaultExpression>1</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="323" parent="289" name="username_UNIQUE">
+    <column id="323" parent="289" name="exist">
+      <Position>5</Position>
+      <DataType>tinyint(1)|0s</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>1</DefaultExpression>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="324" parent="289" name="username_UNIQUE">
       <ColNames>username</ColNames>
-      <Unique>1</Unique>
-      <Type>btree</Type>
-    </index>
-    <index id="324" parent="289" name="email_UNIQUE">
-      <ColNames>email</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
@@ -1112,10 +1113,6 @@ ingredient_description</ColNames>
     <key id="326" parent="289" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <UnderlyingIndexName>username_UNIQUE</UnderlyingIndexName>
-    </key>
-    <key id="327" parent="289" name="email_UNIQUE">
-      <ColNames>email</ColNames>
-      <UnderlyingIndexName>email_UNIQUE</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>

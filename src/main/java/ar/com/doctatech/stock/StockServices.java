@@ -7,6 +7,7 @@ import ar.com.doctatech.stock.ingredient.Unit;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
 import java.util.Optional;
 
@@ -20,7 +21,6 @@ public class StockServices
     {
         ingredientDAO = new IngredientDAOMySQL();
     }
-
 
     protected int getStockDialog(Ingredient ingredient)
     {
@@ -38,11 +38,15 @@ public class StockServices
                 observableArrayList( Unit.values() )
         );
         comboBoxUnits.getSelectionModel().select(Unit.getUnit( ingredient.getUnit() ));
+        comboBoxUnits.setDisable(true);
+
+        Text textDiv = new Text("0 " + getDivUnit(comboBoxUnits));
 
         GridPane grid = new GridPane();
         grid.add(labelDescription, 1,1);
         grid.add(textFieldStock,2,1);
         grid.add(comboBoxUnits, 3, 1);
+        grid.add(textDiv,2,2);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -59,11 +63,14 @@ public class StockServices
                 addStockButton.setDisable(
                         oldValue.trim().isEmpty()
                 );
+
             }
             else
                 {
                 addStockButton.setDisable(newValue.trim().isEmpty());
+
             }
+            updateDiv1000(textFieldStock,textDiv,comboBoxUnits);
         });
 
         dialog.setResultConverter(buttonType ->
@@ -78,5 +85,35 @@ public class StockServices
         Optional<Integer> result = dialog.showAndWait();
 
         return result.orElse(0);
+    }
+
+    protected void updateDiv1000(TextField textField, Text text, ComboBox<Unit> comboboxUnit)
+    {
+        if(!getDivUnit(comboboxUnit).equals("unidades"))
+        {
+            if(!textField.getText().isEmpty())
+            {
+                double stockmin = Integer.parseInt(textField.getText());
+                text.setText(String.format("%.2f", stockmin / 1000) +" "+ getDivUnit(comboboxUnit));
+            }else
+            {
+                text.setText("0.00" + getDivUnit(comboboxUnit));
+            }
+        }else
+        {
+            text.setText(textField.getText() + " unidades");
+        }
+    }
+
+    private String getDivUnit(ComboBox<Unit> comboboxUnit)
+    {
+        if(comboboxUnit.getSelectionModel().getSelectedItem().equals(Unit.GRAMS))
+        {
+            return "kg";
+        }else if(comboboxUnit.getSelectionModel().getSelectedItem().equals(Unit.MILLILITERS))
+        {
+            return "litros";
+        }
+        return "unidades";
     }
 }

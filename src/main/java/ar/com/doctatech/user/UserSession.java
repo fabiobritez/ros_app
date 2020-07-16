@@ -45,7 +45,7 @@ public class UserSession
         }
         else
         {
-            System.out.println("LOGIN: EL USUARIO YA HA INICIADO SESIÓN");
+            System.out.println("AVISO: El usuario ya ha iniciado sesión.");
         }
     }
 
@@ -69,24 +69,8 @@ public class UserSession
         return userLoggedIn;
     }
 
-    /**
-     * Verifica si la sesion de usuario tiene permiso para modificar
-     * al user ingresado como parametro. Podrá modificarlo si es el
-     * mismo usuario o si es el usuario administrador.
-     * @param user el usuario que se desea modificar
-     * @return {@code true} si la sesion de usuario lo puede modificar
-     * @throws PrivilegeException si el usuario no tiene permiso para
-     * modificar atributos del user
-     */
-    public static boolean hasPrivilegesToModify(User user)
-            throws PrivilegeException
+    public static void logout()
     {
-        if (userLoggedIn.hasRole(UserRole.ADMIN) ||
-                userLoggedIn.equals(user)) return true;
-        throw new PrivilegeException("No tienes permiso para modificar este atributo del usuario");
-    }
-
-    public static void logout(){
         userLoggedIn = null;
     }
 }

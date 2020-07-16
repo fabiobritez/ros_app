@@ -102,23 +102,12 @@ public class UsersController
     public void initialize(URL location, ResourceBundle resources)
     {
         loadLists();
-
-        listViewUsers.getSelectionModel().selectedItemProperty().
-                addListener(event ->
-                {
-                    selectUser( listViewUsers.getSelectionModel().getSelectedItem() );
-                }
-        );
-        listViewUsers.getSelectionModel().selectFirst();
-
+        setListenersProperty();
         setProcess(VIEWING);
     }
 
     //region GUI METHODS
 
-    /**
-     * TENER EN CUENTA AL ACTUALIZAR, GUARDAR Y ELIMINAR
-     */
     private ObservableList<String> observableListUsers;
     private HashMap<String, User> mapUsers;
 
@@ -136,10 +125,20 @@ public class UsersController
 
             comboboxRoles.setItems(FXCollections.observableArrayList( UserRole.values() ));
             listViewUsers.setItems(observableListUsers);
+
         }
         catch (SQLException sqlException) {
             FXTool.alertException(sqlException);
         }
+    }
+
+    private void setListenersProperty()
+    {
+        listViewUsers.getSelectionModel().selectedItemProperty().
+                addListener(event ->
+                            selectUser( listViewUsers.getSelectionModel().getSelectedItem() )
+                );
+        listViewUsers.getSelectionModel().selectFirst();
     }
 
     /**
@@ -151,15 +150,19 @@ public class UsersController
      */
     private void selectUser(String username)
     {
-        User userSelected = mapUsers.get(username);
+        if(username != null && !username.isEmpty())
+        {
+            User userSelected = mapUsers.get(username);
 
-        textfieldUsername.setText(userSelected.getUsername());
-        textfieldEmail.setText(userSelected.getEmail());
-        checkBoxEnabled.setSelected(userSelected.isEnabled());
-        listViewRoles.setItems(
-                FXCollections.observableArrayList(userSelected.getUserRoles())
-        );
-        setProcess(VIEWING);
+            textfieldUsername.setText  (userSelected.getUsername());
+            textfieldEmail.setText     (userSelected.getEmail()   );
+            checkBoxEnabled.setSelected(userSelected.isEnabled()  );
+
+            listViewRoles.getItems().clear();
+            listViewRoles.getItems().addAll( userSelected.getUserRoles() );
+           // listViewRoles.setItems( FXCollections.observableArrayList(userSelected.getUserRoles()) );
+            setProcess(VIEWING);
+        }
     }
 
     /**
@@ -171,18 +174,20 @@ public class UsersController
      */
     private void saveUser()
     {
-        if(!textfieldUsername.getText().trim().isEmpty() ||
-                !textfieldEmail.getText().trim().isEmpty())
+        String username = textfieldUsername.getText().trim();
+        String email = textfieldEmail.getText().trim();
+
+        if( checkFields(username,email) )
         {
             try
             {
-                String username = textfieldUsername.getText().trim();
                 User newUser = new User(
                         username,
-                        textfieldEmail.getText().trim(),
+                        email,
                         encrypt(username),
                         checkBoxEnabled.isSelected()
                 );
+
                 newUser.getUserRoles().addAll( listViewRoles.getItems() );
 
                 userDAO.save(newUser);
@@ -197,13 +202,6 @@ public class UsersController
                 FXTool.alertException(e);
             }
         }
-        else
-        {
-            FXTool.alertInformation(
-                    "Campos requeridos",
-                    "El usuario debe tener nombre de usuario y un correo"
-            );
-        }
     }
 
     /**
@@ -215,45 +213,49 @@ public class UsersController
     private void updateUser()
     {
         String username = textfieldUsername.getText().trim();
-        try
+        String email = textfieldEmail.getText().trim();
+        if(checkFields(username, email))
         {
-            User userSelected = mapUsers.get( username );
-
-            userSelected.setEmail( textfieldEmail.getText().trim() );
-            userSelected.setEnabled( checkBoxEnabled.isSelected() );
-
-            //SI UN ROL DE LA LISTA ANTIGUA NO SE ENCUENTRA EN
-            //LA NUEVA LISTA, LO REMOVEMOS DE LA BASE DE DATOS
-            List<String> listTmp = new ArrayList<>(userSelected.getUserRoles());
-            for (String role : listTmp)
+            try
             {
-                if(!listViewRoles.getItems().contains(role))
-                {
-                    userDAO.removeRole(username, role);
-                    userSelected.removeRole(role);
-                }
-            }
+                User userSelected = mapUsers.get( username );
 
-            //SI UN ROL DE LA LISTA NUEVA NO SE ENCUENTRA EN
-            //LA LISTA VEJA, LO AGREGAMOS A LA BASE DE DATOS
-            listTmp.clear();
-            listTmp.addAll( listViewRoles.getItems() );
-            for (String role : listTmp)
+                userSelected.setEmail( email );
+                userSelected.setEnabled( checkBoxEnabled.isSelected() );
+
+                //SI UN ROL DE LA LISTA ANTIGUA NO SE ENCUENTRA EN
+                //LA NUEVA LISTA, LO REMOVEMOS DE LA BASE DE DATOS
+                List<String> listTmp = new ArrayList<>(userSelected.getUserRoles());
+                for (String role : listTmp)
+                {
+                    if(!listViewRoles.getItems().contains(role))
+                    {
+                        userDAO.removeRole(username, role);
+                        userSelected.removeRole(role);
+                    }
+                }
+
+                //SI UN ROL DE LA LISTA NUEVA NO SE ENCUENTRA EN
+                //LA LISTA VEJA, LO AGREGAMOS A LA BASE DE DATOS
+                listTmp.clear();
+                listTmp.addAll( listViewRoles.getItems() );
+                for (String role : listTmp)
+                {
+                    if(!userSelected.getUserRoles().contains(role))
+                    {
+                        userDAO.addRole(username,role);
+                        userSelected.addRole(role);
+                    }
+                }
+
+                userDAO.update(userSelected);
+
+                setProcess(VIEWING);
+            }
+            catch (Exception exception)
             {
-                if(!userSelected.getUserRoles().contains(role))
-                {
-                    userDAO.addRole(username,role);
-                    userSelected.addRole(role);
-                }
+                FXTool.alertException(exception);
             }
-
-            userDAO.update(userSelected);
-
-            setProcess(VIEWING);
-        }
-        catch (Exception exception)
-        {
-            FXTool.alertException(exception);
         }
     }
 
@@ -319,7 +321,7 @@ public class UsersController
      * Si el rol es administrador: agregamos todos los roles.
      * Sino agregamos solo el rol ingresado.
      * Limpiamos los mensajes de error anteriores.
-     * @param role
+     * @param role SS
      */
     private void addRole(String role)
     {
@@ -346,8 +348,7 @@ public class UsersController
         try
         {
             String role = listViewRoles.getSelectionModel().getSelectedItem();
-            if(!role.equals(UserRole.DEFAULT.toString()))
-                listViewRoles.getItems().remove(role);
+            listViewRoles.getItems().remove(role);
             textErrorsRoles.setText("");
         }
         catch (NullPointerException exception)
@@ -385,7 +386,7 @@ public class UsersController
             textfieldEmail.setText("");
             checkBoxEnabled.setSelected(false);
             listViewRoles.getItems().clear();
-            listViewRoles.getItems().add(UserRole.DEFAULT.toString());
+
         }
         else if(process.equals(EDITING))
         {

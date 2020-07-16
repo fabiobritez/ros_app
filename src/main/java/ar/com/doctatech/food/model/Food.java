@@ -82,7 +82,7 @@ public class Food
     public void setProfit(double profit)
     {
         this.profit = profit;
-        this.price = cost + ((cost * profit)/100);
+       // this.price = cost + ((cost * profit)/100);
     }
 
     public double getPrice()
@@ -92,7 +92,7 @@ public class Food
 
     public void setPrice(double price)
     {
-        this.profit = ( ( (price-cost)*100)/cost);
+       // this.profit = ( ( (price-cost)*100)/cost);
         this.price = price;
     }
 

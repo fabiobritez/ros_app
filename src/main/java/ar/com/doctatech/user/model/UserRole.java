@@ -7,8 +7,7 @@ public enum UserRole
     ADMIN("ADMINISTRADOR"),
     CASHIER("CAJERO"),
     STOCKER("REPOSITOR"),
-    SPECTATOR("ESPECTADOR"),
-    DEFAULT("DEFAULT");
+    SPECTATOR("ESPECTADOR");
 
     private String cargo;
 
@@ -29,9 +28,8 @@ public enum UserRole
             case STOCKER:
                 return "REPOSITOR";
             case SPECTATOR:
-                return "ESPECTADOR";
             default:
-                return "DEFAULT";
+                return "ESPECTADOR";
         }
     }
 }

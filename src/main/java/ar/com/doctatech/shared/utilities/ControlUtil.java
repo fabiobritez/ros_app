@@ -1,18 +1,12 @@
-package ar.com.doctatech.user.management;
+package ar.com.doctatech.shared.utilities;
 
-import ar.com.doctatech.shared.utilities.FXTool;
-import ar.com.doctatech.user.model.UserDAO;
-import ar.com.doctatech.user.model.UserDAOMySQL;
+public class ControlUtil {
 
-public class UsersServices
-{
-    UserDAO userDAO ;
+    private ControlUtil(){
 
-    {
-        userDAO = new UserDAOMySQL();
     }
 
-    protected boolean checkFields(String ...fields)
+    public static boolean checkFields(String ...fields)
     {
         for (String field : fields) {
             if (field.trim().isEmpty())
@@ -26,5 +20,6 @@ public class UsersServices
         }
         return true;
     }
+
 
 }

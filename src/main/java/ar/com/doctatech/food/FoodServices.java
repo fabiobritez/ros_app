@@ -29,6 +29,8 @@ public class FoodServices {
         ingredientDAO = new IngredientDAOMySQL();
         foodDAO = new FoodDAOMySQL();
     }
+
+
     protected Ingredient getNewIngredient()
     {
         Dialog<Ingredient> dialog = new Dialog<>();
@@ -123,6 +125,38 @@ public class FoodServices {
         return result.orElse(null);
     }
 
+    protected int getQuantityIngredient()
+    {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Escribe la cantidad que deseas agregar");
+        dialog.setHeaderText("Enter some text, or use default value.");
+
+        TextField textField = dialog.getEditor();
+
+        textField.textProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(!newValue.matches("[0-9]*"))
+            {
+                textField.setText(oldValue);
+            }
+        }
+        );
+
+        Optional<String> result = dialog.showAndWait();
+        String entered = "1";
+
+        if (result.isPresent())
+        {
+            if(result.get().trim().isEmpty())
+                entered = "1";
+            else
+                entered = result.get();
+        }
+
+
+        return Integer.parseInt(entered);
+    }
+
     protected File getFromImageChooser(Node node)
     {
         FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter
@@ -133,6 +167,15 @@ public class FoodServices {
 
         return chooser.showOpenDialog(node.getScene().getWindow());
     }
+
+
+    /**
+     * Realiza una copia de la imagen pasada como parametro con el nombre indicado.
+     * Si
+     * @param imagePath Ruta de la imagen que se desea copiar
+     * @param newName Nombre del archivo destino
+     * @return La ruta del archivo copiado o null si no se pudo realizar.
+     */
     protected String copyImageToHomeFood(String imagePath, String newName)
     {
         File fileOriginal = new File(imagePath);

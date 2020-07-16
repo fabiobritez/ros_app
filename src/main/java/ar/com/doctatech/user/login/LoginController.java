@@ -95,7 +95,7 @@ public class LoginController
             }
             catch (NotFoundException exception)
             {
-                FXTool.textError(txtErrors,"ERROR: Usuario no encontrado.");
+                FXTool.textError(txtErrors,exception.getMessage());
             }
             catch (PrivilegeException e)
             {

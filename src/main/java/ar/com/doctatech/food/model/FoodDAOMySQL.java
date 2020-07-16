@@ -104,9 +104,15 @@ public class FoodDAOMySQL implements FoodDAO
     }
 
     @Override
-    public void addRecipe(int foodID, Map<Ingredient, Integer> recipe) {
+    public void addItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException {
 
     }
+
+    @Override
+    public void removeItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException {
+
+    }
+
 
     @Override
     public Food get(int foodID) throws NotFoundException, SQLException {
@@ -171,23 +177,25 @@ public class FoodDAOMySQL implements FoodDAO
                                     resultSet.getBoolean("exist")
                                     );
 
-                            food.addIngredient(
+                            if(resultSet.getString("description") != null)
+                                food.addIngredient(
                                     new ItemRecipe(
                                         new Ingredient(
                                             resultSet.getString("description"),
-                                            resultSet.getInt("stock"),
-                                            resultSet.getInt("stockMin"),
+                                            resultSet.getInt   ("stock"),
+                                            resultSet.getInt   ("stockMin"),
                                             resultSet.getString("unit")
                                         ),
                                         resultSet.getInt("quantity")
                                     )
-                            );
+                                );
 
                             foodFound.put(name, food);
                         }
                         else
                         {
-                            foodFound.get(name).addIngredient(
+                            if(resultSet.getString("description") != null)
+                                foodFound.get(name).addIngredient(
                                     new ItemRecipe(
                                             new Ingredient(
                                                     resultSet.getString("description"),
@@ -197,7 +205,7 @@ public class FoodDAOMySQL implements FoodDAO
                                             ),
                                             resultSet.getInt("quantity")
                                     )
-                            );
+                                );
                         }
                     }
             }

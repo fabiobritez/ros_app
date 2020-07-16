@@ -19,7 +19,9 @@ public interface FoodDAO {
      */
     void remove(int foodID) throws SQLException;
 
-    void addRecipe(int foodID, Map<Ingredient,Integer> recipe);
+    void addItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException;
+
+    void removeItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException;
 
     Food get(int foodID) throws NotFoundException, SQLException;
 

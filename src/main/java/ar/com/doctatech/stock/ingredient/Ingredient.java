@@ -1,5 +1,7 @@
 package ar.com.doctatech.stock.ingredient;
 
+import com.sun.istack.internal.NotNull;
+
 public class Ingredient
 {
 
@@ -8,9 +10,9 @@ public class Ingredient
     private int stockMin;
     private String unit;
 
-    public Ingredient(String description, int stock,int stockMin, String unit)
+    public Ingredient(String description, int stock, int stockMin, String unit)
     {
-        this.description = description;
+        this.description = description.trim().toUpperCase();
         this.stock = stock;
         this.unit = unit;
         this.stockMin = stockMin;
@@ -23,7 +25,7 @@ public class Ingredient
 
     public void setDescription(String description)
     {
-        this.description = description;
+        this.description = description.trim().toUpperCase();
     }
 
     public int getStock()

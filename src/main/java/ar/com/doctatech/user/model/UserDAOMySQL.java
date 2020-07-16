@@ -23,24 +23,22 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public void save(User user) throws SQLException
     {
-
         //SAVE USER
-        String query = "INSERT INTO user (username, email, password, enabled)  " +
-                "VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO user (username, email, password, enabled) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement =
                     connection.prepareStatement(query))
         {
-            preparedStatement.setString (1,user.getUsername());
-            preparedStatement.setString (2,user.getEmail());
-            preparedStatement.setString (3,user.getPassword());
-            preparedStatement.setBoolean(4,user.isEnabled());
+            preparedStatement.setString (1,user.getUsername() );
+            preparedStatement.setString (2,user.getEmail()    );
+            preparedStatement.setString (3,user.getPassword() );
+            preparedStatement.setBoolean(4,user.isEnabled()   );
 
             preparedStatement.executeUpdate();
         }
 
         //ADD ROLES
-        query = "INSERT INTO role (role,user_username) VALUES (?,?)";
+        query = "INSERT INTO role (role, user_username) VALUES (?, ?)";
         try ( PreparedStatement preparedStatement = connection.prepareStatement(query) )
         {
             for ( String role : user.getUserRoles() )
@@ -74,10 +72,10 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public void remove(String username) throws SQLException
     {
-        String query = "DELETE FROM user WHERE usernamem = ?";
+        String query = "UPDATE user SET exist = false WHERE username = ?";
         try( PreparedStatement preparedStatement = connection.prepareStatement(query) )
         {
-            preparedStatement.setString(1, username);
+            preparedStatement.setString(1, username.toUpperCase().trim() );
             preparedStatement.executeUpdate();
         }
     }
@@ -88,7 +86,7 @@ public class UserDAOMySQL implements UserDAO {
         String query = "DELETE FROM role WHERE user_username = ? && role = ?";
         try( PreparedStatement preparedStatement = connection.prepareStatement(query) )
         {
-            preparedStatement.setString(1, username);
+            preparedStatement.setString(1, username.toUpperCase().trim());
             preparedStatement.setString(2, role);
             preparedStatement.executeUpdate();
         }
@@ -97,11 +95,11 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public void addRole(String username, String role) throws SQLException
     {
-        String query = "INSERT INTO role (role,user_username) VALUES (?,?)";
+        String query = "INSERT INTO role (role,user_username) VALUES (?, ?)";
         try ( PreparedStatement preparedStatement = connection.prepareStatement(query) )
         {
                 preparedStatement.setString(1, role);
-                preparedStatement.setString(2, username);
+                preparedStatement.setString(2, username.toUpperCase().trim() );
 
                 preparedStatement.executeUpdate();
         }
@@ -110,13 +108,13 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public HashMap<String,User> getAll() throws SQLException
     {
-        String queryJoin = "SELECT " +
-                "user.username ,user.email, user.password, user.enabled, role.role " +
-                "FROM user INNER JOIN role ON user.username = role.user_username";
+        String queryJoin = "SELECT * FROM user LEFT OUTER JOIN role " +
+                "ON user.username = role.user_username WHERE exist = true";
 
         HashMap<String, User> usersFound = new HashMap<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryJoin))
+        try (PreparedStatement preparedStatement =
+                     connection.prepareStatement(queryJoin) )
         {
             try(ResultSet resultSet = preparedStatement.executeQuery())
             {
@@ -148,20 +146,19 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public User get(String username) throws NotFoundException, SQLException
     {
-        String query = "SELECT user.username ,user.email, user.password, user.enabled, role.role "+
-                "FROM user INNER JOIN role ON user.username = role.user_username  " +
-                "WHERE user.username = ?";        ;
-        User userFound = new User("null","null","null",false);
+        String query = "SELECT * FROM user LEFT OUTER JOIN role ON user.username = role.user_username " +
+                "WHERE user.username = ? && exist = true";
+
+        User userFound = new User("NULL","null","null",false);
 
         try ( PreparedStatement preparedStatement = connection.prepareStatement(query) )
         {
-
-            preparedStatement.setString(1,username);
+            preparedStatement.setString(1, username.toUpperCase().trim() );
             try(ResultSet resultSet = preparedStatement.executeQuery())
             {
                 while (resultSet.next())
                 {
-                    if(userFound.getUsername()=="null")
+                    if(userFound.getUsername().equals("NULL") )
                     {
                         userFound = new User(
                                 resultSet.getString("username"),
@@ -175,9 +172,9 @@ public class UserDAOMySQL implements UserDAO {
             }
         }
 
-        if ( userFound.getUsername() == "null" )
+        if ( userFound.getUsername().equals("NULL") )
         {
-            throw new NotFoundException("User: '"+username+"' not found.");
+            throw new NotFoundException("Usuario: '"+username+"' no encontrado.");
         }
         return userFound;
     }

@@ -13,16 +13,16 @@ public class User {
 
     public User(String username, String email, String password, boolean enabled)
     {
-        this.username = username.trim().toLowerCase();
+        this.username = username.trim().toUpperCase();
         this.email = email.trim().toLowerCase();
         this.password = password;
         this.enabled = enabled;
-        this.userRoles = new ArrayList<String>();
-        this.userRoles.add( UserRole.DEFAULT.toString() );
+        this.userRoles = new ArrayList<>();
     }
 
     //region ALL GETTERS
-    public String getUsername() {
+    public String getUsername()
+    {
         return username;
     }
 
@@ -50,27 +50,24 @@ public class User {
     //region ALL SETTERS
     public void setUsername(String username)
     {
-        this.username = username;
+        this.username = username.toUpperCase().trim();
     }
 
     public void setEmail(String email){
-        this.email = email;
+        this.email = email.toLowerCase().trim();
     }
 
     public void addRole(String userRole)
     {
-        if( !userRoles.contains(userRole) &&
-                !userRole.equals(UserRole.DEFAULT.toString()) )
-           userRoles.add(userRole);
+        if(userRole!=null)
+            if( !userRoles.contains(userRole) )
+                 userRoles.add(userRole);
     }
 
     public void removeRole(String userRole)
     {
-        if( userRoles.contains(userRole) &&
-                !userRole.equals(UserRole.DEFAULT.toString()) )
-        {
-            userRoles.remove(userRole);
-        }
+        if(userRole!=null)
+           userRoles.remove(userRole);
     }
 
     public void setEnabled(boolean enabled)
@@ -94,5 +91,12 @@ public class User {
                 email.equals(user.email);
     }
 
-   //endregion
+    @Override
+    public String toString() {
+        return  "Username: "+ username +
+                "  Email: " + email +
+                "  Enabled: " + enabled;
+    }
+
+    //endregion
 }
