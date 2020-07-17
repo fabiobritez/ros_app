@@ -1033,84 +1033,79 @@
 ingredient_description</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="313" parent="287" name="fk_food_has_ingredient_food1">
-      <ColNames>food_foodID</ColNames>
-      <RefTableName>food</RefTableName>
-      <RefColNames>foodID</RefColNames>
-    </foreign-key>
-    <foreign-key id="314" parent="287" name="fk_food_has_ingredient_ingredient1">
+    <foreign-key id="313" parent="287" name="fk_food_has_ingredient_ingredient1">
       <ColNames>ingredient_description</ColNames>
       <RefTableName>ingredient</RefTableName>
       <RefColNames>description</RefColNames>
       <OnUpdate>cascade</OnUpdate>
       <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="315" parent="288" name="role">
+    <column id="314" parent="288" name="role">
       <Position>1</Position>
       <DataType>enum(&apos;ADMINISTRADOR&apos;, &apos;REPOSITOR&apos;, &apos;CAJERO&apos;, &apos;ESPECTADOR&apos;)|0e</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="316" parent="288" name="user_username">
+    <column id="315" parent="288" name="user_username">
       <Position>2</Position>
       <DataType>varchar(25)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="317" parent="288" name="fk_userRole_user1_idx">
+    <index id="316" parent="288" name="fk_userRole_user1_idx">
       <ColNames>user_username</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="318" parent="288" name="fk_userRole_user1">
+    <foreign-key id="317" parent="288" name="fk_userRole_user1">
       <ColNames>user_username</ColNames>
       <RefTableName>user</RefTableName>
       <RefColNames>username</RefColNames>
       <OnUpdate>cascade</OnUpdate>
       <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="319" parent="289" name="username">
+    <column id="318" parent="289" name="username">
       <Position>1</Position>
       <DataType>varchar(25)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="320" parent="289" name="email">
+    <column id="319" parent="289" name="email">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="321" parent="289" name="password">
+    <column id="320" parent="289" name="password">
       <Position>3</Position>
       <DataType>varchar(64)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="322" parent="289" name="enabled">
+    <column id="321" parent="289" name="enabled">
       <Position>4</Position>
       <DataType>tinyint|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="323" parent="289" name="exist">
+    <column id="322" parent="289" name="exist">
       <Position>5</Position>
       <DataType>tinyint(1)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="324" parent="289" name="username_UNIQUE">
+    <index id="323" parent="289" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="325" parent="289" name="PRIMARY">
+    <key id="324" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>username</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="326" parent="289" name="username_UNIQUE">
+    <key id="325" parent="289" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <UnderlyingIndexName>username_UNIQUE</UnderlyingIndexName>
     </key>

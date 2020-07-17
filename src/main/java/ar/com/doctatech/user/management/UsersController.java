@@ -184,7 +184,7 @@ public class UsersController
                 User newUser = new User(
                         username,
                         email,
-                        encrypt(username),
+                        encrypt(username.toUpperCase().trim()),
                         checkBoxEnabled.isSelected()
                 );
 
@@ -192,8 +192,8 @@ public class UsersController
 
                 userDAO.save(newUser);
 
-                mapUsers.put(username, newUser);
-                observableListUsers.add(username);
+                mapUsers.put(newUser.getUsername(), newUser);
+                observableListUsers.add(newUser.getUsername());
 
                 setProcess(VIEWING);
             }
