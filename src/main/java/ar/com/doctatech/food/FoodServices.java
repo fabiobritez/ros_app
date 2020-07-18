@@ -11,6 +11,7 @@ import ar.com.doctatech.stock.ingredient.Unit;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -124,6 +125,102 @@ public class FoodServices {
 
         return result.orElse(null);
     }
+
+    protected Integer getQuantity(String unit)
+    {
+        Dialog<Integer> dialog = new Dialog<>();
+
+        dialog.setTitle("Añade la cantidad del ingrediente");
+
+        dialog.setHeaderText("Ingresa la cantidad:");
+        dialog.setResizable(true);
+
+        Label labelDescription = new Label("Cantidad : ");
+        TextField textFieldStock = new TextField();
+        ComboBox<String> comboBoxUnits = new ComboBox<>();
+        comboBoxUnits.getItems().add(unit);
+        comboBoxUnits.getSelectionModel().select(unit);
+        //comboBoxUnits.setDisable(true);
+
+        Text textDiv = new Text("0 " + getDivUnit(unit));
+
+        GridPane grid = new GridPane();
+        grid.add(labelDescription, 1,1);
+        grid.add(textFieldStock,2,1);
+        grid.add(comboBoxUnits, 3, 1);
+        grid.add(textDiv,2,2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeAdd = new ButtonType("Agregar", ButtonBar.ButtonData.APPLY);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeAdd);
+
+        Node addStockButton = dialog.getDialogPane().lookupButton(buttonTypeAdd);
+        addStockButton.setDisable(true);
+
+        textFieldStock.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.matches("[0-9]*"))
+            {
+                textFieldStock.setText(oldValue);
+                addStockButton.setDisable(
+                        oldValue.trim().isEmpty()
+                );
+
+            }
+            else
+            {
+                addStockButton.setDisable(newValue.trim().isEmpty());
+
+            }
+            updateDiv1000(textFieldStock,textDiv,unit);
+        });
+
+        dialog.setResultConverter(buttonType ->
+        {
+            if(buttonType == buttonTypeAdd)
+            {
+                return Integer.parseInt( textFieldStock.getText().trim() );
+            }
+            return null;
+        });
+
+        Optional<Integer> result = dialog.showAndWait();
+
+        return result.orElse(null);
+    }
+
+
+    protected void updateDiv1000(TextField textField, Text text, String unit)
+    {
+        if(!getDivUnit(unit).equals("unidades"))
+        {
+            if(!textField.getText().isEmpty())
+            {
+                double stockmin = Integer.parseInt(textField.getText());
+                text.setText(String.format("%.2f", stockmin / 1000) +" "+ getDivUnit(unit));
+            }else
+            {
+                text.setText("0.00" + getDivUnit(unit));
+            }
+        }else
+        {
+            text.setText(textField.getText() + " unidades");
+        }
+    }
+
+    private String getDivUnit(String unit)
+    {
+        if(unit.equals(Unit.GRAMS.toString()))
+        {
+            return "kg";
+        }
+        else if(unit.equals(Unit.MILLILITERS.toString()))
+        {
+            return "litros";
+        }
+        return "unidades";
+    }
+
 
     protected int getQuantityIngredient()
     {

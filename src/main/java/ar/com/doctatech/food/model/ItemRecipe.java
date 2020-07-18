@@ -13,18 +13,32 @@ public class ItemRecipe
     private Ingredient ingredient;
     private String description;
     private int quantity;
+    private String unit;
 
     public ItemRecipe(Ingredient ingredient, int quantity)
     {
         this.ingredient = ingredient;
         this.description = ingredient.getDescription();
         this.quantity = quantity;
+        this.unit = ingredient.getUnit();
+    }
+
+    public ItemRecipe(Ingredient ingredient)
+    {
+        this.ingredient = ingredient;
+        this.description = ingredient.getDescription();
+        this.unit = ingredient.getUnit();
+        this.quantity = 0;
     }
 
 
     public Ingredient getIngredient()
     {
         return ingredient;
+    }
+
+    public String getUnit() {
+        return unit;
     }
 
     public int getQuantity()
@@ -46,5 +60,16 @@ public class ItemRecipe
     public void setQuantity(int quantity)
     {
         this.quantity = quantity;
+    }
+
+    public void addQuantity(int quantity)
+    {
+        this.quantity+=quantity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        ItemRecipe itemRecipe = (ItemRecipe)obj;
+        return itemRecipe.getDescription().equals(description);
     }
 }

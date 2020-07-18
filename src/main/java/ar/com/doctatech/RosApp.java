@@ -28,10 +28,12 @@ public class RosApp extends Application {
 
         /** VERIFICAR LA LA CONEXION, EN CASO DE SER CONECTABLE SETEA "LOGIN" PARA ABRIR
          SI NO ES CONECTABLE SETEA "DATABASE_SETTINGS" */
-        try{
+        try
+        {
             if( DatabaseConnection.isConnectable() )  pathToLoad = LOGIN;
         }
-        catch (IOException | SQLException exception) {
+        catch (IOException | SQLException exception)
+        {
             System.out.println(exception.toString());
             pathToLoad = DATABASE_SETTINGS;
         }

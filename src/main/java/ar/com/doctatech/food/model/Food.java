@@ -106,13 +106,13 @@ public class Food
         this.image = image;
     }
 
-    public void addIngredient(ItemRecipe itemRecipe)
+    public void addItemRecipe(ItemRecipe itemRecipe)
     {
         if(!recipe.contains(itemRecipe))
             recipe.add(itemRecipe);
     }
 
-    public void removeIngredient(String description)
+    public void removeItemRecipe(String description)
     {
         recipe.removeIf(itemRecipe -> itemRecipe.getDescription().equals(description));
     }

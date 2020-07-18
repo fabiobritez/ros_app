@@ -6,6 +6,7 @@ import ar.com.doctatech.shared.PROCESS;
 import ar.com.doctatech.shared.exceptions.NotFoundException;
 import ar.com.doctatech.stock.ingredient.Ingredient;
 import ar.com.doctatech.shared.utilities.FXTool;
+import com.sun.mail.imap.protocol.Item;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -18,15 +19,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.text.Text;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Key;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -60,7 +56,9 @@ public class FoodController
 
     @FXML private TableColumn<ItemRecipe, Integer> columnQuantity;
 
-    @FXML private TableColumn<ItemRecipe, String> columnDescription;
+    @FXML private TableColumn<ItemRecipe, String> columnDescription, columnUnit;
+
+    @FXML private Text textMessageItemRecipe;
 
     @FXML private void handleClickedListFood(MouseEvent event)
     {
@@ -168,6 +166,7 @@ public class FoodController
 
             //ITEMS FOR RECIPE
             columnDescription.setCellValueFactory( new PropertyValueFactory<>("description") );
+            columnUnit.setCellValueFactory( new PropertyValueFactory<>("unit"));
             columnQuantity.setCellValueFactory( new PropertyValueFactory<>("quantity"));
             observableListItemRecipe = FXCollections.observableArrayList();
             tableViewIngredients.setItems(observableListItemRecipe);
@@ -283,7 +282,7 @@ public class FoodController
 
                 if(!pathImage.equals(IMAGE_DEFAULT))
                 {
-                    String copyImage = copyImageToHomeFood(pathImage , name);
+                    String copyImage = copyImageToHomeFood(removeProtocolImage(pathImage), name);
 
                     if(copyImage != null)
                     {
@@ -293,9 +292,9 @@ public class FoodController
                 }
 
                 Food food = new Food(0, name,
-                        Integer.parseInt(cost),
-                        Integer.parseInt(profit),
-                        Integer.parseInt(price),
+                        Double.parseDouble(cost),
+                        Double.parseDouble(profit),
+                        Double.parseDouble(price),
                         addProtocolImage(labelPathImage.getText()),
                         true
                 );
@@ -369,8 +368,7 @@ public class FoodController
             String copyNewImage = copyImageToHomeFood(removeProtocolImage(newImagePath), food.getName());
             if (copyNewImage != null) //SI SE LOGRO HACER LA COPIA
             {
-                if (!currentImage.equals(IMAGE_DEFAULT)) //SI LA IMAGEN ANTERIOR NO DEFAULT
-
+                if (!currentImage.equals(IMAGE_DEFAULT)) //SI LA IMAGEN ANTERIOR NO ES DEFAULT
                     if (!addProtocolImage(copyNewImage).equals(currentImage)) //VERIFICA SI CAMBIARON EL NOMBRE DE LA COMIDA
                         deleteFile(removeProtocolImage(currentImage));
 
@@ -463,24 +461,35 @@ public class FoodController
      */
     private void addIngredientToFood()
     {
+        textMessageItemRecipe.setText("");
        int foodID = Integer.parseInt(textfieldID.getText());
        String name = textfieldName.getText();
 
        String description = listViewIngredients.getSelectionModel().getSelectedItem();
        if(description!=null)
        {
-           int quantity = getQuantityIngredient();
-           try
+           Ingredient ingredient = mapIngredients.get(description);
+
+           if(!observableListItemRecipe.contains(new ItemRecipe(ingredient)))
            {
-               Ingredient ingredient = mapIngredients.get(description);
-                ItemRecipe itemRecipe = new ItemRecipe(ingredient, quantity);
-               foodDAO.addItemRecipe(foodID, itemRecipe);
-               mapFood.get(name).addIngredient(itemRecipe);
-               observableListItemRecipe.add(itemRecipe);
-           }
-           catch (SQLException e)
-           {
-               FXTool.alertException(e);
+               Integer quantity = getQuantity(ingredient.getUnit());
+               if (quantity != null) {
+                   try {
+                       ItemRecipe itemRecipe = new ItemRecipe(ingredient, quantity);
+
+
+                       foodDAO.addItemRecipe(foodID, itemRecipe);
+                       mapFood.get(name).addItemRecipe(itemRecipe);
+                       observableListItemRecipe.add(itemRecipe);
+
+
+                   } catch (SQLException e) {
+                       FXTool.alertException(e);
+                   }
+               }
+           }else
+               {
+               textMessageItemRecipe.setText("Ya haz agregado este ingrediente!");
            }
        }
     }
@@ -495,7 +504,7 @@ public class FoodController
             try
             {
                 foodDAO.removeItemRecipe(foodID, itemRecipe);
-                mapFood.get(name).removeIngredient(itemRecipe.getDescription());
+                mapFood.get(name).removeItemRecipe(itemRecipe.getDescription());
                 observableListItemRecipe.remove(itemRecipe);
             }
             catch (SQLException e)
@@ -570,6 +579,8 @@ public class FoodController
 
             textfieldName.requestFocus();
         }
+
+        textMessageItemRecipe.setText("");
     }
 
 }

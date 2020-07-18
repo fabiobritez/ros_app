@@ -7,7 +7,6 @@ import ar.com.doctatech.shared.exceptions.NotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
-import java.util.Map;
 
 public class FoodDAOMySQL implements FoodDAO
 {
@@ -105,12 +104,30 @@ public class FoodDAOMySQL implements FoodDAO
 
     @Override
     public void addItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException {
+        String  query = "INSERT INTO recipe (food_foodID, ingredient_description, quantity) " +
+                "VALUES (?, ?, ?)";
 
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(query))
+        {
+            preparedStatement.setInt   (1, foodID         );
+            preparedStatement.setString(2, itemRecipe.getDescription());
+            preparedStatement.setInt   (3, itemRecipe.getQuantity()   );
+            preparedStatement.executeUpdate();
+        }
     }
 
     @Override
     public void removeItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException {
+        String  query = "DELETE FROM recipe WHERE food_foodID=? && ingredient_description=?";
 
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(query))
+        {
+            preparedStatement.setInt   (1, foodID         );
+            preparedStatement.setString(2, itemRecipe.getDescription());
+            preparedStatement.executeUpdate();
+        }
     }
 
 
@@ -178,7 +195,7 @@ public class FoodDAOMySQL implements FoodDAO
                                     );
 
                             if(resultSet.getString("description") != null)
-                                food.addIngredient(
+                                food.addItemRecipe(
                                     new ItemRecipe(
                                         new Ingredient(
                                             resultSet.getString("description"),
@@ -195,7 +212,7 @@ public class FoodDAOMySQL implements FoodDAO
                         else
                         {
                             if(resultSet.getString("description") != null)
-                                foodFound.get(name).addIngredient(
+                                foodFound.get(name).addItemRecipe(
                                     new ItemRecipe(
                                             new Ingredient(
                                                     resultSet.getString("description"),
