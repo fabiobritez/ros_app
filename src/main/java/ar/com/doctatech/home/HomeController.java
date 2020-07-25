@@ -29,6 +29,12 @@ public class HomeController implements Initializable
     @FXML
     private MenuButton menuButtonUser;
 
+    @FXML private void handleOrderButton(ActionEvent event)
+    {
+     orderParent = addModule(CASHIER, ORDERS);
+     selectModule(orderParent);
+    }
+
     @FXML
     private void handleLogoutButton(ActionEvent event)
     {
@@ -49,6 +55,7 @@ public class HomeController implements Initializable
     {
         selectModule(stockParent);
     }
+
 
     //endregion
 

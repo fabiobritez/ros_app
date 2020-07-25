@@ -191,7 +191,8 @@ public class FoodController
         //BUSCADOR
         FilteredList<String> filteredList = new FilteredList<>(observableListFood, s -> true);
         textfieldSearchFood.textProperty().
-                addListener((observable, oldValue, newValue) -> filteredList.setPredicate(f ->
+                addListener((observable, oldValue, newValue) ->
+                        filteredList.setPredicate(f ->
                         f.contains(newValue.toUpperCase().trim() )
                 ));
         listViewFood.setItems(filteredList);
@@ -295,10 +296,13 @@ public class FoodController
                         Double.parseDouble(cost),
                         Double.parseDouble(profit),
                         Double.parseDouble(price),
-                        addProtocolImage(labelPathImage.getText()),
+                        labelPathImage.getText(),
                         true
                 );
+                System.out.println(labelPathImage.getText());
 
+                //TODO verificar si el food ya existe.
+                //si es asi actualizar y cambiar exist = true
                 foodDAO.save(food);
                 textfieldID.setText( food.getFoodID() + "" );
 
@@ -396,7 +400,7 @@ public class FoodController
 
                 mapFood.remove(name);
                 observableListFood.remove(name);
-
+                deleteFile(removeProtocolImage(labelPathImage.getText() ));
                 FXTool.alertInformation("Operación realizada", "Se ha eliminado con exito");
             }
             catch (Exception exception)

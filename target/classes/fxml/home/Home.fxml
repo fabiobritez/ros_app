@@ -14,9 +14,10 @@
             <VBox prefHeight="720.0" prefWidth="180.0" styleClass="lateral-pane" BorderPane.alignment="CENTER">
                <children>
                   <AnchorPane prefHeight="64.0" prefWidth="180.0" />
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="180.0" text="Pedidos" />
+                  <Button mnemonicParsing="false" onAction="#handleOrderButton" prefHeight="32.0" prefWidth="180.0" text="Pedidos" />
                   <Button mnemonicParsing="false" onAction="#handleFoodButton" prefHeight="32.0" prefWidth="180.0" text="Platos" />
-                  <Button mnemonicParsing="false" onAction="#handleStockButton" prefHeight="31.0" prefWidth="179.0" text="Stock" />
+                  <Button mnemonicParsing="false" onAction="#handleStockButton" prefHeight="32.0" prefWidth="179.0" text="Ingredientes" />
+                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="179.0" text="Clientes" />
                   <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="180.0" text="Reportes" />
                   <Button mnemonicParsing="false" onAction="#handleUsersButton" prefHeight="32.0" prefWidth="180.0" text="Usuarios" />
                   <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="180.0" text="Ajustes" />

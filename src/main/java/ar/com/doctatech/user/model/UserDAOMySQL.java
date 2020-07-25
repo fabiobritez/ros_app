@@ -130,7 +130,7 @@ public class UserDAOMySQL implements UserDAO {
                                 resultSet.getBoolean("enabled")
                         );
                         user.addRole( resultSet.getString("role") );
-                        usersFound.put(username, user);
+                        usersFound.put(user.getUsername(), user);
                     }
                     else
                     {
