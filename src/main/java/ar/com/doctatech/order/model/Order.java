@@ -30,22 +30,19 @@ public class Order {
         orderStatusList = new LinkedList<>();
     }
 
-    public Order(Integer orderID, Customer customer,
-                 ArrayList<ItemFood> items, double subtotal,
-                 double discount, double surcharge,
-                 double total, String payMethod,
-                 LinkedList<DetailStatus> orderStatusList) {
+    public Order(Integer orderID, double subtotal,
+                 double discount, double surcharge)
+    {
         this.orderID = orderID;
-        this.customer = customer;
-        this.items = items;
         this.subtotal = subtotal;
         this.discount = discount;
         this.surcharge = surcharge;
-        this.total = total;
-        this.payMethod = payMethod;
-        this.orderStatusList = orderStatusList;
+        this.total = subtotal-discount+surcharge;
+        this.items = new ArrayList<>();
+        this.orderStatusList = new LinkedList<>();
     }
 
+    //PARA INSERTAR UNA
     public Order(Customer customer, List<ItemFood> items, double subtotal,
                  double discount, double surcharge, double total, String payMethod)
     {
@@ -82,6 +79,11 @@ public class Order {
 
     public List<ItemFood> getItems() {
         return items;
+    }
+
+    public DetailStatus getDetailStatus()
+    {
+        return orderStatusList.getLast();
     }
 
     public void setItems(ArrayList<ItemFood> items) {
@@ -132,5 +134,20 @@ public class Order {
     {
         //TODO terminary analizar cuando cambiar
         return total;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Order order = (Order) o;
+
+        return getOrderID().equals(order.getOrderID());
+    }
+
+    @Override
+    public int hashCode() {
+        return getOrderID().hashCode();
     }
 }

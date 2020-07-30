@@ -41,8 +41,8 @@
                                     <TextField fx:id="textfieldCustomerName" disable="true" layoutX="26.0" layoutY="28.0" prefHeight="26.0" prefWidth="184.0" promptText="Cliente" />
                                     <TextField fx:id="textfieldWhatsapp" disable="true" layoutX="225.0" layoutY="27.0" prefHeight="26.0" prefWidth="130.0" promptText="Whatsapp" />
                                     <TextField fx:id="textfieldTelefono" disable="true" layoutX="367.0" layoutY="28.0" prefHeight="26.0" prefWidth="113.0" promptText="Telefono" text="-" />
-                                    <TextField fx:id="textfieldStreet" disable="true" layoutX="28.0" layoutY="76.0" prefHeight="26.0" prefWidth="186.0" promptText="DIreccion" text="-" />
-                                    <TextField fx:id="textfieldApartment" disable="true" layoutX="225.0" layoutY="77.0" prefHeight="26.0" prefWidth="70.0" promptText="Casa" text="-" />
+                                    <TextField fx:id="textfieldStreet" disable="true" layoutX="28.0" layoutY="76.0" prefHeight="26.0" prefWidth="186.0" promptText="DIreccion" />
+                                    <TextField fx:id="textfieldApartment" disable="true" layoutX="225.0" layoutY="77.0" prefHeight="26.0" prefWidth="70.0" promptText="Casa" />
                                     <CheckBox fx:id="checkBoxDelivery" layoutX="326.0" layoutY="75.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="128.0" text="CON DELIVERY" />
                                     <TableView fx:id="tableviewNewOrder" layoutX="26.0" layoutY="112.0" prefHeight="298.0" prefWidth="572.0">
                                       <columns>
@@ -89,16 +89,71 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab text="Pedidos en proceso ">
+          <Tab onSelectionChanged="#onTabOrderSelected" text="Pedidos en proceso ">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="textfieldBrowser" layoutX="25.0" layoutY="26.0" prefHeight="26.0" prefWidth="236.0" promptText="Buscar por cliente, estado, pago" />
+                        <TableView fx:id="tableViewOrders" layoutX="25.0" layoutY="67.0" prefHeight="548.0" prefWidth="580.0">
+                          <columns>
+                            <TableColumn fx:id="columnDate" prefWidth="86.0" text="Fecha" />
+                            <TableColumn fx:id="columnHour" prefWidth="55.0" text="Hora" />
+                              <TableColumn fx:id="columnCustomer" prefWidth="169.0" text="Cliente" />
+                              <TableColumn fx:id="columnStatus" prefWidth="103.0" text="Estado" />
+                              <TableColumn fx:id="columnIsPaid" prefWidth="85.0" text="Pago" />
+                              <TableColumn fx:id="columnTotal" prefWidth="77.0" text="Total" />
+                          </columns>
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                    <MenuItem mnemonicParsing="false" onAction="#onActionButtonSendOrder" text="Enviar" />
+                                  <MenuItem mnemonicParsing="false" onAction="#onActionButtonDeliverOrder" text="Entregar" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                        <TableView fx:id="tableViewItems" layoutX="609.0" layoutY="68.0" prefHeight="210.0" prefWidth="277.0" stylesheets="@tableview.css">
+                          <columns>
+                            <TableColumn fx:id="columnNameItem" prefWidth="187.0" text="Item" />
+                            <TableColumn fx:id="columnQuantityItem" prefWidth="35.0" text="Cantidad" />
+                              <TableColumn fx:id="columnPriceItem" prefWidth="52.0" text="Precio" />
+                          </columns>
+                        </TableView>
+                        <Label alignment="CENTER_RIGHT" layoutX="625.0" layoutY="518.0" prefHeight="16.0" prefWidth="259.0" text="Direccion" />
+                        <TextField fx:id="textfieldDeliveryPersonIP" layoutX="624.0" layoutY="489.0" prefHeight="26.0" prefWidth="261.0" promptText="Repartidor" />
+                        <Label alignment="CENTER_RIGHT" layoutX="625.0" layoutY="470.0" prefHeight="16.0" prefWidth="259.0" text="Repartidor" />
+                        <TextArea fx:id="textfieldCommentsIP" layoutX="623.0" layoutY="393.0" prefHeight="65.0" prefWidth="263.0" promptText="Comentarios, preferencias" />
+                        <ComboBox fx:id="comboBoxFilter" layoutX="319.0" layoutY="26.0" onAction="#onTabOrderSelected" prefWidth="150.0" promptText="Estado" />
+                        <Label layoutX="848.0" layoutY="331.0" text="Total" />
+                        <Label fx:id="textfieldTotalIP" alignment="CENTER_RIGHT" layoutX="741.0" layoutY="348.0" prefHeight="37.0" prefWidth="140.0" text="0.00">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="675.0" layoutY="284.0" text="Descuento" />
+                        <Label layoutX="828.0" layoutY="284.0" prefHeight="16.0" prefWidth="58.0" text="Recargo" />
+                        <Label fx:id="textfieldDiscountIP" alignment="CENTER_RIGHT" layoutX="650.0" layoutY="302.0" prefHeight="26.0" prefWidth="96.0" text="0.00">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="textfieldSurchargeIP" alignment="CENTER_RIGHT" layoutX="787.0" layoutY="300.0" prefHeight="27.0" prefWidth="96.0" text="0.00">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="checkBoxIsPaid" layoutX="662.0" layoutY="358.0" mnemonicParsing="false" text="Pagado" />
+                        <Button fx:id="buttonCancelOrder" layoutX="805.0" layoutY="22.0" mnemonicParsing="false" onAction="#onActionButtonCancelOrder" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #f14747;" text="Anular" textFill="WHITE" />
+                        <Label layoutX="321.0" layoutY="6.0" prefHeight="16.0" prefWidth="149.0" text="Estado" />
+                        <Button fx:id="buttonSendOrder" layoutX="620.0" layoutY="589.0" mnemonicParsing="false" onAction="#onActionButtonSendOrder" prefHeight="26.0" prefWidth="71.0" text="Enviar" />
+                        <Button fx:id="buttonDeliverOrder" layoutX="710.0" layoutY="589.0" mnemonicParsing="false" onAction="#onActionButtonDeliverOrder" prefHeight="26.0" prefWidth="75.0" text="Entregar" />
+                        <Button fx:id="buttonUpdateOrder" layoutX="802.0" layoutY="589.0" mnemonicParsing="false" onAction="#onActionButtonUpdateOrder" text="Actualizar" />
+                        <Label layoutX="26.0" layoutY="6.0" text="Buscar" />
+                        <TextField fx:id="textfieldStreetIP" layoutX="625.0" layoutY="534.0" prefHeight="26.0" prefWidth="192.0" promptText="Calle" />
+                        <TextField fx:id="textfieldAparmentIP" layoutX="832.0" layoutY="534.0" prefHeight="26.0" prefWidth="56.0" promptText="Casa" />
+                     </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="    Pedidos entregados   ">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-               </content>
-            </Tab>
         </tabs>
       </TabPane>
    </children>

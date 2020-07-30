@@ -12,6 +12,7 @@ public class Customer
     private String apartment;
 
 
+
     public Customer(Integer customerID, String name, String numberPhone,
                     String numberWhatsapp, String street, String apartment)
     {
@@ -21,6 +22,7 @@ public class Customer
         this.numberWhatsapp = numberWhatsapp;
         this.street = street;
         this.apartment = apartment;
+
     }
 
     public Integer getCustomerID() {

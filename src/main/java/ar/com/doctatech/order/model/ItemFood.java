@@ -12,21 +12,14 @@ public class ItemFood
     private double priceAtTheMoment;
     private double amount;
 
-    /**
-     * Constructor cuando voy enlistar ordenes ya realizadas
-     * @param food
-     * @param quantity
-     * @param costAtTheMoment
-     * @param priceAtTheMoment
-     */
-    public ItemFood(Food food, Integer quantity, double costAtTheMoment, double priceAtTheMoment)
+
+    //PARA MOSTRAR EN LAS LISTAS
+    public ItemFood(String description, Integer quantity,
+                   double priceAtTheMoment)
     {
-        this.food = food;
-        this.description = food.getName();
+        this.description = description;
         this.quantity = quantity;
-        this.costAtTheMoment = costAtTheMoment;
         this.priceAtTheMoment = priceAtTheMoment;
-        this.amount = quantity * priceAtTheMoment;
     }
 
     /**
@@ -86,5 +79,20 @@ public class ItemFood
     public double getAmount()
     {
         return amount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ItemFood itemFood = (ItemFood) o;
+
+        return getDescription().equals(itemFood.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return getDescription().hashCode();
     }
 }

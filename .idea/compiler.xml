@@ -10,4 +10,9 @@
       </profile>
     </annotationProcessing>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ros_app" options="-bootclasspath /opt/java/jdk1.8.0_251/jre/lib/resources.jar:/opt/java/jdk1.8.0_251/jre/lib/rt.jar:/opt/java/jdk1.8.0_251/jre/lib/sunrsasign.jar:/opt/java/jdk1.8.0_251/jre/lib/jsse.jar:/opt/java/jdk1.8.0_251/jre/lib/jce.jar:/opt/java/jdk1.8.0_251/jre/lib/charsets.jar:/opt/java/jdk1.8.0_251/jre/lib/jfr.jar:/opt/java/jdk1.8.0_251/jre/classes:/opt/java/jdk1.8.0_251/jre/lib/jfxrt.jar" />
+    </option>
+  </component>
 </project>

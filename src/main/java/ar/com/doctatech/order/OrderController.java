@@ -3,15 +3,14 @@ package ar.com.doctatech.order;
 import ar.com.doctatech.customer.dialog.CustomerDialog;
 import ar.com.doctatech.customer.model.Customer;
 import ar.com.doctatech.food.model.Food;
-import ar.com.doctatech.order.model.DetailStatus;
-import ar.com.doctatech.order.model.ItemFood;
-import ar.com.doctatech.order.model.Order;
-import ar.com.doctatech.order.model.OrderStatus;
+import ar.com.doctatech.order.model.*;
 import ar.com.doctatech.shared.utilities.FXTool;
 import ar.com.doctatech.user.UserSession;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -22,9 +21,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static ar.com.doctatech.shared.utilities.ControlUtil.checkFields;
 
@@ -32,6 +29,26 @@ public class OrderController
     extends OrderServices
         implements Initializable
 {
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources)
+    {
+        Platform.runLater(()->{
+            loadNewOrder();
+            addListenersEventsNO();
+        });
+
+        Platform.runLater(this::loadOrdersComponents);
+
+        loadDeliveredOrders();
+        addListenersEvents();
+
+        textfieldSearchFood.requestFocus();
+    }
+
+    //region=================== NEW ORDER =======================
+
+    //region FXML NEW ORDER
     @FXML private ListView <String> listViewFood;
     @FXML private void onMouseClickedFoodList(MouseEvent event){
         if(event.getButton() == MouseButton.PRIMARY
@@ -58,56 +75,39 @@ public class OrderController
 
     @FXML private CheckBox checkBoxDelivery, checkBoxPayNow;
     @FXML private TextArea textAreaComments;
-    @FXML private void onActionTakeOrder() { takeOrder(); };
+    @FXML private void onActionTakeOrder() { takeOrder(); }
+    //endregion
 
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources)
-    {
-        loadNewOrder();
-        loadInProcessOrders();
-        loadDeliveredOrders();
-        setListenersProperties();
-
-        textfieldSearchFood.requestFocus();
-    }
-
-
-    //=================== NEW ORDER =======================//
-    private ObservableList<String> foodList;
-    private HashMap<String, Food> foodHashMap;
-    private ObservableList<ItemFood> orderItems;
-
+    private ObservableList<String> obsFood;
+    private HashMap<String, Food> mapFood;
+    private ObservableList<ItemFood> obsItemsNO;
 
     private void loadNewOrder()
     {
+        columnDescriptionNO.setCellValueFactory( new PropertyValueFactory<>("description"));
+        columnQuantityNO.setCellValueFactory( new PropertyValueFactory<>("quantity"));
+        columnPriceNO.setCellValueFactory( new PropertyValueFactory<>("priceAtTheMoment"));
+        columnAmountNO.setCellValueFactory( new PropertyValueFactory<>("amount"));
+
         try
         {
-            foodHashMap = foodDAO.getAll();
-            foodList = FXCollections.observableArrayList(foodHashMap.keySet());
+            mapFood = foodDAO.getAll();
+            obsFood = FXCollections.observableArrayList(mapFood.keySet());
+            obsItemsNO = FXCollections.observableArrayList();
 
-            orderItems = FXCollections.observableArrayList();
-            columnDescriptionNO.setCellValueFactory( new PropertyValueFactory<>("description"));
-            columnQuantityNO.setCellValueFactory( new PropertyValueFactory<>("quantity"));
-            columnPriceNO.setCellValueFactory( new PropertyValueFactory<>("priceAtTheMoment"));
-            columnAmountNO.setCellValueFactory( new PropertyValueFactory<>("amount"));
-            tableviewNewOrder.setItems(orderItems);
-
+            tableviewNewOrder.setItems(obsItemsNO);
             comboboxPayment.setItems( FXCollections.observableArrayList( orderDAO.getAllPaymentTypes() ));
             comboboxPayment.getSelectionModel().select("EFECTIVO");
         }
-        catch (SQLException e)
-        {
-            FXTool.alertException(e);
-        }
+        catch (SQLException e) { FXTool.alertException(e); }
     }
 
-    private void setListenersProperties()
+    private void addListenersEventsNO()
     {
         FXTool.setTextFieldDouble(textfieldDiscount);
         FXTool.setTextFieldDouble(textfieldSurcharge);
 
-        //ENTER EN UN ITEM DE LA LISTA DE COMIDAS
+        //ENTER AND UP KEY, ON FOOD ITEM
         listViewFood.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.ENTER)
                 addItemFoodToOrder();
@@ -116,14 +116,16 @@ public class OrderController
                 textfieldSearchFood.requestFocus();
         });
 
-        //BUSCADOR
+        //FOOD BROWSER
         FilteredList<String> foodFilteredList =
-                new FilteredList<>(foodList, s -> true);
-        textfieldSearchFood.textProperty().addListener(
-                (observable, oldValue, newValue) -> foodFilteredList.setPredicate(
-                        foodDescription -> foodDescription.contains(
-                                newValue.trim().toUpperCase())
+                new FilteredList<>(obsFood, s -> true);
+        textfieldSearchFood.textProperty().addListener((observable, oldValue, newValue) ->
+                foodFilteredList.setPredicate(foodDescription ->
+                        foodDescription.toLowerCase().contains(newValue.trim().toLowerCase())
                 ));
+        listViewFood.setItems(foodFilteredList);
+
+        //DOWN KEY, ON TEXT BROWSER
         textfieldSearchFood.setOnKeyReleased(event -> {
             if(event.getCode()==KeyCode.DOWN)
             {
@@ -132,21 +134,19 @@ public class OrderController
             }
 
         } );
-        listViewFood.setItems(foodFilteredList);
-
     }
 
     //region ==== ADD-REMOVE ITEMS ====
     private void addItemFoodToOrder()
     {
-        Food foodSelected = foodHashMap.get(
+        Food foodSelected = mapFood.get(
                 listViewFood.getSelectionModel().getSelectedItem() );
         if(foodSelected!=null)
         {
            Integer quantity = getQuantityFood(foodSelected.getName());
             if(quantity!=null)
             {
-                orderItems.add( new ItemFood(foodSelected, quantity) );
+                obsItemsNO.add( new ItemFood(foodSelected, quantity) );
                 textfieldTotalNO.setText( calculateTotal() + "");
                 //TODO si ya esta en la lista sumar quantity, sino agregar
             }
@@ -161,7 +161,7 @@ public class OrderController
 
         if(itemFood!=null)
         {
-            orderItems.remove(itemFood);
+            obsItemsNO.remove(itemFood);
             textfieldTotalNO.setText(calculateTotal() + "");
             textfieldSearchFood.requestFocus();
         }
@@ -177,7 +177,7 @@ public class OrderController
         if(textfieldSurcharge.getText().trim().isEmpty()) surcharge = 0.0;
         else surcharge = Double.parseDouble(textfieldSurcharge.getText());
 
-        return getTotal(orderItems) - discount + surcharge;
+        return getTotal(obsItemsNO) - discount + surcharge;
     }
 
     //endregion
@@ -262,8 +262,8 @@ public class OrderController
 
     //endregion
 
-    //region ==== TAKE ORDER ====
 
+    //region ==== TAKE ORDER ====
     private void takeOrder()
     {
         String customerName = textfieldCustomerName.getText().trim().toUpperCase();
@@ -279,42 +279,247 @@ public class OrderController
             FXTool.alertInformation("ERROR", "Debes agregar almenos un item");
         else if(sTotal.isEmpty() || sTotal.equals("0.0"))
             FXTool.alertInformation("ERROR", "El total no puede ser 0.0");
+        else
+        {
+            try
+            {
+                //CUSTOMER
+                Customer customer = customerDAO.get(customerName);
+
+                //DETAIL STATUS -> USER
+                DetailStatus detailStatus = new DetailStatus(
+                        UserSession.getUser().getUsername(),
+                        OrderStatus.ACCEPTED.toString(),
+                        checkBoxPayNow.isSelected(),
+                        textAreaComments.getText()
+                );
+
+                //ORDER -> ITEMS -> FOOD
+                //      -> PAYMETHOD
+
+                if(sDiscount.isEmpty())
+                    sDiscount="0.0";
+                if(sSurcharge.isEmpty())
+                    sSurcharge="0.0";
+
+                Order order = new Order(
+                        customer,
+                        obsItemsNO,
+                        getTotal(obsItemsNO),
+                        Double.parseDouble(sDiscount),
+                        Double.parseDouble(sSurcharge),
+                        Double.parseDouble(sTotal),
+                        comboboxPayment.getSelectionModel().getSelectedItem()
+                );
+                order.addDetailStatus(detailStatus);
+                orderDAO.takeOrder(order);
+
+                FXTool.alertInformation("Operación realizada",
+                        "Se aceptado la orden existosamente.");
+
+                clearOrder();
+            }
+            catch (SQLException e) { FXTool.alertException(e); }
+        }
+
+
+    }
+
+    private void clearOrder()
+    {
+        textfieldCustomerName.setText("");
+        textfieldWhatsapp.setText("");
+        textfieldTelefono.setText("-");
+        textfieldApartment.setText("");
+        textfieldStreet.setText("");
+        textfieldDiscount.setText("");
+        textfieldSearchFood.setText("");
+        textfieldTotalNO.setText("0.00");
+        textAreaComments.setText("");
+
+        disableCustomer(true);
+        obsItemsNO.clear();
+        comboboxPayment.getSelectionModel().select("EFECTIVO");
+        checkBoxDelivery.setSelected(false);
+        checkBoxPayNow.setSelected(false);
+    }
+
+    //endregion
+    //endregion
+
+    //region================== ALL ORDERS ================
+
+    //region FXML ALL ORDERS
+    @FXML private TableView<OrderModel> tableViewOrders;
+    @FXML private TableColumn<OrderModel, String> columnDate, columnHour,
+            columnCustomer, columnStatus, columnIsPaid, columnTotal;
+
+    @FXML private TableView<ItemFood> tableViewItems;
+    @FXML private TableColumn<ItemFood, String> columnQuantityItem, columnNameItem,
+            columnPriceItem;
+
+    @FXML private TextField textfieldBrowser, textfieldDeliveryPersonIP, textfieldStreetIP,
+            textfieldAparmentIP;
+    @FXML private TextArea textfieldCommentsIP;
+    @FXML private Label textfieldDiscountIP, textfieldSurchargeIP, textfieldTotalIP;
+
+    @FXML private ComboBox<String> comboBoxFilter;
+    @FXML private CheckBox checkBoxIsPaid;
+
+    @FXML private Button buttonSendOrder, buttonUpdateOrder,
+            buttonDeliverOrder, buttonCancelOrder;
+
+    @FXML private void onTabOrderSelected(){Platform.runLater(this::updateOrdersTable);}
+    @FXML private void onActionButtonUpdateOrder(){updateOrder();}
+    @FXML private void onActionButtonSendOrder(){sendOrder();}
+    @FXML private void onActionButtonDeliverOrder(){deliverOrder();}
+    @FXML private void onActionButtonCancelOrder(){cancelOrder();}
+
+    //endregion
+
+    ObservableList<OrderModel> obsInProcessOrder;
+
+    private void loadOrdersComponents()
+    {
+        columnDate.setCellValueFactory(param -> param.getValue().getDate());
+        columnHour.setCellValueFactory(param -> param.getValue().getHour());
+        columnCustomer.setCellValueFactory(new PropertyValueFactory<>("nameCustomer"));
+        columnStatus.setCellValueFactory(new PropertyValueFactory<>("statusDelivery"));
+        columnIsPaid.setCellValueFactory(new PropertyValueFactory<>("statusPaid"));
+        columnTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+        columnNameItem.setCellValueFactory(new PropertyValueFactory<>("description"));
+        columnQuantityItem.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        columnPriceItem.setCellValueFactory(new PropertyValueFactory<>("priceAtTheMoment"));
+
+        comboBoxFilter.setItems(FXCollections.observableArrayList("EN PROCESO", "FINALIZADO"));
+        comboBoxFilter.getSelectionModel().select("EN PROCESO");
+
+
+        obsInProcessOrder = FXCollections.observableArrayList();
+
+        //Order Browser
+        FilteredList<OrderModel> flOrderInProcess = new FilteredList<>(
+                obsInProcessOrder, s->true);
+
+        textfieldBrowser.textProperty().addListener((observable, oldValue, newValue) ->
+                flOrderInProcess.setPredicate(otm -> {
+                    String textWrited = newValue.trim().toLowerCase();
+
+                    boolean byCustomer = otm.getNameCustomer().toLowerCase().contains(textWrited);
+                    boolean byIsPaid = otm.getStatusPaid().toLowerCase().contains(textWrited);
+                    boolean byStatus = otm.getStatusDelivery().toLowerCase().contains(textWrited);
+
+                    return (byCustomer || byIsPaid) || byStatus;
+                })
+        );
+        SortedList<OrderModel> sortedList = new SortedList<>(flOrderInProcess);
+        tableViewOrders.setItems(sortedList);
+        sortedList.comparatorProperty().bind(tableViewOrders.comparatorProperty());
+
+    }
+
+    private void updateOrdersTable()
+    {
+        try {
+            boolean isFinished = comboBoxFilter.getSelectionModel().getSelectedItem().equals("FINALIZADO");
+
+            obsInProcessOrder.clear();
+            obsInProcessOrder.addAll(orderDAO.getOrdersByStatus(isFinished));
+            tableViewOrders.getSelectionModel().selectFirst();
+
+            //HABILITACION ACTUALIZACIÓN
+            buttonDeliverOrder.setVisible(!isFinished);
+            buttonUpdateOrder.setVisible(!isFinished);
+            buttonSendOrder.setVisible(!isFinished);
+            buttonCancelOrder.setVisible(!isFinished);
+        }
+        catch (SQLException e) { FXTool.alertException(e);}
+    }
+
+    private void addListenersEvents()
+    {
+        tableViewOrders.getSelectionModel().selectedItemProperty().addListener(event-> selectOrder());
+    }
+
+    private void selectOrder()
+    {
+        OrderModel orderSelected = tableViewOrders.getSelectionModel().getSelectedItem();
+        tableViewItems.getItems().clear();
+        if(orderSelected!=null)
+        {
+
+            tableViewItems.getItems().addAll(orderSelected.getItems());
+            textfieldDiscountIP.setText(orderSelected.getDiscount()+"");
+            textfieldSurchargeIP.setText(orderSelected.getSurcharge()+"");
+            textfieldTotalIP.setText(orderSelected.getTotal()+"");
+            textfieldStreetIP.setText(orderSelected.getStreet());
+            textfieldAparmentIP.setText(orderSelected.getApartment());
+            textfieldDeliveryPersonIP.setText(orderSelected.getDeliveryPerson());
+            checkBoxIsPaid.setDisable(orderSelected.isPaid());
+            checkBoxIsPaid.setSelected(orderSelected.isPaid());
+            textfieldCommentsIP.setText(orderSelected.getComments());
+        }
+        else
+        {
+            textfieldDiscountIP.setText("");
+            textfieldSurchargeIP.setText("");
+            textfieldTotalIP.setText("");
+            textfieldStreetIP.setText("");
+            textfieldAparmentIP.setText("");
+            textfieldDeliveryPersonIP.setText("");
+            checkBoxIsPaid.setSelected(false);
+            textfieldCommentsIP.setText("");
+        }
+    }
+
+    private void updateOrder()
+    {
+
+    }
+
+    private void sendOrder()
+    {
+        //verificar el combobox finalizado
+        String deliveryMan = textfieldDeliveryPersonIP.getText().trim().toUpperCase();
+        if(!deliveryMan.isEmpty())
+        {
+           DetailStatus detailStatus = new DetailStatus(
+                   UserSession.getUser().getUsername(),
+                   tableViewOrders.getSelectionModel().getSelectedItem().getStatusDelivery(),
+                   checkBoxIsPaid.isSelected(),
+                   textfieldCommentsIP.getText()
+           );
+           //TODO actualizar table
+            // TODO actualizar database
+        }else
+        {
+            FXTool.alertInformation("ERROR", "Debe indicar quien es el repartidor");
+        }
+    }
+
+    private void deliverOrder()
+    {
+        //verificar el combobox finalizado
+    }
+
+    private void cancelOrder()
+    {
+             DetailStatus detailStatus = new DetailStatus(
+                UserSession.getUser().getUsername(),//change
+                OrderStatus.CANCELED.toString(), //change
+                checkBoxIsPaid.isSelected(),
+                textfieldCommentsIP.getText()
+        );
 
         try
         {
-            //CUSTOMER
-            Customer customer = customerDAO.get(customerName);
-
-            //DETAIL STATUS -> USER
-            DetailStatus detailStatus = new DetailStatus(
-                UserSession.getUser().getUsername(),
-                OrderStatus.ACCEPTED.toString(),
-                checkBoxPayNow.isSelected(),
-                textAreaComments.getText()
-            );
-
-            //ORDER -> ITEMS -> FOOD
-            //      -> PAYMETHOD
-
-            if(sDiscount.isEmpty())
-                sDiscount="0.0";
-            if(sSurcharge.isEmpty())
-                sSurcharge="0.0";
-
-            Order order = new Order(
-                customer,
-                orderItems,
-                getTotal(orderItems),
-                Double.parseDouble(sDiscount),
-                Double.parseDouble(sSurcharge),
-                Double.parseDouble(sTotal),
-                comboboxPayment.getSelectionModel().getSelectedItem()
-            );
-            order.addDetailStatus(detailStatus);
-
-            orderDAO.takeOrder(order);
-
-
+            orderDAO.updateOrderStatus(
+                    tableViewOrders.getSelectionModel().getSelectedItem().getOrderID(),
+                    detailStatus);
+            Platform.runLater(this::updateOrdersTable);
+            FXTool.alertInformation("Operación realizada",
+                    "Orden cancelada exitosamente!");
         }
         catch (SQLException e) { FXTool.alertException(e); }
 
@@ -323,16 +528,10 @@ public class OrderController
 
     //endregion
 
-    //================== IN PROCESS ORDER ================//
-    private void loadInProcessOrders()
-    {
-
-    }
-
-
-    //================== DELIVERED ORDERS =================//
+    //region================== DELIVERED ORDERS =================
     private void loadDeliveredOrders()
     {
 
     }
+    //endregion
 }

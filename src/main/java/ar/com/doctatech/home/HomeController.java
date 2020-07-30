@@ -42,17 +42,23 @@ public class HomeController implements Initializable
     }
 
     @FXML
-    private void handleUsersButton(ActionEvent event) { selectModule(usersParent); }
+    private void handleUsersButton(ActionEvent event)
+    {
+        usersParent = addModule(ADMIN, USERS);
+        selectModule(usersParent);
+    }
 
     @FXML
     private void handleFoodButton(ActionEvent event)
     {
+        foodParent  = addModule(STOCKER, FOOD);
         selectModule(foodParent);
     }
 
     @FXML
     private void handleStockButton(ActionEvent event)
     {
+        stockParent = addModule(STOCKER, STOCK);
         selectModule(stockParent);
     }
 
@@ -73,6 +79,8 @@ public class HomeController implements Initializable
     {
         loadModules();
         menuButtonUser.setText("@"+UserSession.getUser().getUsername());
+        orderParent = addModule(CASHIER, ORDERS);
+        selectModule(orderParent);
     }
 
     private Parent orderParent, foodParent, stockParent, reportParent,usersParent, settingsParent;
@@ -84,6 +92,7 @@ public class HomeController implements Initializable
      */
     private void selectModule(Parent module)
     {
+
         borderPane.setCenter(module);
     }
 
@@ -93,9 +102,9 @@ public class HomeController implements Initializable
      */
     private void loadModules()
     {
-        usersParent = addModule(ADMIN,   USERS);
-        foodParent  = addModule(STOCKER, FOOD);
-        stockParent = addModule(STOCKER, STOCK);
+        //usersParent = addModule(ADMIN,   USERS);
+        //foodParent  = addModule(STOCKER, FOOD);
+        //stockParent = addModule(STOCKER, STOCK);
         //orderParent = addModule(CASHIER, ORDERS);
         //foodParent = addModule(STOCKER, FOOD );
         //report = addModule(SPECTATOR, REPORTS);

@@ -23,11 +23,11 @@ public class RosApp extends Application {
     @Override
     public void start(Stage stage)
     {
-     
+
         String pathToLoad = "";
 
-        /** VERIFICAR LA LA CONEXION, EN CASO DE SER CONECTABLE SETEA "LOGIN" PARA ABRIR
-         SI NO ES CONECTABLE SETEA "DATABASE_SETTINGS" */
+        //VERIFICAR LA LA CONEXION, EN CASO DE SER CONECTABLE SETEA "LOGIN" PARA ABRIR
+        // SI NO ES CONECTABLE SETEA "DATABASE_SETTINGS"
         try
         {
             if( DatabaseConnection.isConnectable() )  pathToLoad = LOGIN;
@@ -38,7 +38,7 @@ public class RosApp extends Application {
             pathToLoad = DATABASE_SETTINGS;
         }
 
-        /** CARGA LA VENTANA DE pathToLoad **/
+        //CARGA LA VENTANA DE pathToLoad
         try {
             Parent root = FXMLLoader.load(getClass().getResource(pathToLoad));
             Scene scene = new Scene(root);
@@ -50,7 +50,6 @@ public class RosApp extends Application {
             exception.printStackTrace();
             FXTool.alertException(exception);
         }
-
     }
 
     public static void main(String[] args)

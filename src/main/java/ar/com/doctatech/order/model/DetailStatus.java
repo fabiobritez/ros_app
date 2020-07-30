@@ -1,54 +1,41 @@
 package ar.com.doctatech.order.model;
 
-import ar.com.doctatech.user.model.User;
-
 import java.time.LocalDateTime;
 
 public class DetailStatus
 {
     private Integer statusID;
     private String userUsername;
-    private String orderStatus;
     private String deliveryPerson;
+    private String status;
     private LocalDateTime dateUpdate;
     private boolean isPaid;
     private String comments;
 
 
-    //PARA ORDER NEW
-    public DetailStatus(String userUsername, String orderStatus,
+    //TAKE ORDER
+    //UPDATE STATUS
+    public DetailStatus(String userUsername, String status,
                         boolean isPaid, String comments)
     {
         this.userUsername = userUsername;
-        this.orderStatus = orderStatus;
+        this.status = status;
         this.dateUpdate = LocalDateTime.now();
         this.isPaid = isPaid;
         this.comments = comments;
     }
 
     public DetailStatus(Integer statusID, String userUsername,
-                        String orderStatus, String deliveryPerson,
+                        String deliveryPerson, String status,
                         LocalDateTime dateUpdate, boolean isPaid,
                         String comments)
     {
         this.statusID = statusID;
         this.userUsername = userUsername;
-        this.orderStatus = orderStatus;
         this.deliveryPerson = deliveryPerson;
+        this.status = status;
         this.dateUpdate = dateUpdate;
         this.isPaid = isPaid;
-        this.comments = comments;
-    }
-
-    public DetailStatus(Integer statusID, String userUsername,
-                        String orderStatus, String deliveryPerson,
-                        LocalDateTime dateUpdate, String comments)
-    {
-        this.statusID = statusID;
-        this.userUsername = userUsername;
-        this.orderStatus = orderStatus;
-        this.deliveryPerson = deliveryPerson;
-        this.dateUpdate = dateUpdate;
         this.comments = comments;
     }
 
@@ -68,12 +55,12 @@ public class DetailStatus
         this.userUsername = userUsername;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDeliveryPerson() {
