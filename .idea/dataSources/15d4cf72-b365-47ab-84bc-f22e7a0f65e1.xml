@@ -1025,6 +1025,7 @@ SELECT|sys.sys_config:null
       <ColNames>order_orderID</ColNames>
       <RefTableName>order</RefTableName>
       <RefColNames>orderID</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
     </foreign-key>
     <foreign-key id="316" parent="285" name="fk_orderStatus_user1">
       <ColNames>user_username</ColNames>
@@ -1119,7 +1120,7 @@ SELECT|sys.sys_config:null
     </key>
     <column id="334" parent="288" name="order_orderID">
       <Position>1</Position>
-      <DataType>int|0s</DataType>
+      <DataType>int(6) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
     </column>
     <column id="335" parent="288" name="food_foodID">
@@ -1157,194 +1158,190 @@ SELECT|sys.sys_config:null
 food_foodID</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="342" parent="288" name="fk_itemFood_order">
-      <ColNames>order_orderID</ColNames>
-      <RefTableName>order</RefTableName>
-      <RefColNames>orderID</RefColNames>
-    </foreign-key>
-    <foreign-key id="343" parent="288" name="fk_itemFood_food">
+    <foreign-key id="342" parent="288" name="fk_itemFood_food">
       <ColNames>food_foodID</ColNames>
       <RefTableName>food</RefTableName>
       <RefColNames>foodID</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
     </foreign-key>
-    <column id="344" parent="289" name="orderID">
+    <column id="343" parent="289" name="orderID">
       <Position>1</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="345" parent="289" name="customer_customerID">
+    <column id="344" parent="289" name="customer_customerID">
       <Position>2</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="346" parent="289" name="subtotal">
+    <column id="345" parent="289" name="subtotal">
       <Position>3</Position>
       <DataType>double|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>0</DefaultExpression>
     </column>
-    <column id="347" parent="289" name="discount">
+    <column id="346" parent="289" name="discount">
       <Position>4</Position>
       <DataType>double|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>0</DefaultExpression>
     </column>
-    <column id="348" parent="289" name="surcharge">
+    <column id="347" parent="289" name="surcharge">
       <Position>5</Position>
       <DataType>double|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>0</DefaultExpression>
     </column>
-    <column id="349" parent="289" name="payMethod_method">
+    <column id="348" parent="289" name="payMethod_method">
       <Position>6</Position>
       <DataType>varchar(70)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;EFECTIVO&apos;</DefaultExpression>
     </column>
-    <column id="350" parent="289" name="exist">
+    <column id="349" parent="289" name="exist">
       <Position>7</Position>
       <DataType>tinyint(1)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
     </column>
-    <index id="351" parent="289" name="fk_order_customer1_idx">
+    <index id="350" parent="289" name="fk_order_customer1_idx">
       <ColNames>customer_customerID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="352" parent="289" name="fk_order_payMethod1_idx">
+    <index id="351" parent="289" name="fk_order_payMethod1_idx">
       <ColNames>payMethod_method</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="353" parent="289" name="PRIMARY">
+    <key id="352" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>orderID
 payMethod_method</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="354" parent="289" name="fk_order_customer1">
+    <foreign-key id="353" parent="289" name="fk_order_customer1">
       <ColNames>customer_customerID</ColNames>
       <RefTableName>customer</RefTableName>
       <RefColNames>customerID</RefColNames>
     </foreign-key>
-    <foreign-key id="355" parent="289" name="fk_order_payMethod">
+    <foreign-key id="354" parent="289" name="fk_order_payMethod">
       <ColNames>payMethod_method</ColNames>
       <RefTableName>payMethod</RefTableName>
       <RefColNames>method</RefColNames>
     </foreign-key>
-    <column id="356" parent="290" name="method">
+    <column id="355" parent="290" name="method">
       <Position>1</Position>
       <DataType>varchar(70)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="357" parent="290" name="PRIMARY">
+    <key id="356" parent="290" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>method</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="358" parent="291" name="ingredient_description">
+    <column id="357" parent="291" name="ingredient_description">
       <Position>1</Position>
       <DataType>varchar(80)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="359" parent="291" name="food_foodID">
+    <column id="358" parent="291" name="food_foodID">
       <Position>2</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="360" parent="291" name="quantity">
+    <column id="359" parent="291" name="quantity">
       <Position>3</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
     </column>
-    <index id="361" parent="291" name="fk_recipe_ingredient_idx">
+    <index id="360" parent="291" name="fk_recipe_ingredient_idx">
       <ColNames>ingredient_description</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="362" parent="291" name="fk_recipe_food_idx">
+    <index id="361" parent="291" name="fk_recipe_food_idx">
       <ColNames>food_foodID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="363" parent="291" name="PRIMARY">
+    <key id="362" parent="291" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>ingredient_description
 food_foodID</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="364" parent="291" name="fk_recipe_ingredient">
+    <foreign-key id="363" parent="291" name="fk_recipe_ingredient">
       <ColNames>ingredient_description</ColNames>
       <RefTableName>ingredient</RefTableName>
       <RefColNames>description</RefColNames>
       <OnUpdate>cascade</OnUpdate>
       <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <foreign-key id="365" parent="291" name="fk_recipe_food">
+    <foreign-key id="364" parent="291" name="fk_recipe_food">
       <ColNames>food_foodID</ColNames>
       <RefTableName>food</RefTableName>
       <RefColNames>foodID</RefColNames>
       <OnUpdate>cascade</OnUpdate>
       <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="366" parent="292" name="role">
+    <column id="365" parent="292" name="role">
       <Position>1</Position>
       <DataType>enum(&apos;ADMINISTRADOR&apos;, &apos;REPOSITOR&apos;, &apos;CAJERO&apos;, &apos;ESPECTADOR&apos;)|0e</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="367" parent="292" name="user_username">
+    <column id="366" parent="292" name="user_username">
       <Position>2</Position>
       <DataType>varchar(25)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="368" parent="292" name="fk_userRole_user1_idx">
+    <index id="367" parent="292" name="fk_userRole_user1_idx">
       <ColNames>user_username</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="369" parent="292" name="fk_userRole_user1">
+    <foreign-key id="368" parent="292" name="fk_userRole_user1">
       <ColNames>user_username</ColNames>
       <RefTableName>user</RefTableName>
       <RefColNames>username</RefColNames>
       <OnUpdate>cascade</OnUpdate>
       <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="370" parent="293" name="username">
+    <column id="369" parent="293" name="username">
       <Position>1</Position>
       <DataType>varchar(25)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="371" parent="293" name="email">
+    <column id="370" parent="293" name="email">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="372" parent="293" name="password">
+    <column id="371" parent="293" name="password">
       <Position>3</Position>
       <DataType>varchar(64)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="373" parent="293" name="enabled">
+    <column id="372" parent="293" name="enabled">
       <Position>4</Position>
       <DataType>tinyint|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
     </column>
-    <column id="374" parent="293" name="exist">
+    <column id="373" parent="293" name="exist">
       <Position>5</Position>
       <DataType>tinyint(1)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>1</DefaultExpression>
     </column>
-    <index id="375" parent="293" name="username_UNIQUE">
+    <index id="374" parent="293" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="376" parent="293" name="PRIMARY">
+    <key id="375" parent="293" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>username</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="377" parent="293" name="username_UNIQUE">
+    <key id="376" parent="293" name="username_UNIQUE">
       <ColNames>username</ColNames>
       <UnderlyingIndexName>username_UNIQUE</UnderlyingIndexName>
     </key>

@@ -8,37 +8,46 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="676.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.user.management.UsersController">
    <children>
-      <SplitPane dividerPositions="0.26837416481069043" prefHeight="676.0" prefWidth="900.0">
+      <SplitPane dividerPositions="0.25" prefHeight="676.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <AnchorPane prefHeight="83.0" prefWidth="237.0" />
-                  <ListView fx:id="listViewUsers" onMouseClicked="#handleClickedListUser" prefHeight="675.0" prefWidth="237.0" />
+                  <AnchorPane prefHeight="50.0" prefWidth="237.0">
+                     <children>
+                        <TextField fx:id="textfieldSearchEngine" layoutX="1.0" layoutY="3.0" onKeyPressed="#onKeyPressedSearchEngine" prefHeight="28.0" prefWidth="210.0" promptText="Buscar" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0" />
+                        <Button alignment="CENTER" contentDisplay="TEXT_ONLY" layoutX="209.0" layoutY="3.0" mnemonicParsing="false" onAction="#onActionClear" prefHeight="27.0" prefWidth="27.0" text="x" AnchorPane.leftAnchor="209.0" AnchorPane.topAnchor="2.0" />
+                     </children></AnchorPane>
+                  <ListView fx:id="listViewUsers" minHeight="-Infinity" prefHeight="640.0" prefWidth="237.0" />
                </children>
             </VBox>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <TextField fx:id="textfieldUsername" layoutX="46.0" layoutY="193.0" promptText="Nombre" />
-                  <TextField fx:id="textfieldEmail" layoutX="293.0" layoutY="193.0" prefHeight="31.0" prefWidth="262.0" promptText="Correo" />
-                  <ListView fx:id="listViewRoles" layoutX="46.0" layoutY="291.0" prefHeight="130.0" prefWidth="200.0" />
-                  <Button fx:id="buttonAddRole" layoutX="253.0" layoutY="439.0" mnemonicParsing="false" onAction="#handleButtonAddRole" prefHeight="31.0" prefWidth="80.0" text="Añadir" />
-                  <Button fx:id="buttonRemoveRole" layoutX="253.0" layoutY="291.0" mnemonicParsing="false" onAction="#handleButtonRemoveRole" prefHeight="31.0" prefWidth="80.0" text="Remover" />
-                  <Label layoutX="46.0" layoutY="264.0" prefHeight="21.0" prefWidth="200.0" text="Roles" />
-                  <Label layoutX="46.0" layoutY="172.0" prefHeight="21.0" prefWidth="187.0" text="Nombre de usuario" />
-                  <Label layoutX="293.0" layoutY="172.0" prefHeight="21.0" prefWidth="262.0" text="Email" />
-                  <CheckBox fx:id="checkBoxEnabled" layoutX="376.0" layoutY="363.0" mnemonicParsing="false" text="Habilitado" />
-                  <Button layoutX="20.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleButtonNewUser" prefHeight="31.0" prefWidth="119.0" text="Nuevo Usuario" />
-                  <Button fx:id="buttonSaveUser" layoutX="509.0" layoutY="604.0" mnemonicParsing="false" onAction="#handleButtonSaveUser" prefHeight="31.0" prefWidth="119.0" text="Guardar" />
-                  <Button fx:id="buttonUpdateUser" layoutX="388.0" layoutY="604.0" mnemonicParsing="false" onAction="#handleButtonUpdateUser" prefHeight="31.0" prefWidth="119.0" text="Actualizar" />
-                  <Button fx:id="buttonEditUser" layoutX="267.0" layoutY="604.0" mnemonicParsing="false" onAction="#handleButtonEditUser" prefHeight="31.0" prefWidth="119.0" text="Editar" />
+                  <TextField fx:id="textfieldUsername" layoutX="46.0" layoutY="120.0" prefHeight="26.0" prefWidth="200.0" promptText="Nombre" />
+                  <TextField fx:id="textfieldEmail" layoutX="293.0" layoutY="120.0" prefHeight="31.0" prefWidth="262.0" promptText="Correo" />
+                  <ListView fx:id="listViewRoles" layoutX="46.0" layoutY="218.0" prefHeight="130.0" prefWidth="200.0" />
+                  <Button fx:id="buttonAddRole" layoutX="253.0" layoutY="366.0" mnemonicParsing="false" onAction="#onActionAddRole" prefHeight="31.0" prefWidth="80.0" text="Añadir" />
+                  <Button fx:id="buttonRemoveRole" layoutX="253.0" layoutY="218.0" mnemonicParsing="false" onAction="#onActionRemoveRole" prefHeight="31.0" prefWidth="80.0" text="Remover" />
+                  <Label layoutX="46.0" layoutY="191.0" prefHeight="21.0" prefWidth="200.0" text="Roles" />
+                  <Label layoutX="46.0" layoutY="99.0" prefHeight="21.0" prefWidth="187.0" text="Nombre de usuario" />
+                  <Label layoutX="293.0" layoutY="99.0" prefHeight="21.0" prefWidth="262.0" text="Email" />
+                  <CheckBox fx:id="checkBoxEnabled" layoutX="399.0" layoutY="290.0" mnemonicParsing="false" text="HABILITAR USUARIO" />
+                  <HBox layoutX="115.0" layoutY="604.0" spacing="10.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="28.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onActionNewUser" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
+                        <Button fx:id="buttonEditUser" mnemonicParsing="false" onAction="#onActionEditUser" prefHeight="30.0" prefWidth="120.0" text="Editar" />
+                        <Button fx:id="buttonUpdateUser" mnemonicParsing="false" onAction="#onActionUpdateUser" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
+                        <Button fx:id="buttonSaveUser" mnemonicParsing="false" onAction="#onActionSaveUser" prefHeight="30.0" prefWidth="120.0" text="Guardar" />
+                     </children>
+                  </HBox>
                   <Text fx:id="textErrorsRoles" fill="RED" layoutX="46.0" layoutY="506.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="200.0" />
-                  <ComboBox fx:id="comboboxRoles" layoutX="46.0" layoutY="439.0" prefHeight="31.0" prefWidth="200.0" />
-                  <Button fx:id="buttonDeleteUser" layoutX="555.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleButtonDeleteUser" style="-fx-background-color: ef5350;" text="Eliminar" />
+                  <ComboBox fx:id="comboboxRoles" layoutX="46.0" layoutY="366.0" prefHeight="31.0" prefWidth="200.0" />
+                  <Button fx:id="buttonDeleteUser" layoutX="505.0" layoutY="14.0" mnemonicParsing="false" onAction="#onActionDeleteUser" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: ff3c3c;" text="Eliminar" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="14.0" />
                </children>
             </AnchorPane>
         </items>

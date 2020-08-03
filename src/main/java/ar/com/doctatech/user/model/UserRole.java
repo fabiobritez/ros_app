@@ -1,20 +1,7 @@
 package ar.com.doctatech.user.model;
-
-import ar.com.doctatech.shared.exceptions.NotFoundException;
-
 public enum UserRole
 {
-    ADMIN("ADMINISTRADOR"),
-    CASHIER("CAJERO"),
-    STOCKER("REPOSITOR"),
-    SPECTATOR("ESPECTADOR");
-
-    private String cargo;
-
-    UserRole(String cargo)
-    {
-        this.cargo = cargo;
-    }
+    ADMIN,CASHIER, STOCKER, SPECTATOR;
 
     @Override
     public String toString()

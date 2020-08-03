@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="720.0" prefWidth="1080.0" stylesheets="@Home.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.home.HomeController">
    <children>
@@ -14,13 +16,32 @@
             <VBox prefHeight="720.0" prefWidth="180.0" styleClass="lateral-pane" BorderPane.alignment="CENTER">
                <children>
                   <AnchorPane prefHeight="64.0" prefWidth="180.0" />
-                  <Button mnemonicParsing="false" onAction="#handleOrderButton" prefHeight="32.0" prefWidth="180.0" text="Pedidos" />
-                  <Button mnemonicParsing="false" onAction="#handleFoodButton" prefHeight="32.0" prefWidth="180.0" text="Platos" />
-                  <Button mnemonicParsing="false" onAction="#handleStockButton" prefHeight="32.0" prefWidth="179.0" text="Ingredientes" />
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="179.0" text="Clientes" />
-                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="180.0" text="Reportes" />
-                  <Button mnemonicParsing="false" onAction="#handleUsersButton" prefHeight="32.0" prefWidth="180.0" text="Usuarios" />
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="180.0" text="Ajustes" />
+                  <ToggleButton fx:id="buttonOrders" minWidth="180.0" mnemonicParsing="false" onAction="#onActionButtonOrders" prefHeight="35.0" prefWidth="180.0" text="Pedidos">
+                     <font>
+                        <Font size="18.0" />
+                     </font></ToggleButton>
+                  <ToggleButton fx:id="buttonFood" minWidth="180.0" mnemonicParsing="false" onAction="#onActionButtonFood" prefHeight="35.0" prefWidth="0.0" text="Platos">
+                     <font>
+                        <Font size="18.0" />
+                     </font></ToggleButton>
+                  <ToggleButton fx:id="buttonIngredients" minWidth="180.0" mnemonicParsing="false" onAction="#onActionButtonIngredients" prefHeight="35.0" prefWidth="0.0" text="Ingredientes">
+                     <font>
+                        <Font size="18.0" />
+                     </font></ToggleButton>
+                  <ToggleButton fx:id="buttonCustomers" minWidth="180.0" mnemonicParsing="false" onAction="#onActionButtonCustomers" prefHeight="35.0" prefWidth="0.0" text="Clientes">
+                     <font>
+                        <Font size="18.0" />
+                     </font></ToggleButton>
+                  <ToggleButton fx:id="buttonReports" minWidth="180.0" mnemonicParsing="false" onAction="#onActionButtonReports" prefHeight="35.0" prefWidth="0.0" text="Reportes">
+                     <font>
+                        <Font size="18.0" />
+                     </font></ToggleButton>
+                  <ToggleButton fx:id="buttonUsers" minWidth="180.0" mnemonicParsing="false" onAction="#onActionButtonUsers" prefHeight="35.0" prefWidth="0.0" text="Usuarios">
+                     <font>
+                        <Font size="18.0" />
+                     </font></ToggleButton>
+                  <ToggleButton fx:id="buttonSettings" minWidth="180.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="0.0" text="Ajustes" visible="false" />
+                  <Group />
                </children>
             </VBox>
          </left>
@@ -31,8 +52,11 @@
                      <children>
                         <MenuButton fx:id="menuButtonUser" layoutX="710.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="180.0" text="\\@User" textFill="WHITE" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                            <items>
-                              <MenuItem mnemonicParsing="false" onAction="#handleLogoutButton" text="        Cerrar Sesión        " />
+                              <MenuItem mnemonicParsing="false" onAction="#onActionButtonLogout" text="        Cerrar Sesión        " />
                            </items>
+                           <font>
+                              <Font size="18.0" />
+                           </font>
                         </MenuButton>
                      </children>
                   </AnchorPane>

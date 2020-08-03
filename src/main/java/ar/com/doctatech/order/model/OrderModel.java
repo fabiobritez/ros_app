@@ -1,4 +1,5 @@
 package ar.com.doctatech.order.model;
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,7 @@ public class OrderModel {
     private double discount;
     private double surcharge;
     private double total;
+    private String payMethod ;
     private LocalDateTime dateUpdate;
 
     private String nameCustomer;
@@ -30,17 +32,19 @@ public class OrderModel {
 
     private String deliveryPerson;
 
+    private String username;
 
     public OrderModel(Integer orderID, double subtotal, double discount, double surcharge,
-                      LocalDateTime dateUpdate, String nameCustomer, String numberPhone,
+                      String payMethod, LocalDateTime dateUpdate, String nameCustomer, String numberPhone,
                       String numberWhatsapp, String street, String apartment,
-                      String statusDelivery, String deliveryPerson, boolean statusPaid, String comments)
+                      String statusDelivery, String deliveryPerson, boolean statusPaid, String comments, String username)
     {
         this.orderID = orderID;
         this.subtotal = subtotal;
         this.discount =  discount;
         this.surcharge =  surcharge;
         this.total =  subtotal - discount + surcharge;
+        this.payMethod = payMethod;
         this.dateUpdate = dateUpdate;
 
         this.nameCustomer =  nameCustomer;
@@ -57,6 +61,16 @@ public class OrderModel {
         else
             this.statusPaid =  "DEBE";
         this.comments =  comments;
+        this.username = username;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Integer getOrderID() {
@@ -75,6 +89,13 @@ public class OrderModel {
         else
             this.statusPaid =  "DEBE";
 
+    }
+    public String getPayMethod() {
+        return payMethod;
+    }
+
+    public void setPayMethod(String payMethod) {
+        this.payMethod = payMethod;
     }
 
     public void setDeliveryPerson(String deliveryPerson)

@@ -1,5 +1,7 @@
 package ar.com.doctatech.customer.model;
 
+import com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -17,6 +19,13 @@ public interface CustomerDAO
     void update(Customer customer) throws SQLException;
 
     void delete(Integer customerID) throws SQLException;
+
+
+    double getTotalSales(String customerName) throws SQLException;
+
+    double getTotalDebt(String customerName) throws SQLException;
+
+    String getLastSale(String customerName) throws SQLException;
 
     
 }

@@ -7,13 +7,12 @@ import ar.com.doctatech.stock.ingredient.Unit;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -28,7 +27,7 @@ public class StockController extends StockServices
         implements Initializable
 {
     //region FXML REFERENCES
-    @FXML private TextField textFieldSearchIngredients;
+    @FXML private TextField textfieldSearchEngine;
 
     @FXML private ListView<String> listViewIngredients;
 
@@ -49,80 +48,89 @@ public class StockController extends StockServices
     @FXML private TableColumn<Ingredient, Integer> columnStock, columnStockMin;
 
     //<------------------------METHODS------------------------------>
+    @FXML private void onKeyPressedSearchEngine(KeyEvent event)
+    {
+        if(event.getCode() == KeyCode.DOWN)
+        {
+            listViewIngredients.getSelectionModel().selectFirst();
+            listViewIngredients.requestFocus();
+        }
+    }
 
-    @FXML private void handleButtonAddStock(ActionEvent event)
+    @FXML private void onActionClear()
+    {
+        textfieldSearchEngine.setText("");
+        textfieldSearchEngine.requestFocus();
+    }
+
+    @FXML private void onActionAddStock()
     {
         addStock( tableViewLowStockIngredients.getSelectionModel().getSelectedItem() );
     }
 
-    @FXML private void handleButtonNew(ActionEvent event)
+    @FXML private void onActionNewIngredient()
     {
         setProcess(ADDING);
     }
 
-    @FXML private void handleButtonDelete(ActionEvent event)
+    @FXML private void onActionDeleteIngredient()
     {
         deleteIngredient();
     }
 
-    @FXML private void handleButtonSave(ActionEvent event)
+    @FXML private void onActionSaveIngredient()
     {
         saveIngredient();
     }
 
-    @FXML private void handleButtonUpdate(ActionEvent event)
+    @FXML private void onActionUpdateIngredient()
     {
         updateIngredient();
     }
 
-    @FXML private void handleClickedListIngredients(MouseEvent event)
-    {
-        selectIngredient( listViewIngredients.getSelectionModel().getSelectedItem() );
-    }
-
-    @FXML private void handleTextfieldStockReleased(KeyEvent event)
+    @FXML private void onReleasedTextfieldStock()
     {
         updateDiv1000(textfieldStock, textStock,comboboxUnit);
     }
 
-    @FXML private void handleTextfieldStockMinReleased(KeyEvent event)
+    @FXML private void onReleasedTextfieldStockMin()
     {
         updateDiv1000(textfieldStockMin, textStockMin,comboboxUnit);
     }
+
+    @FXML private void onSelectChangedTab(){updateLowStockIngredients();}
     //endregion
 
     @Override public void initialize(URL location, ResourceBundle resources)
     {
-        loadLists();
-        setListenersProperty();
-        loadTableViewLowStock();
+        loadIngredients();
+        addListenersEvents();
+        loadLowStockIngredients();
     }
 
-    //region GUI METHODS
-    private ObservableList<String> observableListIngredients;
-    private HashMap<String, Ingredient> mapIngredients;
-    FilteredList<String> filteredListIngredients;
-    ObservableList<Ingredient> observableLowStockIngredients = FXCollections.observableArrayList();
+    //region METHODS
 
-    private void loadLists()
+    private HashMap<String, Ingredient> mapIngredients;
+    private ObservableList<String> obsIngredients;
+    private FilteredList<String> flIngredients;
+    private ObservableList<Ingredient> obsLowStockIngredients = FXCollections.observableArrayList();
+
+    private void loadIngredients()
     {
         try
         {
             mapIngredients = ingredientDAO.getAll();
-            observableListIngredients = FXCollections.observableArrayList(mapIngredients.keySet());
-            filteredListIngredients = new FilteredList<>(observableListIngredients, s -> true);
+            obsIngredients = FXCollections.observableArrayList(mapIngredients.keySet());
+            flIngredients = new FilteredList<>(obsIngredients, s -> true);
 
-            listViewIngredients.setItems(filteredListIngredients);
+            listViewIngredients.setItems(flIngredients);
             comboboxUnit.setItems(FXCollections.observableArrayList( Unit.values() ));
             comboboxUnit.getSelectionModel().select(Unit.QUANTITY);
         }
-        catch (SQLException e)
-        {
-            FXTool.alertException(e);
-        }
+        catch (SQLException e) { FXTool.alertException(e); }
     }
 
-    private void loadTableViewLowStock()
+    private void loadLowStockIngredients()
     {
         columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         columnStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
@@ -130,35 +138,62 @@ public class StockController extends StockServices
         columnUnit.setCellValueFactory(new PropertyValueFactory<>("unit"));
 
         updateLowStockIngredients();
-        tableViewLowStockIngredients.setItems(observableLowStockIngredients);
+        tableViewLowStockIngredients.setItems(obsLowStockIngredients);
     }
 
-    private void setListenersProperty()
+    private void updateLowStockIngredients()
+    {
+        obsLowStockIngredients.clear();
+        for (Ingredient ingredient: mapIngredients.values())
+        {
+            if( ingredient.getStock()<=ingredient.getStockMin()
+                    && !obsLowStockIngredients.contains(ingredient) )
+            {
+                obsLowStockIngredients.add(ingredient);
+            }
+        }
+    }
+
+    private void addListenersEvents()
     {
         FXTool.setTextFieldInteger(textfieldStock);
         FXTool.setTextFieldInteger(textfieldStockMin);
 
+        //ITEMS SELECTION
         listViewIngredients.getSelectionModel().selectedItemProperty().addListener(event ->
-                selectIngredient( listViewIngredients.getSelectionModel().getSelectedItem() ) );
+                selectIngredient() );
 
-        textFieldSearchIngredients.textProperty().addListener((observable, oldValue, newValue) ->
-                filteredListIngredients.setPredicate(ingred ->
+        //UX
+        listViewIngredients.setOnKeyPressed(event ->
+        {
+            if(event.getCode() == KeyCode.UP &&
+                listViewIngredients.getSelectionModel().isSelected(0))
+            {
+                textfieldSearchEngine.requestFocus();
+            }
+        });
+
+        //INGREDIENTS SEARCHER
+        textfieldSearchEngine.textProperty().addListener((observable, oldValue, newValue) ->
+                flIngredients.setPredicate(ingred ->
                         ingred.contains(newValue.trim().toUpperCase())
                 ));
 
+        //CONVERTER
         comboboxUnit.getSelectionModel().selectedItemProperty().addListener((observable) -> {
                     updateDiv1000(textfieldStock, textStock,comboboxUnit);
                     updateDiv1000(textfieldStockMin, textStockMin,comboboxUnit);
                 });
-
     }
 
-    private void selectIngredient(String description)
+    private void selectIngredient()
     {
-        Ingredient ingredient = mapIngredients.get(description);
+        String description = listViewIngredients.getSelectionModel().getSelectedItem();
 
-        if(ingredient != null)
+        if(checkFields(description))
         {
+            Ingredient ingredient = mapIngredients.get(description);
+
             textfieldDescription.setText(description);
             textfieldStock    .setText(ingredient.getStock()  + "");
             textfieldStockMin .setText(ingredient.getStockMin()+"");
@@ -169,6 +204,7 @@ public class StockController extends StockServices
 
             setProcess(VIEWING);
         }
+
     }
 
     private void saveIngredient()
@@ -189,9 +225,8 @@ public class StockController extends StockServices
                 );
                 ingredientDAO.save(i);
 
-                observableListIngredients.add(i.getDescription());
+                obsIngredients.add(i.getDescription());
                 mapIngredients.put(i.getDescription(),i);
-                updateLowStockIngredients();
 
                 setProcess(VIEWING);
             }
@@ -218,10 +253,10 @@ public class StockController extends StockServices
                 ingredientDAO.update(ingredient);
 
                 setProcess(VIEWING);
+                textfieldSearchEngine.requestFocus();
                 labelMessage.setText("'" + description.toUpperCase() + "' ACTUALIZADO CORRECTAMENTE! ");
             }
             catch (SQLException e) { FXTool.alertException(e); }
-            updateLowStockIngredients();
         }
     }
 
@@ -243,29 +278,17 @@ public class StockController extends StockServices
             if (alert.getResult().equals(ButtonType.YES))
             {
                 ingredientDAO.remove(description);
-                observableListIngredients.remove(description);
+
+                obsIngredients.remove(description);
                 mapIngredients.remove(description);
+
                 FXTool.alertInformation("Eliminado","Ingrediente eliminado correctamente!");
 
                 listViewIngredients.getSelectionModel().selectFirst();
                 setProcess(VIEWING);
-                updateLowStockIngredients();
             }
         }
         catch (SQLException e) { FXTool.alertException(e); }
-    }
-
-    private void updateLowStockIngredients()
-    {
-        observableLowStockIngredients.clear();
-        for (Ingredient ingredient: mapIngredients.values())
-        {
-            if( ingredient.getStock()<=ingredient.getStockMin()
-                    && !observableLowStockIngredients.contains(ingredient) )
-            {
-                observableLowStockIngredients.add(ingredient);
-            }
-        }
     }
 
     private void addStock(Ingredient ingredient)
@@ -300,15 +323,17 @@ public class StockController extends StockServices
             textfieldStockMin.setText("0");
             textfieldStock.setText("0");
             comboboxUnit.getSelectionModel().select(Unit.QUANTITY);
-            buttonDelete.setVisible(false);
-            buttonSave.toFront();
+            buttonDelete.setDisable(true);
+            buttonUpdate.setDisable(true);
+            buttonSave.setDisable(false);
         }
         else if(process.equals(EDITING)
                 || process.equals(VIEWING))
         {
             textfieldDescription.setEditable(false);
-            buttonDelete.setVisible(true);
-            buttonUpdate.toFront();
+            buttonDelete.setDisable(false);
+            buttonUpdate.setDisable(false);
+            buttonSave.setDisable(true);
         }
         labelMessage.setText("");
     }

@@ -8,9 +8,11 @@ import ar.com.doctatech.stock.ingredient.Ingredient;
 import ar.com.doctatech.stock.ingredient.IngredientDAO;
 import ar.com.doctatech.stock.ingredient.IngredientDAOMySQL;
 import ar.com.doctatech.stock.ingredient.Unit;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
@@ -165,7 +167,6 @@ public class FoodServices {
                 addStockButton.setDisable(
                         oldValue.trim().isEmpty()
                 );
-
             }
             else
             {
@@ -188,7 +189,6 @@ public class FoodServices {
 
         return result.orElse(null);
     }
-
 
     protected void updateDiv1000(TextField textField, Text text, String unit)
     {

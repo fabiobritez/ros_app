@@ -38,10 +38,10 @@ public class OrderController
             addListenersEventsNO();
         });
 
-        Platform.runLater(this::loadOrdersComponents);
-
-        loadDeliveredOrders();
-        addListenersEvents();
+        Platform.runLater(()-> {
+                   this.loadOrdersComponents();
+                   addListenersEvents();
+                });
 
         textfieldSearchFood.requestFocus();
     }
@@ -146,9 +146,11 @@ public class OrderController
            Integer quantity = getQuantityFood(foodSelected.getName());
             if(quantity!=null)
             {
-                obsItemsNO.add( new ItemFood(foodSelected, quantity) );
+                ItemFood itemToAdd =  new ItemFood(foodSelected, quantity);
+                //TODO SOLUCIONAR DE UNA FORMA OPTIMA
+                if(!obsItemsNO.contains(itemToAdd))
+                    obsItemsNO.add(itemToAdd);
                 textfieldTotalNO.setText( calculateTotal() + "");
-                //TODO si ya esta en la lista sumar quantity, sino agregar
             }
             textfieldSearchFood.requestFocus();
         }
@@ -289,7 +291,7 @@ public class OrderController
                 //DETAIL STATUS -> USER
                 DetailStatus detailStatus = new DetailStatus(
                         UserSession.getUser().getUsername(),
-                        OrderStatus.ACCEPTED.toString(),
+                        OrderStatus.ACCEPTED.toString(),"",
                         checkBoxPayNow.isSelected(),
                         textAreaComments.getText()
                 );
@@ -368,13 +370,14 @@ public class OrderController
 
     @FXML private Button buttonSendOrder, buttonUpdateOrder,
             buttonDeliverOrder, buttonCancelOrder;
+    @FXML MenuItem menuItemDeliver, menuItemSend;
 
     @FXML private void onTabOrderSelected(){Platform.runLater(this::updateOrdersTable);}
     @FXML private void onActionButtonUpdateOrder(){updateOrder();}
     @FXML private void onActionButtonSendOrder(){sendOrder();}
     @FXML private void onActionButtonDeliverOrder(){deliverOrder();}
     @FXML private void onActionButtonCancelOrder(){cancelOrder();}
-
+    //TODO IMPORTANTE! = VERIFICAR COMO SOLUCIONAR DUPLICIDAD DE ITEMS ADD ITEM
     //endregion
 
     ObservableList<OrderModel> obsInProcessOrder;
@@ -433,6 +436,8 @@ public class OrderController
             buttonUpdateOrder.setVisible(!isFinished);
             buttonSendOrder.setVisible(!isFinished);
             buttonCancelOrder.setVisible(!isFinished);
+            menuItemDeliver.setVisible(!isFinished);
+            menuItemSend.setVisible(!isFinished);
         }
         catch (SQLException e) { FXTool.alertException(e);}
     }
@@ -475,23 +480,61 @@ public class OrderController
 
     private void updateOrder()
     {
+        OrderModel orderModel = tableViewOrders.getSelectionModel().getSelectedItem();
 
+        if(orderModel!=null)
+        {
+            DetailStatus detailStatus = new DetailStatus(
+                    UserSession.getUser().getUsername(),
+                    orderModel.getStatusDelivery(),
+                    textfieldDeliveryPersonIP.getText(),
+                    checkBoxIsPaid.isSelected(),
+                    textfieldCommentsIP.getText()
+            );
+            try
+            {
+                orderDAO.updateOrderStatus(orderModel.getOrderID(), detailStatus);
+                Platform.runLater(()->{
+                    this.updateOrdersTable();
+                    tableViewOrders.getSelectionModel().select(orderModel);
+                });
+                FXTool.alertInformation("Orden actualizada!", "");
+
+            }
+            catch (SQLException e)
+            {
+                FXTool.alertException(e);
+            }
+        }
     }
 
     private void sendOrder()
     {
         //verificar el combobox finalizado
         String deliveryMan = textfieldDeliveryPersonIP.getText().trim().toUpperCase();
-        if(!deliveryMan.isEmpty())
+        OrderModel orderModel = tableViewOrders.getSelectionModel().getSelectedItem();
+
+        if(!deliveryMan.isEmpty() && orderModel!=null)
         {
            DetailStatus detailStatus = new DetailStatus(
                    UserSession.getUser().getUsername(),
-                   tableViewOrders.getSelectionModel().getSelectedItem().getStatusDelivery(),
+                   OrderStatus.ON_THE_WAY.toString(),
+                   deliveryMan,
                    checkBoxIsPaid.isSelected(),
                    textfieldCommentsIP.getText()
            );
-           //TODO actualizar table
-            // TODO actualizar database
+            try
+            {
+                orderDAO.updateOrderStatus(orderModel.getOrderID(), detailStatus);
+                Platform.runLater(()->{
+                    this.updateOrdersTable();
+                    tableViewOrders.getSelectionModel().select(orderModel);
+                });
+                FXTool.alertInformation("Orden en camino!", "Repartidor: " + deliveryMan +
+                           "\nDirección: " + orderModel.getStreet());
+
+            }
+            catch (SQLException e) { FXTool.alertException(e); }
         }else
         {
             FXTool.alertInformation("ERROR", "Debe indicar quien es el repartidor");
@@ -500,14 +543,36 @@ public class OrderController
 
     private void deliverOrder()
     {
-        //verificar el combobox finalizado
+        OrderModel orderModel = tableViewOrders.getSelectionModel().getSelectedItem();
+
+        if(orderModel!=null)
+        {
+            DetailStatus detailStatus = new DetailStatus(
+                    UserSession.getUser().getUsername(),
+                    OrderStatus.DELIVERED.toString(),
+                    orderModel.getDeliveryPerson(),
+                    checkBoxIsPaid.isSelected(),
+                    textfieldCommentsIP.getText()
+            );
+            try
+            {
+                orderDAO.updateOrderStatus(orderModel.getOrderID(), detailStatus);
+                FXTool.alertInformation("Orden entregada!", "");
+                this.updateOrdersTable();
+
+            }
+            catch (SQLException e)
+            {
+                FXTool.alertException(e);
+            }
+        }
     }
 
     private void cancelOrder()
     {
              DetailStatus detailStatus = new DetailStatus(
                 UserSession.getUser().getUsername(),//change
-                OrderStatus.CANCELED.toString(), //change
+                OrderStatus.CANCELED.toString(),textfieldDeliveryPersonIP.getText(),//change
                 checkBoxIsPaid.isSelected(),
                 textfieldCommentsIP.getText()
         );
@@ -525,13 +590,5 @@ public class OrderController
 
     }
 
-
-    //endregion
-
-    //region================== DELIVERED ORDERS =================
-    private void loadDeliveredOrders()
-    {
-
-    }
     //endregion
 }

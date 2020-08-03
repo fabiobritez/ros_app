@@ -15,11 +15,12 @@ public class DetailStatus
 
     //TAKE ORDER
     //UPDATE STATUS
-    public DetailStatus(String userUsername, String status,
-                        boolean isPaid, String comments)
+    public DetailStatus(String userUsername, String status,String deliveryPerson,
+                        boolean isPaid,String comments)
     {
         this.userUsername = userUsername;
         this.status = status;
+        this.deliveryPerson = deliveryPerson;
         this.dateUpdate = LocalDateTime.now();
         this.isPaid = isPaid;
         this.comments = comments;

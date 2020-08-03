@@ -198,7 +198,7 @@ public class FXTool
     public static void setTextFieldInteger(TextField textField)
     {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("[0-9]*"))
+            if(!newValue.matches("-?[0-9]*"))
             {
                 textField.setText(oldValue);
             }

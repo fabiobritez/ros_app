@@ -13,9 +13,11 @@ public class UserDAOMySQL implements UserDAO {
 
     Connection connection;
     {
-        try {
+        try
+        {
             connection = DatabaseConnection.getConnection();
-        } catch (IOException | SQLException exception) {
+        }
+        catch (IOException | SQLException exception) {
             System.out.println(exception.toString());
         }
     }
@@ -24,31 +26,24 @@ public class UserDAOMySQL implements UserDAO {
     public void save(User user) throws SQLException
     {
         //SAVE USER
-        String query = "INSERT INTO user (username, email, password, enabled) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO user (username, email, password, enabled) VALUES (?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE email=?, password=?, enabled=?, exist = true";
 
-        try (PreparedStatement preparedStatement =
-                    connection.prepareStatement(query))
+        try ( PreparedStatement ps =
+                      connection.prepareStatement(query) )
         {
-            preparedStatement.setString (1,user.getUsername() );
-            preparedStatement.setString (2,user.getEmail()    );
-            preparedStatement.setString (3,user.getPassword() );
-            preparedStatement.setBoolean(4,user.isEnabled()   );
+            ps.setString (1,user.getUsername() );
+            ps.setString (2,user.getEmail()    );
+            ps.setString (3,user.getPassword() );
+            ps.setBoolean(4,user.isEnabled()   );
 
-            preparedStatement.executeUpdate();
+            ps.setString(5, user.getEmail());
+            ps.setString(6, user.getPassword());
+            ps.setBoolean(7, user.isEnabled());
+
+            ps.executeUpdate();
         }
-
-        //ADD ROLES
-        query = "INSERT INTO role (role, user_username) VALUES (?, ?)";
-        try ( PreparedStatement preparedStatement = connection.prepareStatement(query) )
-        {
-            for ( String role : user.getUserRoles() )
-            {
-                preparedStatement.setString(1, role);
-                preparedStatement.setString(2, user.getUsername());
-
-                preparedStatement.executeUpdate();
-            }
-        }
+        updateRoles(user);
     }
 
     @Override
@@ -57,86 +52,85 @@ public class UserDAOMySQL implements UserDAO {
         String query = "UPDATE user SET email = ?, password = ?, enabled = ? " +
                 "WHERE username = ?";
 
-        try( PreparedStatement preparedStatement
+        try( PreparedStatement ps
                      = connection.prepareStatement(query) )
         {
-            preparedStatement.setString (1, user.getEmail()    );
-            preparedStatement.setString (2, user.getPassword() );
-            preparedStatement.setBoolean(3, user.isEnabled()   );
-            preparedStatement.setString (4, user.getUsername() );
+            ps.setString (1, user.getEmail()    );
+            ps.setString (2, user.getPassword() );
+            ps.setBoolean(3, user.isEnabled()   );
+            ps.setString (4, user.getUsername() );
+            ps.execute();
+        }
+       updateRoles(user);
+    }
 
-            preparedStatement.execute();
+    public void updateRoles(User user) throws SQLException
+    {
+        String query1 = "DELETE FROM role WHERE user_username='"+user.getUsername()+"'";
+        try (PreparedStatement ps = connection.prepareStatement(query1))
+        {
+            ps.executeUpdate();
+        }
+
+        String query2 = "INSERT INTO role (role, user_username) VALUES (?,?)";
+
+        try ( PreparedStatement ps =
+                      connection.prepareStatement(query2) )
+        {
+            for ( String role : user.getUserRoles() )
+            {
+                ps.setString(1, role);
+                ps.setString(2, user.getUsername());
+
+                ps.executeUpdate();
+            }
         }
     }
 
     @Override
-    public void remove(String username) throws SQLException
+    public void delete(String username) throws SQLException
     {
         String query = "UPDATE user SET exist = false WHERE username = ?";
-        try( PreparedStatement preparedStatement = connection.prepareStatement(query) )
+        try( PreparedStatement ps = connection.prepareStatement(query) )
         {
-            preparedStatement.setString(1, username.toUpperCase().trim() );
-            preparedStatement.executeUpdate();
+            ps.setString(1, username.toUpperCase().trim() );
+            ps.executeUpdate();
         }
     }
 
-    @Override
-    public void removeRole(String username, String role) throws SQLException
-    {
-        String query = "DELETE FROM role WHERE user_username = ? && role = ?";
-        try( PreparedStatement preparedStatement = connection.prepareStatement(query) )
-        {
-            preparedStatement.setString(1, username.toUpperCase().trim());
-            preparedStatement.setString(2, role);
-            preparedStatement.executeUpdate();
-        }
-    }
-
-    @Override
-    public void addRole(String username, String role) throws SQLException
-    {
-        String query = "INSERT INTO role (role,user_username) VALUES (?, ?)";
-        try ( PreparedStatement preparedStatement = connection.prepareStatement(query) )
-        {
-                preparedStatement.setString(1, role);
-                preparedStatement.setString(2, username.toUpperCase().trim() );
-
-                preparedStatement.executeUpdate();
-        }
-    }
 
     @Override
     public HashMap<String,User> getAll() throws SQLException
     {
-        String queryJoin = "SELECT * FROM user LEFT OUTER JOIN role " +
-                "ON user.username = role.user_username WHERE exist = true";
+        String query = "SELECT * FROM user " +
+                "LEFT JOIN role r on user.username = r.user_username " +
+                "WHERE user.exist=true";
 
         HashMap<String, User> usersFound = new HashMap<>();
 
-        try (PreparedStatement preparedStatement =
-                     connection.prepareStatement(queryJoin) )
+        try (PreparedStatement ps =
+                     connection.prepareStatement(query) )
         {
-            try(ResultSet resultSet = preparedStatement.executeQuery())
+            try(ResultSet rs = ps.executeQuery())
             {
-                while (resultSet.next())
+                while (rs.next())
                 {
-                    String username = resultSet.getString("username");
+                    String username = rs.getString("username");
                     if(!usersFound.containsKey(username))
                     {
                         User user = new User(
                                 username,
-                                resultSet.getString("email"),
-                                resultSet.getString("password"),
-                                resultSet.getBoolean("enabled")
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getBoolean("enabled")
                         );
-                        user.addRole( resultSet.getString("role") );
+                        user.addRole( rs.getString("role") );
                         usersFound.put(user.getUsername(), user);
                     }
                     else
-                    {
                         usersFound.get( username ).
-                                addRole( resultSet.getString("role") );
-                    }
+                            addRole( rs.getString("role") );
+
                 }
             }
         }
@@ -146,36 +140,35 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public User get(String username) throws NotFoundException, SQLException
     {
-        String query = "SELECT * FROM user LEFT OUTER JOIN role ON user.username = role.user_username " +
+        String query = "SELECT * FROM user " +
+                "LEFT OUTER JOIN role ON user.username = role.user_username " +
                 "WHERE user.username = ? && exist = true";
 
         User userFound = new User("NULL","null","null",false);
-
-        try ( PreparedStatement preparedStatement = connection.prepareStatement(query) )
+        try ( PreparedStatement ps =
+                      connection.prepareStatement(query) )
         {
-            preparedStatement.setString(1, username.toUpperCase().trim() );
-            try(ResultSet resultSet = preparedStatement.executeQuery())
+            ps.setString(1, username.toUpperCase().trim() );
+            try( ResultSet rs = ps.executeQuery() )
             {
-                while (resultSet.next())
+                while (rs.next())
                 {
                     if(userFound.getUsername().equals("NULL") )
                     {
                         userFound = new User(
-                                resultSet.getString("username"),
-                                resultSet.getString("email"),
-                                resultSet.getString("password"),
-                                resultSet.getBoolean("enabled")
+                                rs.getString("username"),
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getBoolean("enabled")
                         );
                     }
-                    userFound.addRole( resultSet.getString("role") );
+                    userFound.addRole( rs.getString("role") );
                 }
             }
         }
 
-        if ( userFound.getUsername().equals("NULL") )
-        {
-            throw new NotFoundException("Usuario: '"+username+"' no encontrado.");
-        }
+        if ( userFound.getUsername().equals("NULL") ){ throw new NotFoundException("Usuario: '"+username+"' no encontrado.");}
+
         return userFound;
     }
 

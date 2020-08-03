@@ -6,17 +6,24 @@ import static ar.com.doctatech.user.model.UserRole.*;
 import ar.com.doctatech.shared.utilities.FXTool;
 import ar.com.doctatech.user.UserSession;
 import ar.com.doctatech.user.model.UserRole;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.SepiaTone;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 
 public class HomeController implements Initializable
@@ -26,64 +33,63 @@ public class HomeController implements Initializable
     @FXML
     private BorderPane borderPane;
 
+    @FXML private ToggleButton buttonFood, buttonOrders, buttonIngredients,
+            buttonCustomers, buttonReports,buttonUsers,buttonSettings;
+    private ToggleGroup toggleGroup = new ToggleGroup();
+
     @FXML
     private MenuButton menuButtonUser;
 
-    @FXML private void handleOrderButton(ActionEvent event)
-    {
+    @FXML private void onActionButtonOrders() {
      orderParent = addModule(CASHIER, ORDERS);
      selectModule(orderParent);
     }
-
-    @FXML
-    private void handleLogoutButton(ActionEvent event)
-    {
-        logout();
+    @FXML private void onActionButtonFood()  {
+        foodParent  = addModule(STOCKER, FOOD);
+        selectModule(foodParent);
     }
-
-    @FXML
-    private void handleUsersButton(ActionEvent event)
+    @FXML private void onActionButtonIngredients() {
+        stockParent = addModule(STOCKER, STOCK);
+        selectModule(stockParent);
+    }
+    @FXML private void onActionButtonCustomers() {
+        customerParent = addModule(ADMIN, CUSTOMERS);
+        selectModule(customerParent);
+    }
+    @FXML private void onActionButtonReports()
     {
+        reportParent = addModule(SPECTATOR, REPORTS);
+        selectModule(reportParent);
+    }
+    @FXML private void onActionButtonUsers() {
         usersParent = addModule(ADMIN, USERS);
         selectModule(usersParent);
     }
 
-    @FXML
-    private void handleFoodButton(ActionEvent event)
+
+    @FXML private void onActionButtonLogout()
     {
-        foodParent  = addModule(STOCKER, FOOD);
-        selectModule(foodParent);
+        logout();
     }
 
-    @FXML
-    private void handleStockButton(ActionEvent event)
-    {
-        stockParent = addModule(STOCKER, STOCK);
-        selectModule(stockParent);
-    }
 
 
     //endregion
-
-
-    /****
-     * CAMBIAR LA FORMA DE ELIMINAR USERS
-     * QUE NO SE PUEDA VER MAS EN NINGUN LADO
-     * SOLO EL HISTORIAL
-     * AGREGAR UN CAMPO LLAMADO exist
-     */
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        loadModules();
+        toggleGroup.getToggles().addAll(
+                buttonFood, buttonOrders, buttonIngredients,
+                buttonCustomers, buttonReports,buttonUsers,buttonSettings
+        );
+
         menuButtonUser.setText("@"+UserSession.getUser().getUsername());
         orderParent = addModule(CASHIER, ORDERS);
         selectModule(orderParent);
+        toggleGroup.selectToggle(buttonOrders);
     }
 
-    private Parent orderParent, foodParent, stockParent, reportParent,usersParent, settingsParent;
+    private Parent orderParent,customerParent, foodParent, stockParent, reportParent,usersParent, settingsParent;
 
     /**
      * Muestra el modulo que le indicamos como parametro
@@ -92,23 +98,7 @@ public class HomeController implements Initializable
      */
     private void selectModule(Parent module)
     {
-
         borderPane.setCenter(module);
-    }
-
-    /**
-     * Carga todos los modulos indicados. Dependiendo de los roles o permisos
-     * que tenga el usuario que inicio sesión.
-     */
-    private void loadModules()
-    {
-        //usersParent = addModule(ADMIN,   USERS);
-        //foodParent  = addModule(STOCKER, FOOD);
-        //stockParent = addModule(STOCKER, STOCK);
-        //orderParent = addModule(CASHIER, ORDERS);
-        //foodParent = addModule(STOCKER, FOOD );
-        //report = addModule(SPECTATOR, REPORTS);
-        //settingsParent = addModule(ADMIN, SETTINGS);
     }
 
     /**
@@ -158,4 +148,5 @@ public class HomeController implements Initializable
             FXTool.alertException(exception);
         }
     }
+
 }

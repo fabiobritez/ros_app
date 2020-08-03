@@ -6,19 +6,18 @@ import ar.com.doctatech.shared.PROCESS;
 import ar.com.doctatech.shared.exceptions.NotFoundException;
 import ar.com.doctatech.stock.ingredient.Ingredient;
 import ar.com.doctatech.shared.utilities.FXTool;
-import com.sun.mail.imap.protocol.Item;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import java.io.File;
@@ -34,43 +33,54 @@ import static ar.com.doctatech.shared.utilities.FileUtil.deleteFile;
 public class FoodController
         extends FoodServices implements Initializable
 {
-    //TODO BUSQUEDA, DAO, CAMBIAR CON TECLAS, CON TECLA ABAJO BAJAR , ETC
     //region FXML REFERENCES
 
-    @FXML private ListView<String> listViewFood;
+    @FXML private ListView<String> listViewFood, listViewIngredients;
 
-    @FXML private TextField textfieldSearchFood;
-
+    @FXML private TextField textfieldSearchFood, textfieldSearchIngredient,
+            textfieldID, textfieldName, textfieldCost, textfieldProfit, textfieldPrice;
     @FXML private CheckBox checkBoxPrice;
-
-    @FXML private TextField textfieldID, textfieldName, textfieldCost,
-            textfieldProfit, textfieldPrice;
-
-    @FXML private Button buttonNew, buttonEdit, buttonUpdate,
-            buttonSave, buttonDelete,buttonSelectImage;
-
     @FXML private ImageView imageView;
     @FXML private Label labelPathImage;
 
+    @FXML private Button buttonEdit, buttonUpdate, buttonSave,
+                         buttonDelete,buttonSelectImage;
+
+    @FXML private Tab tabIngredient;
     @FXML private TableView<ItemRecipe> tableViewIngredients;
-
     @FXML private TableColumn<ItemRecipe, Integer> columnQuantity;
-
     @FXML private TableColumn<ItemRecipe, String> columnDescription, columnUnit;
-
     @FXML private Text textMessageItemRecipe;
 
-    @FXML private void handleClickedListFood(MouseEvent event)
+    @FXML private void onActionClearFood()
     {
-        selectFood( listViewFood.getSelectionModel().getSelectedItem() );
+        textfieldSearchFood.setText("");
+        textfieldSearchFood.requestFocus();
+    }
+    @FXML private void onActionClearIngredient()
+    {
+        textfieldSearchIngredient.setText("");
+        textfieldSearchIngredient.requestFocus();
     }
 
-    @FXML private void handleTextFieldSearchFood(KeyEvent keyEvent)
+    @FXML private void onKeyPressedTextfieldSearchFood(KeyEvent keyEvent)
     {
-
-
+        if(keyEvent.getCode() == KeyCode.DOWN)
+        {
+            listViewFood.requestFocus();
+            listViewFood.getSelectionModel().selectFirst();
+        }
     }
-    @FXML private void handleTextFieldProfit (KeyEvent event)
+    @FXML private void onKeyPressedTextfiedSearchIngredient(KeyEvent event)
+    {
+        if(event.getCode() == KeyCode.DOWN)
+        {
+            listViewIngredients.requestFocus();
+            listViewIngredients.getSelectionModel().selectFirst();
+        }
+    }
+
+    @FXML private void onKeyReleasedTextfieldProfit()
     {
         if(!textfieldProfit.getText().trim().isEmpty() && !textfieldCost.getText().trim().isEmpty())
         {
@@ -85,8 +95,7 @@ public class FoodController
              textfieldPrice.setText(textfieldCost.getText());
         }
     }
-
-    @FXML private void handleTextFieldPrice(KeyEvent event)
+    @FXML private void onKeyReleasedTextfieldPrice()
     {
         if(!textfieldPrice.getText().trim().isEmpty() && !textfieldCost.getText().trim().isEmpty())
         {
@@ -101,107 +110,108 @@ public class FoodController
 
     }
 
-    @FXML private void handleButtonSelectImage(ActionEvent event)
-    {
-        selectImage();
-    }
+    @FXML private void onActionButtonSelectImage() { selectImage(); }
+    @FXML private void onActionButtonNewFood()     { setProcess(PROCESS.ADDING);  }
+    @FXML private void onActionButtonEditFood()    { setProcess(PROCESS.EDITING); }
+    @FXML private void onActionButtonUpdateFood()  { updateFood(); }
+    @FXML private void onActionButtonSaveFood()    { saveFood();   }
+    @FXML private void onActionButtonDeleteFood()  { deleteFood(); }
 
-    @FXML private void handleButtonNew(ActionEvent event)
-    {
-        setProcess(PROCESS.ADDING);
-    }
-
-    @FXML private void handleButtonEdit(ActionEvent event)
-    {
-        setProcess(PROCESS.EDITING);
-    }
-    @FXML private void handleButtonUpdate (ActionEvent event)
-    {
-        updateFood();
-    }
-
-    @FXML private void handleButtonSave(ActionEvent event)
-    {
-        saveFood();
-    }
-
-    @FXML private void handleButtonDelete(ActionEvent event)
-    {
-        deleteFood();
-    }
+    @FXML private void onActionButtonNewIngredient() { addNewIngredient(); }
+    @FXML private void onActionButtonAddIngredient() { addIngredientToFood(); }
+    @FXML private void onActionButtonRemoveIngredient() { removeIngredientFromFood(); }
 
     //endregion
-    @FXML
-    private ListView<String> listViewIngredients;
 
     public void initialize(URL location, ResourceBundle resources)
     {
-        loadLists();
-        setListenersProperty();
-
+        Platform.runLater(()->{
+            loadFoodAndIngredients();
+            addListenerEvents();
+        });
         setProcess(PROCESS.VIEWING);
     }
 
     private HashMap<String, Food> mapFood;
-    private ObservableList<String> observableListFood;
-
     private HashMap<String, Ingredient> mapIngredients;
-    private ObservableList<String> observableListIngredients;
 
-    private ObservableList<ItemRecipe> observableListItemRecipe;
+    private ObservableList<String> obsFood;
+    private ObservableList<String> obsIngredients;
+    private ObservableList<ItemRecipe> obsItemRecipe;
+
+    private FilteredList<String> flFood;
+    private FilteredList<String> flIngredients;
 
     private final String IMAGE_DEFAULT = getClass().getResource(IMAGE_FOOD_DEFAULT).toExternalForm();
 
-    private void loadLists()
+    private void loadFoodAndIngredients()
     {
-        try {
-            //FOOD
+        try
+        {
             mapFood = foodDAO.getAll();
-            observableListFood = FXCollections.observableArrayList( mapFood.keySet() );
-
-            //ALL INGREDIENTS
             mapIngredients = ingredientDAO.getAll();
-            observableListIngredients = FXCollections.observableArrayList(mapIngredients.keySet());
-            listViewIngredients.setItems(observableListIngredients);
+
+            obsFood = FXCollections.observableArrayList( mapFood.keySet() );
+            obsIngredients = FXCollections.observableArrayList(mapIngredients.keySet());
+
+            flFood = new FilteredList<>(obsFood, s -> true);
+            flIngredients = new FilteredList<>(obsIngredients, s -> true);
+
+            listViewFood.setItems(flFood);
+            listViewIngredients.setItems(flIngredients);
 
             //ITEMS FOR RECIPE
             columnDescription.setCellValueFactory( new PropertyValueFactory<>("description") );
             columnUnit.setCellValueFactory( new PropertyValueFactory<>("unit"));
             columnQuantity.setCellValueFactory( new PropertyValueFactory<>("quantity"));
-            observableListItemRecipe = FXCollections.observableArrayList();
-            tableViewIngredients.setItems(observableListItemRecipe);
+            obsItemRecipe = FXCollections.observableArrayList();
+            tableViewIngredients.setItems(obsItemRecipe);
         }
-        catch (SQLException e)
-        {
-            FXTool.alertException(e);
-        }
+        catch (SQLException e) { FXTool.alertException(e); }
     }
 
-    private void setListenersProperty()
+    private void addListenerEvents()
     {
         FXTool.setTextFieldDouble(textfieldCost);
         FXTool.setTextFieldDouble(textfieldProfit);
         FXTool.setTextFieldDouble(textfieldPrice);
 
-        //CAMBIO EN EL ITEM SELECCIONADO
+        //SELECTED ITEM PROPERTY
         listViewFood.getSelectionModel().selectedItemProperty()
                 .addListener((observable) ->
                         selectFood(listViewFood.getSelectionModel().getSelectedItem()));
 
-        //BUSCADOR
-        FilteredList<String> filteredList = new FilteredList<>(observableListFood, s -> true);
+        //SEARCH
         textfieldSearchFood.textProperty().
                 addListener((observable, oldValue, newValue) ->
-                        filteredList.setPredicate(f ->
-                        f.contains(newValue.toUpperCase().trim() )
-                ));
-        listViewFood.setItems(filteredList);
-        listViewFood.getSelectionModel().selectFirst();
+                        flFood.setPredicate(food ->
+                                food.contains( newValue.toUpperCase().trim() )));
+        textfieldSearchIngredient.textProperty().
+                addListener((observable, oldValue, newValue) ->
+                        flIngredients.setPredicate( ingredient ->
+                                ingredient.contains( newValue.toUpperCase().trim() )));
+        //UX
+        listViewIngredients.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.UP &&
+                    listViewIngredients.getSelectionModel().isSelected(0))
+                textfieldSearchIngredient.requestFocus();
+            else if(event.getCode() == KeyCode.ENTER)
+                addIngredientToFood();
+        });
+        listViewFood.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.UP &&
+                    listViewFood.getSelectionModel().isSelected(0))
+                textfieldSearchFood.requestFocus();
+        });
 
-        //TEXTFIELD PRECIO
+        listViewFood.getSelectionModel().selectFirst();
+        listViewFood.requestFocus();
+
+        //TEXTFIELD PRICE
         checkBoxPrice.selectedProperty().addListener((observable, oldValue, newValue) -> textfieldPrice.setDisable(!newValue));
     }
 
+    //region FOOD METHODS
 
     /**
      * Obtiene el Food del HashMap y rellena el formulario.
@@ -221,8 +231,8 @@ public class FoodController
             textfieldPrice.setText ( food.getPrice()  + "");
             showImage(food.getImage());
 
-            observableListItemRecipe.clear();
-            observableListItemRecipe.addAll(food.getRecipe());
+            obsItemRecipe.clear();
+            obsItemRecipe.addAll(food.getRecipe());
 
             setProcess(PROCESS.VIEWING);
         }
@@ -306,7 +316,7 @@ public class FoodController
                 foodDAO.save(food);
                 textfieldID.setText( food.getFoodID() + "" );
 
-                observableListFood.add(name);
+                obsFood.add(name);
                 mapFood.put(name, food);
 
                 setProcess(PROCESS.VIEWING);
@@ -346,10 +356,10 @@ public class FoodController
 
                 foodDAO.update(food);
 
-                if(!observableListFood.contains(name))
+                if(!obsFood.contains(name))
                 {
-                    observableListFood.remove(oldName);
-                    observableListFood.add   (name);
+                    obsFood.remove(oldName);
+                    obsFood.add   (name);
                 }
                 mapFood.put(name, food);
 
@@ -399,7 +409,7 @@ public class FoodController
                 foodDAO.remove(  Integer.parseInt(foodID));
 
                 mapFood.remove(name);
-                observableListFood.remove(name);
+                obsFood.remove(name);
                 deleteFile(removeProtocolImage(labelPathImage.getText() ));
                 FXTool.alertInformation("Operación realizada", "Se ha eliminado con exito");
             }
@@ -410,31 +420,9 @@ public class FoodController
         }
     }
 
+    //endregion
 
-
-    //region INGREDIENT
-
-    @FXML
-    private TextField textFieldSearchIngredients;
-
-    @FXML private Tab tabIngredient;
-    @FXML
-    private void handleButtonNewIngredient(ActionEvent event)
-    {
-        addNewIngredient();
-    }
-    @FXML private void handleButtonAddIngredient(ActionEvent event)
-    {
-        addIngredientToFood();
-    }
-
-    @FXML private void handleButtonRemoveIngredient(ActionEvent event)
-    {
-        removeIngredientFromFood();
-    }
-
-
-
+    //region INGREDIENT METHODS
 
     /**
      * Crear un nuevo ingrediente
@@ -451,7 +439,7 @@ public class FoodController
                 ingredientDAO.save(newIngredient);
 
                 mapIngredients.put(newIngredient.getDescription(), newIngredient);
-                observableListIngredients.add(newIngredient.getDescription());
+                obsIngredients.add(newIngredient.getDescription());
 
             }
 
@@ -474,7 +462,7 @@ public class FoodController
        {
            Ingredient ingredient = mapIngredients.get(description);
 
-           if(!observableListItemRecipe.contains(new ItemRecipe(ingredient)))
+           if(!obsItemRecipe.contains(new ItemRecipe(ingredient)))
            {
                Integer quantity = getQuantity(ingredient.getUnit());
                if (quantity != null) {
@@ -484,7 +472,7 @@ public class FoodController
 
                        foodDAO.addItemRecipe(foodID, itemRecipe);
                        mapFood.get(name).addItemRecipe(itemRecipe);
-                       observableListItemRecipe.add(itemRecipe);
+                       obsItemRecipe.add(itemRecipe);
 
 
                    } catch (SQLException e) {
@@ -509,7 +497,7 @@ public class FoodController
             {
                 foodDAO.removeItemRecipe(foodID, itemRecipe);
                 mapFood.get(name).removeItemRecipe(itemRecipe.getDescription());
-                observableListItemRecipe.remove(itemRecipe);
+                obsItemRecipe.remove(itemRecipe);
             }
             catch (SQLException e)
             {

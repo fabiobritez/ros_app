@@ -15,6 +15,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="675.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.order.OrderController">
@@ -93,7 +94,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TextField fx:id="textfieldBrowser" layoutX="25.0" layoutY="26.0" prefHeight="26.0" prefWidth="236.0" promptText="Buscar por cliente, estado, pago" />
+                        <TextField fx:id="textfieldBrowser" layoutX="25.0" layoutY="26.0" prefHeight="26.0" prefWidth="245.0" promptText="Buscar por cliente, estado, pago" />
                         <TableView fx:id="tableViewOrders" layoutX="25.0" layoutY="67.0" prefHeight="548.0" prefWidth="580.0">
                           <columns>
                             <TableColumn fx:id="columnDate" prefWidth="86.0" text="Fecha" />
@@ -106,13 +107,13 @@
                            <contextMenu>
                               <ContextMenu>
                                 <items>
-                                    <MenuItem mnemonicParsing="false" onAction="#onActionButtonSendOrder" text="Enviar" />
-                                  <MenuItem mnemonicParsing="false" onAction="#onActionButtonDeliverOrder" text="Entregar" />
+                                    <MenuItem fx:id="menuItemSend" mnemonicParsing="false" onAction="#onActionButtonSendOrder" text="Enviar" />
+                                  <MenuItem fx:id="menuItemDeliver" mnemonicParsing="false" onAction="#onActionButtonDeliverOrder" text="Entregar" />
                                 </items>
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TableView fx:id="tableViewItems" layoutX="609.0" layoutY="68.0" prefHeight="210.0" prefWidth="277.0" stylesheets="@tableview.css">
+                        <TableView fx:id="tableViewItems" layoutX="613.0" layoutY="67.0" prefHeight="210.0" prefWidth="277.0" stylesheets="@tableview.css" AnchorPane.rightAnchor="10.0">
                           <columns>
                             <TableColumn fx:id="columnNameItem" prefWidth="187.0" text="Item" />
                             <TableColumn fx:id="columnQuantityItem" prefWidth="35.0" text="Cantidad" />
@@ -120,37 +121,40 @@
                           </columns>
                         </TableView>
                         <Label alignment="CENTER_RIGHT" layoutX="625.0" layoutY="518.0" prefHeight="16.0" prefWidth="259.0" text="Direccion" />
-                        <TextField fx:id="textfieldDeliveryPersonIP" layoutX="624.0" layoutY="489.0" prefHeight="26.0" prefWidth="261.0" promptText="Repartidor" />
-                        <Label alignment="CENTER_RIGHT" layoutX="625.0" layoutY="470.0" prefHeight="16.0" prefWidth="259.0" text="Repartidor" />
-                        <TextArea fx:id="textfieldCommentsIP" layoutX="623.0" layoutY="393.0" prefHeight="65.0" prefWidth="263.0" promptText="Comentarios, preferencias" />
+                        <TextField fx:id="textfieldDeliveryPersonIP" layoutX="624.0" layoutY="489.0" prefHeight="26.0" prefWidth="267.0" promptText="Repartidor" AnchorPane.rightAnchor="10.0" />
+                        <Label alignment="CENTER_RIGHT" layoutX="630.0" layoutY="469.0" prefHeight="16.0" prefWidth="265.0" text="Repartidor" AnchorPane.rightAnchor="11.0" />
+                        <TextArea fx:id="textfieldCommentsIP" layoutX="623.0" layoutY="393.0" prefHeight="65.0" prefWidth="263.0" promptText="Comentarios, preferencias" AnchorPane.rightAnchor="10.0" />
                         <ComboBox fx:id="comboBoxFilter" layoutX="319.0" layoutY="26.0" onAction="#onTabOrderSelected" prefWidth="150.0" promptText="Estado" />
-                        <Label layoutX="848.0" layoutY="331.0" text="Total" />
-                        <Label fx:id="textfieldTotalIP" alignment="CENTER_RIGHT" layoutX="741.0" layoutY="348.0" prefHeight="37.0" prefWidth="140.0" text="0.00">
+                        <Label layoutX="848.0" layoutY="331.0" text="Total" AnchorPane.rightAnchor="10.0" />
+                        <Label fx:id="textfieldTotalIP" alignment="CENTER_RIGHT" layoutX="741.0" layoutY="348.0" prefHeight="37.0" prefWidth="140.0" text="0.00" AnchorPane.rightAnchor="10.0">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Label>
                         <Label layoutX="675.0" layoutY="284.0" text="Descuento" />
-                        <Label layoutX="828.0" layoutY="284.0" prefHeight="16.0" prefWidth="58.0" text="Recargo" />
+                        <Label alignment="CENTER_RIGHT" layoutX="828.0" layoutY="284.0" prefHeight="16.0" prefWidth="58.0" text="Recargo" AnchorPane.rightAnchor="10.0" />
                         <Label fx:id="textfieldDiscountIP" alignment="CENTER_RIGHT" layoutX="650.0" layoutY="302.0" prefHeight="26.0" prefWidth="96.0" text="0.00">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </Label>
-                        <Label fx:id="textfieldSurchargeIP" alignment="CENTER_RIGHT" layoutX="787.0" layoutY="300.0" prefHeight="27.0" prefWidth="96.0" text="0.00">
+                        <Label fx:id="textfieldSurchargeIP" alignment="CENTER_RIGHT" layoutX="787.0" layoutY="300.0" prefHeight="27.0" prefWidth="96.0" text="0.00" AnchorPane.rightAnchor="10.0">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="checkBoxIsPaid" layoutX="662.0" layoutY="358.0" mnemonicParsing="false" text="Pagado" />
-                        <Button fx:id="buttonCancelOrder" layoutX="805.0" layoutY="22.0" mnemonicParsing="false" onAction="#onActionButtonCancelOrder" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #f14747;" text="Anular" textFill="WHITE" />
-                        <Label layoutX="321.0" layoutY="6.0" prefHeight="16.0" prefWidth="149.0" text="Estado" />
-                        <Button fx:id="buttonSendOrder" layoutX="620.0" layoutY="589.0" mnemonicParsing="false" onAction="#onActionButtonSendOrder" prefHeight="26.0" prefWidth="71.0" text="Enviar" />
-                        <Button fx:id="buttonDeliverOrder" layoutX="710.0" layoutY="589.0" mnemonicParsing="false" onAction="#onActionButtonDeliverOrder" prefHeight="26.0" prefWidth="75.0" text="Entregar" />
-                        <Button fx:id="buttonUpdateOrder" layoutX="802.0" layoutY="589.0" mnemonicParsing="false" onAction="#onActionButtonUpdateOrder" text="Actualizar" />
+                        <CheckBox fx:id="checkBoxIsPaid" layoutX="670.0" layoutY="351.0" mnemonicParsing="false" text="Pagado" />
+                        <Button fx:id="buttonCancelOrder" layoutX="790.0" layoutY="11.0" mnemonicParsing="false" onAction="#onActionButtonCancelOrder" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #f14747;" text="Anular" textFill="WHITE" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                        <HBox layoutX="614.0" layoutY="589.0" spacing="5.0" AnchorPane.rightAnchor="10.0">
+                           <children>
+                              <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#onActionButtonSendOrder" prefHeight="30.0" prefWidth="90.0" text="Enviar" />
+                              <Button fx:id="buttonDeliverOrder" mnemonicParsing="false" onAction="#onActionButtonDeliverOrder" prefHeight="30.0" prefWidth="90.0" text="Entregar" />
+                              <Button fx:id="buttonUpdateOrder" mnemonicParsing="false" onAction="#onActionButtonUpdateOrder" prefHeight="30.0" prefWidth="90.0" text="Actualizar" />
+                           </children>
+                        </HBox>
                         <Label layoutX="26.0" layoutY="6.0" text="Buscar" />
                         <TextField fx:id="textfieldStreetIP" layoutX="625.0" layoutY="534.0" prefHeight="26.0" prefWidth="192.0" promptText="Calle" />
-                        <TextField fx:id="textfieldAparmentIP" layoutX="832.0" layoutY="534.0" prefHeight="26.0" prefWidth="56.0" promptText="Casa" />
+                        <TextField fx:id="textfieldAparmentIP" editable="false" layoutX="832.0" layoutY="534.0" prefHeight="26.0" prefWidth="56.0" promptText="Casa" AnchorPane.rightAnchor="10.0" />
                      </children></AnchorPane>
             </content>
           </Tab>

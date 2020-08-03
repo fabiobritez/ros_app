@@ -9,25 +9,11 @@ import java.util.HashMap;
 
 public interface UserDAO {
 
-
-    /**
-     * Inserta un nuevo usuario a la tabla de usuarios.
-     * @param user Usuario que se desea insertar
-     */
     void save(User user) throws SQLException;
 
-    /**
-     * Actualiza el usuario (buscando en en la base de datos con el username)
-     * @param user Usuario que se desea actualizar
-     * @throws SQLException Un error en la consulta
-     */
     void update(User user) throws SQLException;
 
-    void remove(String username) throws SQLException;
-
-    void removeRole(String username, String role) throws SQLException;
-
-    void addRole(String username, String role) throws SQLException;
+    void delete(String username) throws SQLException;
 
     User get(String username) throws NotFoundException, SQLException;
 

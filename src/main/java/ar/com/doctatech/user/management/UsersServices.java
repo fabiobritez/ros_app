@@ -11,20 +11,4 @@ public class UsersServices
     {
         userDAO = new UserDAOMySQL();
     }
-
-    protected boolean checkFields(String ...fields)
-    {
-        for (String field : fields) {
-            if (field.trim().isEmpty())
-            {
-                FXTool.alertInformation(
-                        "RELLENA LOS CAMPOS REQUERIDOS: " ,
-                        "Verifica el formulario"
-                );
-                return false;
-            }
-        }
-        return true;
-    }
-
 }
