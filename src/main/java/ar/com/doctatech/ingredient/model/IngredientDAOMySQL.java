@@ -1,4 +1,4 @@
-package ar.com.doctatech.stock.ingredient;
+package ar.com.doctatech.ingredient.model;
 
 import ar.com.doctatech.shared.db.DatabaseConnection;
 
@@ -24,7 +24,9 @@ public class IngredientDAOMySQL implements IngredientDAO
     @Override
     public void save(Ingredient ingredient) throws SQLException
     {
-        String query = "INSERT INTO ingredient (DESCRIPTION, STOCK, STOCKMIN, UNIT) VALUES (?, ?, ?, ?)";
+        String query =
+                "INSERT INTO ingredient (description, stock, stockMin, unit) " +
+                "VALUES (?, ?, ?, ?)";
 
         try ( PreparedStatement preparedStatement
                       = connection.prepareStatement(query) )

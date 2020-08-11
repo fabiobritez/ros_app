@@ -13,26 +13,27 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="676.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.food.FoodController">
+<AnchorPane prefHeight="676.0" prefWidth="900.0" styleClass="panel" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.food.FoodController">
    <children>
-      <SplitPane dividerPositions="0.27" prefHeight="676.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.25" prefHeight="676.0" prefWidth="900.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <VBox prefHeight="674.0" prefWidth="315.0">
+            <VBox prefHeight="674.0" prefWidth="315.0" SplitPane.resizableWithParent="false">
                <children>
-                  <AnchorPane prefHeight="34.0" prefWidth="221.0">
+                  <AnchorPane prefHeight="34.0" prefWidth="221.0" styleClass="panel-back">
                      <children>
-                        <TextField fx:id="textfieldSearchFood" layoutX="2.0" layoutY="2.0" onKeyPressed="#onKeyPressedTextfieldSearchFood" prefHeight="28.0" prefWidth="210.0" promptText="Buscar" />
-                        <Button layoutX="208.0" layoutY="2.0" mnemonicParsing="false" onAction="#onActionClearFood" prefHeight="27.0" prefWidth="27.0" text="x" />
+                        <TextField fx:id="textfieldSearchFood" layoutX="2.0" layoutY="2.0" onKeyPressed="#onKeyPressedTextfieldSearchFood" prefHeight="28.0" prefWidth="192.0" promptText="Buscar" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="2.0" />
+                        <Button layoutX="194.0" layoutY="3.0" mnemonicParsing="false" onAction="#onActionClearFood" prefHeight="28.0" prefWidth="28.0" style="-fx-border-color: transparent;" text="x" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="3.0" />
                      </children>
                   </AnchorPane>
-                  <ListView fx:id="listViewFood" prefHeight="622.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="listViewFood" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                <children>
                   <TabPane prefHeight="674.0" prefWidth="669.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <tabs>
@@ -44,9 +45,8 @@
                                     <TextField fx:id="textfieldCost" layoutX="276.0" layoutY="234.0" onKeyReleased="#onKeyReleasedTextfieldProfit" prefHeight="31.0" prefWidth="163.0" promptText="Costo" />
                                     <TextField fx:id="textfieldProfit" layoutX="463.0" layoutY="234.0" onKeyReleased="#onKeyReleasedTextfieldProfit" prefHeight="31.0" prefWidth="163.0" promptText="Porcentaje ganancia" />
                                     <TextField fx:id="textfieldPrice" disable="true" layoutX="463.0" layoutY="293.0" onKeyReleased="#onKeyReleasedTextfieldPrice" prefHeight="31.0" prefWidth="164.0" promptText="Precio" />
-                                    <ImageView fx:id="imageView" fitHeight="235.0" fitWidth="235.0" layoutX="21.0" layoutY="88.0" pickOnBounds="true" smooth="false" />
                                     <TextField fx:id="textfieldID" disable="true" editable="false" layoutX="464.0" layoutY="97.0" prefHeight="31.0" prefWidth="164.0" promptText="ID" />
-                                    <Label alignment="CENTER" layoutX="403.0" layoutY="97.0" prefHeight="32.0" prefWidth="48.0" text="ID " />
+                                    <Label alignment="CENTER" layoutX="408.0" layoutY="96.0" prefHeight="32.0" prefWidth="48.0" text="ID " />
                                     <Label layoutX="277.0" layoutY="138.0" prefHeight="21.0" prefWidth="348.0" text="Nombre" />
                                     <Label layoutX="277.0" layoutY="212.0" prefHeight="21.0" prefWidth="161.0" text="Costo" />
                                     <Label layoutX="463.0" layoutY="211.0" prefHeight="21.0" prefWidth="163.0" text="Ganancia(%)" />
@@ -54,15 +54,20 @@
                                     <Button fx:id="buttonSelectImage" layoutX="21.0" layoutY="335.0" mnemonicParsing="false" onAction="#onActionButtonSelectImage" prefHeight="31.0" prefWidth="236.0" text="Elegir imagen.." />
                                     <HBox layoutX="96.0" layoutY="594.0" spacing="10.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="28.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onAction="#onActionButtonNewFood" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
-                                          <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#onActionButtonEditFood" prefHeight="30.0" prefWidth="120.0" text="Editar" />
-                                          <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#onActionButtonUpdateFood" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
                                           <Button fx:id="buttonSave" mnemonicParsing="false" onAction="#onActionButtonSaveFood" prefHeight="30.0" prefWidth="120.0" text="Guardar" />
+                                          <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#onActionButtonUpdateFood" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
+                                          <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#onActionButtonEditFood" prefHeight="30.0" prefWidth="120.0" text="Editar" />
+                                          <Button mnemonicParsing="false" onAction="#onActionButtonNewFood" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
                                        </children>
                                     </HBox>
                                     <Button fx:id="buttonDelete" layoutX="512.0" layoutY="17.0" mnemonicParsing="false" onAction="#onActionButtonDeleteFood" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: ff3c3c;" text="Eliminar" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="14.0" />
-                                    <Label fx:id="labelPathImage" layoutX="33.0" layoutY="57.0" prefHeight="31.0" prefWidth="604.0" wrapText="true" />
+                                    <Label fx:id="labelPathImage" layoutX="33.0" layoutY="57.0" prefHeight="31.0" prefWidth="604.0" visible="false" wrapText="true" />
                                     <CheckBox fx:id="checkBoxPrice" layoutX="318.0" layoutY="293.0" mnemonicParsing="false" text="Precio manual" />
+                                    <StackPane layoutX="22.0" layoutY="79.0" prefHeight="235.0" prefWidth="235.0" style="-fx-border-color: gray; -fx-border-radius: 7px;" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="79.0">
+                                       <children>
+                                          <ImageView fx:id="imageView" fitHeight="235.0" fitWidth="235.0" pickOnBounds="true" smooth="false" StackPane.alignment="CENTER" />
+                                       </children>
+                                    </StackPane>
                                  </children>
                               </AnchorPane>
                            </content>

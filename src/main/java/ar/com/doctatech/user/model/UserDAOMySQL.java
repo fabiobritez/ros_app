@@ -26,8 +26,9 @@ public class UserDAOMySQL implements UserDAO {
     public void save(User user) throws SQLException
     {
         //SAVE USER
-        String query = "INSERT INTO user (username, email, password, enabled) VALUES (?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE email=?, password=?, enabled=?, exist = true";
+        String query =
+                "INSERT INTO user (username, email, password, enabled) " +
+                "VALUES (?, ?, ?, ?)";
 
         try ( PreparedStatement ps =
                       connection.prepareStatement(query) )
@@ -36,11 +37,6 @@ public class UserDAOMySQL implements UserDAO {
             ps.setString (2,user.getEmail()    );
             ps.setString (3,user.getPassword() );
             ps.setBoolean(4,user.isEnabled()   );
-
-            ps.setString(5, user.getEmail());
-            ps.setString(6, user.getPassword());
-            ps.setBoolean(7, user.isEnabled());
-
             ps.executeUpdate();
         }
         updateRoles(user);
@@ -49,7 +45,8 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public void update(User user) throws SQLException
     {
-        String query = "UPDATE user SET email = ?, password = ?, enabled = ? " +
+        String query =
+                "UPDATE user SET email = ?, password = ?, enabled = ? " +
                 "WHERE username = ?";
 
         try( PreparedStatement ps
@@ -67,10 +64,9 @@ public class UserDAOMySQL implements UserDAO {
     public void updateRoles(User user) throws SQLException
     {
         String query1 = "DELETE FROM role WHERE user_username='"+user.getUsername()+"'";
-        try (PreparedStatement ps = connection.prepareStatement(query1))
-        {
-            ps.executeUpdate();
-        }
+        try (PreparedStatement ps =
+                     connection.prepareStatement(query1))
+        { ps.executeUpdate(); }
 
         String query2 = "INSERT INTO role (role, user_username) VALUES (?,?)";
 
@@ -102,9 +98,11 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public HashMap<String,User> getAll() throws SQLException
     {
-        String query = "SELECT * FROM user " +
-                "LEFT JOIN role r on user.username = r.user_username " +
-                "WHERE user.exist=true";
+        String query =
+        "SELECT username, email, password, enabled, role " +
+        "FROM user " +
+        "LEFT JOIN role r on user.username = r.user_username " +
+        "WHERE user.exist=true";
 
         HashMap<String, User> usersFound = new HashMap<>();
 
@@ -130,7 +128,6 @@ public class UserDAOMySQL implements UserDAO {
                     else
                         usersFound.get( username ).
                             addRole( rs.getString("role") );
-
                 }
             }
         }
@@ -140,9 +137,11 @@ public class UserDAOMySQL implements UserDAO {
     @Override
     public User get(String username) throws NotFoundException, SQLException
     {
-        String query = "SELECT * FROM user " +
-                "LEFT OUTER JOIN role ON user.username = role.user_username " +
-                "WHERE user.username = ? && exist = true";
+        String query =
+                "SELECT username, email, password, enabled, role " +
+                "FROM user " +
+                "LEFT JOIN role r ON user.username = r.user_username " +
+                "WHERE user.username=? AND user.exist=true";
 
         User userFound = new User("NULL","null","null",false);
         try ( PreparedStatement ps =
@@ -156,10 +155,10 @@ public class UserDAOMySQL implements UserDAO {
                     if(userFound.getUsername().equals("NULL") )
                     {
                         userFound = new User(
-                                rs.getString("username"),
-                                rs.getString("email"),
-                                rs.getString("password"),
-                                rs.getBoolean("enabled")
+                            rs.getString ("username"),
+                            rs.getString ("email"),
+                            rs.getString ("password"),
+                            rs.getBoolean("enabled")
                         );
                     }
                     userFound.addRole( rs.getString("role") );

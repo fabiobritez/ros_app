@@ -9,6 +9,7 @@ import ar.com.doctatech.shared.utilities.FXTool;
 import java.io.IOException;
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,17 +27,16 @@ public class OrderDAOMySQL implements OrderDAO {
     @Override
     public List<String> getAllPaymentTypes()
             throws SQLException {
-        String query = "SELECT * FROM payMethod";
-        List<String> allPaymentTypes = new ArrayList<>();
+        String query = "SELECT method FROM payMethod";
+        List<String> payments = new ArrayList<>();
         try (PreparedStatement preparedStatement =
                      connection.prepareStatement(query)) {
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    allPaymentTypes.add(resultSet.getString("method"));
-                }
+            try (ResultSet resultSet =
+                         preparedStatement.executeQuery()) {
+                while (resultSet.next()) payments.add(resultSet.getString("method"));
             }
         }
-        return allPaymentTypes;
+        return payments;
     }
 
     @Override
@@ -146,19 +146,22 @@ public class OrderDAOMySQL implements OrderDAO {
 
     @Override
     public Set<OrderModel> getOrdersByStatus(boolean isFinished)
-            throws SQLException {
-        //TODO HACER PRUEBAS PARA ASEGURARSE DE SIEMPRE REIBIR EL ULTIMO DETAILSTATUS
+            throws SQLException
+    {
         String query =
-                "SELECT orderID, subtotal, discount, surcharge, payMethod_method, dateUpdate, " +
-                        "c.name,numberPhone, numberWhatsapp, street, apartment, " +
-                        "f.name, quantity, priceAtTheMoment, dS.deliveryPerson, " +
-                        "dS.status, isPaid, comments, u.username FROM `order` " +
-                        "LEFT OUTER JOIN customer c on `order`.customer_customerID = c.customerID " +
-                        "LEFT OUTER JOIN detailStatus dS on `order`.orderID = dS.order_orderID " +
-                        "LEFT OUTER JOIN user u on dS.user_username = u.username " +
-                        "LEFT OUTER JOIN itemFood i on `order`.orderID = i.order_orderID " +
-                        "LEFT OUTER JOIN food f on i.food_foodID = f.foodID " +
-                        " WHERE date(dateUpdate)=CURDATE() ORDER BY dateUpdate DESC  ";
+         "SELECT dS.dateUpdate, o.orderID, c.name, dS.status,  "+
+         "o.subtotal, o.discount, o.surcharge, o.payMethod_method, "+
+         "c.numberPhone, c.numberWhatsapp, c.street, c.apartment, "+
+         "f.name, i.quantity, i.priceAtTheMoment, dS.deliveryPerson, "+
+         "dS.isPaid, dS.comments, u.username "+
+       "FROM `order` AS o "+
+       "LEFT OUTER JOIN customer c      ON o.customer_customerID = c.customerID "+
+       "LEFT OUTER JOIN detailStatus dS ON o.orderID = dS.order_orderID "+
+       "LEFT OUTER JOIN user u          ON dS.user_username = u.username "+
+       "LEFT OUTER JOIN itemFood i      ON o.orderID = i.order_orderID "+
+       "LEFT OUTER JOIN food f          ON i.food_foodID = f.foodID "+
+       "WHERE  dS.dateUpdate > DATE_SUB(NOW(), INTERVAL 3 DAY) "+
+       "ORDER BY dS.dateUpdate DESC";
 
         HashMap<Integer, OrderModel> mapOrder = new HashMap<>();
 
@@ -171,23 +174,23 @@ public class OrderDAOMySQL implements OrderDAO {
                     if (!mapOrder.containsKey(orderID)) {
                         OrderModel orderModel = new OrderModel(
                                 orderID,
-                                rs.getDouble("subtotal"),
-                                rs.getDouble("discount"),
-                                rs.getDouble("surcharge"),
-                                rs.getString("payMethod_method"),
-                                rs.getTimestamp("dateUpdate").toLocalDateTime(),
+                                rs.getDouble   ("o.subtotal"),
+                                rs.getDouble   ("o.discount"),
+                                rs.getDouble   ("o.surcharge"),
+                                rs.getString   ("o.payMethod_method"),
+                                rs.getTimestamp("dS.dateUpdate").toLocalDateTime(),
 
                                 rs.getString("c.name"),
-                                rs.getString("numberPhone"),
-                                rs.getString("numberWhatsapp"),
-                                rs.getString("street"),
-                                rs.getString("apartment"),
+                                rs.getString("c.numberPhone"),
+                                rs.getString("c.numberWhatsapp"),
+                                rs.getString("c.street"),
+                                rs.getString("c.apartment"),
 
-                                rs.getString("ds.status"),
-                                rs.getString("dS.deliveryPerson"),
-                                rs.getBoolean("isPaid"),
-                                rs.getString("comments"),
-                                rs.getString("u.username")
+                                rs.getString ("ds.status"),
+                                rs.getString ("dS.deliveryPerson"),
+                                rs.getBoolean("dS.isPaid"),
+                                rs.getString ("dS.comments"),
+                                rs.getString ("u.username")
                         );
 
                         mapOrder.put(orderID, orderModel);
@@ -198,26 +201,24 @@ public class OrderDAOMySQL implements OrderDAO {
                                 rs.getInt("quantity"),
                                 rs.getDouble("priceAtTheMoment")
                         );
-
                         mapOrder.get(orderID).addItemFood(itemFood);
                     }
                 }
             }
         }
 
-        String criterio1 = isFinished ? "ENTREGADO" : "EN CAMINO";
-        String criterio2 = isFinished ? "CANCELADO" : "ACEPTADO";
+        String isFinishCondition  = isFinished ? "ENTREGADO" : "EN CAMINO";
+        String isFinishCondition2 = isFinished ? "CANCELADO" : "ACEPTADO";
 
-        return mapOrder.values().stream().filter(ovm ->
-                ovm.getStatusDelivery().equals(criterio1) ||
-                        ovm.getStatusDelivery().equals(criterio2)
-        ).collect(Collectors.toSet());
+        return mapOrder.values().stream().filter(order ->
+            order.getStatusDelivery().equals(isFinishCondition) ||
+                 order.getStatusDelivery().equals(isFinishCondition2))
+                    .collect(Collectors.toSet());
     }
 
     @Override
-    public Set<OrderModel> getOrders(
-            Date start, Date end, Boolean isPaid, String isDelivered)
-            throws SQLException
+    public Set<OrderModel> getOrders(Date start, Date end,
+                       Boolean isPaid, String isDelivered) throws SQLException
     {
         StringBuilder query = new StringBuilder();
         query.append(
@@ -279,12 +280,92 @@ public class OrderDAOMySQL implements OrderDAO {
                                 rs.getInt("quantity"),
                                 rs.getDouble("priceAtTheMoment")
                         );
-
                         mapOrder.get(orderID).addItemFood(itemFood);
                     }
                 }
             }
         }
         return new HashSet<>(mapOrder.values());
+    }
+
+    @Override
+    public void restoreStock(Integer orderID) throws SQLException {
+        String restoreStock =
+                "UPDATE ingredient " +
+                "LEFT JOIN recipe r        ON ingredient.description = r.ingredient_description " +
+                "LEFT JOIN itemFood i      ON r.food_foodID = i.food_foodID " +
+                "LEFT OUTER JOIN `order` o ON o.orderID = i.order_orderID "+
+                "SET stock = stock + (r.quantity*i.quantity) WHERE orderID=?";
+
+        try (PreparedStatement psStock =
+                     connection.prepareStatement(restoreStock)) {
+                    psStock.setInt(1, orderID);
+                    psStock.executeUpdate();
+        }
+    }
+
+    @Override
+    public Set<OrderModel> getOrdersByCustomer(String ID)
+            throws SQLException
+    {
+            String query =
+                    "SELECT orderID, subtotal, discount, surcharge, payMethod_method, " +
+                    "dateUpdate, c.name,numberPhone, numberWhatsapp, street, apartment, " +
+                    "f.name, quantity, priceAtTheMoment, dS.deliveryPerson, " +
+                    "dS.status, isPaid, comments, u.username " +
+                    "FROM `order` AS o " +
+                    "LEFT OUTER JOIN customer c      ON o.customer_customerID = c.customerID " +
+                    "LEFT OUTER JOIN detailStatus dS ON o.orderID = dS.order_orderID " +
+                    "LEFT OUTER JOIN user u          ON dS.user_username = u.username " +
+                    "LEFT OUTER JOIN itemFood i      ON o.orderID = i.order_orderID " +
+                    "LEFT OUTER JOIN food f          ON i.food_foodID = f.foodID " +
+                    "WHERE dS.status = 'ENTREGADO'  AND o.exist " +
+                     "AND c.customerID=? AND dS.isPaid=false " +
+                    "ORDER BY dateUpdate DESC ";
+            //TODO ERROR GRAVE: CAUNDO PONGO AND  , SOLO ME APARECEN LOS FALSOS Y SI ESTA PAGADO NO APARECE
+            HashMap<Integer, OrderModel> mapOrder = new HashMap<>();
+
+            try (PreparedStatement ps =
+                         connection.prepareStatement(query)) {
+                ps.setString(1, ID);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Integer orderID = rs.getInt("orderID");
+                        if (!mapOrder.containsKey(orderID)) {
+                            OrderModel orderModel = new OrderModel(
+                                    orderID,
+                                    rs.getDouble("subtotal"),
+                                    rs.getDouble("discount"),
+                                    rs.getDouble("surcharge"),
+                                    rs.getString("payMethod_method"),
+                                    rs.getDate("dateUpdate").toLocalDate().atStartOfDay(),
+                                    rs.getString("c.name"),
+                                    rs.getString("numberPhone"),
+                                    rs.getString("numberWhatsapp"),
+                                    rs.getString("street"),
+                                    rs.getString("apartment"),
+
+                                    rs.getString("ds.status"),
+                                    rs.getString("dS.deliveryPerson"),
+                                    rs.getBoolean("isPaid"),
+                                    rs.getString("comments"),
+                                    rs.getString("u.username")
+                            );
+
+                            mapOrder.put(orderID, orderModel);
+                        }
+                        if (mapOrder.containsKey(orderID)) {
+                            ItemFood itemFood = new ItemFood(
+                                    rs.getString("f.name"),
+                                    rs.getInt("quantity"),
+                                    rs.getDouble("priceAtTheMoment")
+                            );
+                            mapOrder.get(orderID).addItemFood(itemFood);
+                        }
+                    }
+                }
+            }
+            return new HashSet<>(mapOrder.values());
     }
 }

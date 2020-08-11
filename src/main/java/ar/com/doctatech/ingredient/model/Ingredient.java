@@ -1,6 +1,4 @@
-package ar.com.doctatech.stock.ingredient;
-
-import com.sun.istack.internal.NotNull;
+package ar.com.doctatech.ingredient.model;
 
 public class Ingredient
 {
@@ -36,6 +34,15 @@ public class Ingredient
     public void reduceStock(int value)
     {
         this.stock-=value;
+    }
+
+    public String getUnitDiv()
+    {
+        if(unit.equals(Unit.GRAMS.toString()))
+            return "kg";
+        else if(unit.equals(Unit.MILLILITERS.toString()))
+            return "litros";
+        return "unidades";
     }
 
     public void addStock(int value)

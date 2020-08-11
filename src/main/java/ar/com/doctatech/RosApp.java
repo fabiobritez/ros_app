@@ -30,12 +30,20 @@ public class RosApp extends Application {
         // SI NO ES CONECTABLE SETEA "DATABASE_SETTINGS"
         try
         {
-            if( DatabaseConnection.isConnectable() )  pathToLoad = LOGIN;
+            if( DatabaseConnection.isConnectable() ) {
+                pathToLoad = LOGIN;
+
+                stage.setMinHeight(720);
+                stage.setMinWidth(1080);
+            }
         }
         catch (IOException | SQLException exception)
         {
             System.out.println(exception.toString());
             pathToLoad = DATABASE_SETTINGS;
+            stage.setMaxHeight(720);
+            stage.setMinHeight(680);
+            stage.setMaxWidth(450);
         }
 
         //CARGA LA VENTANA DE pathToLoad

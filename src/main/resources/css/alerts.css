@@ -1,0 +1,53 @@
+.root
+{
+    primary-color : #04879c;
+    primary-back  : #15191C;
+    secondary-back: #22282c;
+    tertiary-back : #22282d;
+    -fx-font-family: "Ubuntu Mono";
+    -fx-font-size: 14;
+}
+
+.dialog-pane{
+    -fx-border-color: primary-color;
+    -fx-border-width: 2px;
+}
+
+/**Costumization of The Bar where the buttons are located**/
+.dialog-pane > .button-bar > .container {
+    -fx-background-color:secondary-back;
+}
+
+.dialog-pane > .content.label {
+    -fx-padding: 0.5em 0.5em 0.5em 0.5em;
+    -fx-background-color: secondary-back;
+    -fx-text-fill:white;
+    -fx-font-size:15px;
+}
+
+/**Costumization of DialogPane Header**/
+.dialog-pane:header .header-panel {
+    -fx-background-color: primary-color;
+}
+
+.dialog-pane:header .header-panel .label{
+    -fx-background-color: primary-color;
+    -fx-background-radius:10px;
+    -fx-text-fill:white;
+    -fx-font-size:20px;
+}
+
+
+/**Costumization of Buttons**/
+.dialog-pane .button{
+    -fx-background-color: primary-color;
+    -fx-text-fill:white;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow( three-pass-box, black, 10.0, 0.0, 0.0, 0.0);
+    -fx-cursor:hand;
+}
+
+.dialog-pane .button:hover{
+    -fx-effect: dropshadow( three-pass-box, primary-color, 15, 0.0, 0.0, 0.0);
+    -fx-font-weight:bold;
+}

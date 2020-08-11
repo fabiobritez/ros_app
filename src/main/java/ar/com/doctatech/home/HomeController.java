@@ -43,27 +43,33 @@ public class HomeController implements Initializable
     @FXML private void onActionButtonOrders() {
      orderParent = addModule(CASHIER, ORDERS);
      selectModule(orderParent);
+     toggleGroup.selectToggle(buttonOrders);
     }
     @FXML private void onActionButtonFood()  {
         foodParent  = addModule(STOCKER, FOOD);
         selectModule(foodParent);
+        toggleGroup.selectToggle(buttonFood);
     }
     @FXML private void onActionButtonIngredients() {
         stockParent = addModule(STOCKER, STOCK);
         selectModule(stockParent);
+        toggleGroup.selectToggle(buttonIngredients);
     }
     @FXML private void onActionButtonCustomers() {
         customerParent = addModule(ADMIN, CUSTOMERS);
         selectModule(customerParent);
+        toggleGroup.selectToggle(buttonCustomers);
     }
     @FXML private void onActionButtonReports()
     {
         reportParent = addModule(SPECTATOR, REPORTS);
         selectModule(reportParent);
+        toggleGroup.selectToggle(buttonReports);
     }
     @FXML private void onActionButtonUsers() {
         usersParent = addModule(ADMIN, USERS);
         selectModule(usersParent);
+        toggleGroup.selectToggle(buttonUsers);
     }
 
 

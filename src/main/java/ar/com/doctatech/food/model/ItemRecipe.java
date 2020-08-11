@@ -1,6 +1,6 @@
 package ar.com.doctatech.food.model;
 
-import ar.com.doctatech.stock.ingredient.Ingredient;
+import ar.com.doctatech.ingredient.model.Ingredient;
 
 
 /**

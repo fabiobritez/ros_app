@@ -1,0 +1,381 @@
+.root
+{
+    primary-color : #04879c;
+    primary-back  : #15191C;
+    secondary-back: #22282c;
+    tertiary-back : #22282d;
+    -fx-font-family: "Ubuntu Mono";
+    -fx-font-size: 14;
+}
+
+/*region toggle-button*/
+.toggle-button{
+    -fx-text-fill: white;
+    -fx-background-color: primary-back;
+    -fx-alignment: baseline-left;
+}
+.toggle-button:selected{
+    -fx-background-color: secondary-back;
+}
+
+.toggle-button:hover{
+    -fx-background-color: secondary-back;
+}
+/*endregion*/
+
+
+
+/*region table-view*/
+
+.table-view{
+    -fx-background-color: secondary-back;
+    -fx-border-color: primary-back;
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+    -fx-padding: 0;
+}
+.table-view .placeholder .label
+{
+    -fx-text-fill: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: secondary-back;
+    -fx-border-width: 0px 0px 1px 1px;
+}
+.table-view .column-header-background,
+.table-view .column-header-background .filler
+{
+    -fx-background-color: primary-back;
+}
+.table-view .column-header-background .label{
+    -fx-text-fill: white;
+}
+
+
+.table-view .table-cell{
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+}
+
+.table-row-cell{
+    -fx-background-color: secondary-back;
+    -fx-border-width: 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.table-row-cell:odd{
+    -fx-background-color: primary-back;
+    -fx-border-width: 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #005797;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+.table-row-cell:hover
+{
+    -fx-background-color: #084c80;;
+}
+/*endregion*/
+
+/*region list-view*/
+.list-view {
+    -fx-background-color: secondary-back;
+    -fx-border-color: primary-back;
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+    -fx-padding: 0;
+}
+.list-view .list-cell
+{
+    -fx-background-color: secondary-back;
+    -fx-text-fill: white;
+}
+.list-view .list-cell:odd
+{
+    -fx-background-color: primary-back;
+    -fx-text-fill: white ;
+}
+
+.list-view .list-cell:selected{
+    -fx-background-color: #005797;
+}
+
+.list-view .list-cell:hover{
+    -fx-background-color: #084c80;;
+}
+
+/*endregion*/
+
+/*region scroll-bar*/
+.scroll-bar,
+.scroll-bar .track,
+.scroll-bar .track-background,
+.corner
+{
+    -fx-background-color: primary-back;
+}
+
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .thumb
+{
+    -fx-background-color: secondary-back;
+}
+
+/*endregion*/
+
+/*region panels*/
+.panel{
+    -fx-background-color: primary-back ;
+}
+.panel-back{
+    -fx-background-color: secondary-back;
+}
+/*endregion*/
+
+.card-red
+{
+    -fx-background-color: #d32f2f;
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+}
+.card-label
+{
+    -fx-font-size: 33;
+}
+.card-green{
+    -fx-background-color: #388e3c;
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+}
+
+.card-primary
+{
+    -fx-background-color: primary-color;
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+}
+
+.label{
+    -fx-text-fill: white;
+}
+
+.text-area ,
+.text-field
+{
+    -fx-text-fill: white;
+    -fx-background-color: primary-back;
+    -fx-background-radius: 5px;
+    -fx-border-color: secondary-back;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box,black,5,0,0,0);
+}
+
+.text-area .content
+{
+    -fx-background-color: primary-back;
+}
+
+
+.text-field:disabled{
+    -fx-effect: dropshadow(three-pass-box,black,1,0,0,0);
+    -fx-opacity: 0.6;
+}
+
+.text-field-error:focused
+{
+    -fx-border-color: #d32f2f;
+    -fx-effect: dropshadow(three-pass-box,#d32f2f,1,0,0,0);
+}
+
+.button{
+    -fx-background-color: #04879c;
+    -fx-alignment: baseline_left;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+}
+.button:hover {
+    -fx-effect: dropshadow( three-pass-box, white ,3, 0 , 0 ,0);
+}
+
+.button:pressed {
+    -fx-effect: dropshadow( three-pass-box, primary-color ,7, 0 , 0 ,0);
+}
+
+.button-error:hover {
+    -fx-background-color: #d32f2f;
+}
+.button-error:pressed {
+    -fx-effect: dropshadow( three-pass-box, black ,6, 0 , 0 ,0);
+}
+
+.tab{
+    -fx-background-color: primary-back;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-padding: 10px 10px 5px 5px;
+}
+
+.tab-pane,
+.tab-pane .tab-content-area,
+.tab-pane .tab-header-area .tab-header-background
+{
+    -fx-background-color: primary-back;
+    -fx-border-color: primary-back;
+}
+
+.split-pane
+{
+    -fx-background-color: secondary-back;
+    -fx-border-color: secondary-back;
+}
+
+
+
+.tab .tab-container
+{
+
+    -fx-background-color: primary-back;
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-border-color: primary-back;
+}
+.tab:selected .tab-container
+{
+    -fx-border-color: primary-color;
+}
+.tab:selected .tab-container .tab-label
+{
+    -fx-text-fill: primary-color;
+}
+
+.tab .tab-container .tab-label
+{
+
+    -fx-text-fill: white;
+}
+
+.split-pane:horizontal .split-pane-divider
+{
+    -fx-background-color: secondary-back;
+    -fx-background-radius: 3px;
+    -fx-border-color: secondary-back;
+}
+
+.titled-pane .title,
+.titled-pane .content
+{
+    -fx-text-fill: white;
+    -fx-background-color: primary-back;
+    -fx-border-color: primary-back;
+}
+.combo-box .arrow-button .arrow,
+.titled-pane .title .arrow-button .arrow{
+    -fx-background-color: white;
+}
+
+
+.titled-pane
+{
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+}
+.titled-pane .title .text
+{
+    -fx-fill: white;
+}
+
+.combo-box,
+.combo-box:editable .text-field,
+.combo-box:editable .arrow-button,
+.combo-box .list-cell .text
+{
+    -fx-background-color: primary-color;
+    -fx-border-color: primary-color;
+    -fx-fill: white;
+}
+
+.check-box .box,
+.check-box .text
+{
+    -fx-background-color: primary-color;
+    -fx-fill: primary-color;
+}
+
+.check-box:selected .box .mark
+{
+    -fx-background-color: white;
+}
+
+.date-picker .arrow-button .arrow
+{
+    -fx-background-color: primary-color;
+}
+.date-picker,
+.date-picker .arrow-button,
+.date-picker .date-display-node
+{
+    -fx-border-color: secondary-back;
+    -fx-background-color: primary-back;
+}
+
+.date-picker-popup .month-year-pane,
+.date-picker-popup .calendar-cell
+{
+    -fx-background-color: secondary-back;
+}
+
+.date-picker
+{
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+}
+
+.button-home
+{
+    -fx-font-size: 20;
+}
+
+.context-menu
+{
+    -fx-padding: 10px;
+    -fx-border-width: 1px;
+
+    -fx-background-color:primary-color;
+    -fx-background-radius: 10px 10px 10px 10px;
+}
+
+.context-menu:hover
+{
+    -fx-opacity: 0.7;
+}
+.menu-item {
+    -fx-padding: 0;
+    -fx-text-fill: white;
+    -fx-background: transparent ;
+}
+
+/*region menu-button-login*/
+.menu-button {
+    -fx-background-color: primary-back ;
+    -fx-background-radius: 15px 15px 0px 0px;
+    -fx-border-width: 2.0;
+}
+.menu-button .label {
+    -fx-font-size: 14.0 pt;
+    -fx-font-family: "Bookman Old Style";
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+}
+
+
+.menu-button .context-menu {
+    -fx-padding: 0;
+    -fx-border-width: 0px;
+
+    -fx-background-color:primary-back;
+    -fx-background-radius: 2px 2px 15px 15px;
+}
+.menu-button .context-menu:hover{
+    -fx-opacity: 0.8;
+}
+
+/*endregion*/

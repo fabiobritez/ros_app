@@ -5,24 +5,21 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
+import static ar.com.doctatech.shared.utilities.FileUtil.getConfigDirIfNotExists;
+
 /**
  * Administra la conexión de la base de datos. Tiene metodos para administrar los 
  * atributos necesarios para la conexión a la base de datos.
- * @author: f.b.
- * @version: 1.0
  * @since 1.0
  */
 
 public class DatabaseSettingsServices {
 
-    private static final String PARAMETERS_FILE_PATH =  "src/main/resources/database/db.properties";
+    private static final String PARAMETERS_FILE_PATH = getConfigDirIfNotExists()+"/db.properties";
 
     protected static final String URL_KEY   = "url";
     protected static final String RDBMS_KEY = "rdbms";
@@ -119,7 +116,6 @@ public class DatabaseSettingsServices {
     {
         String url = getURLFormat(properties);
         properties.setProperty(URL_KEY, url);
-
         try(OutputStream fileOutput = new FileOutputStream(PARAMETERS_FILE_PATH))
         {
             properties.store(fileOutput, "DATABASE PARAMETERS");

@@ -1,0 +1,112 @@
+.root
+{
+    primary-color : #04879c;
+    primary-back  : #15191C;
+    secondary-back: #22282c;
+    tertiary-back : #22282d;
+    -fx-font-family: "Ubuntu Mono";
+    -fx-font-size: 14;
+}
+
+/*region list-view*/
+.list-view {
+    -fx-background-color: secondary-back;
+    -fx-border-color: primary-back;
+    -fx-effect: dropshadow(three-pass-box,black,10,0,0,0);
+    -fx-padding: 0;
+}
+.list-view .list-cell
+{
+    -fx-background-color: secondary-back;
+    -fx-text-fill: white;
+}
+.list-view .list-cell:odd
+{
+    -fx-background-color: primary-back;
+    -fx-text-fill: white ;
+}
+
+.list-view .list-cell:selected{
+    -fx-background-color: #005797;
+}
+
+.list-view .list-cell:hover{
+    -fx-background-color: #084c80;;
+}
+
+/*endregion*/
+
+/*region scroll-bar*/
+.scroll-bar,
+.scroll-bar .track,
+.scroll-bar .track-background,
+.corner
+{
+    -fx-background-color: primary-back;
+}
+
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .thumb
+{
+    -fx-background-color: secondary-back;
+}
+
+/*endregion*/
+
+/*region panels*/
+.panel{
+    -fx-background-color: primary-back ;
+}
+.panel-back{
+    -fx-background-color: secondary-back;
+    -fx-border-color: primary-color;
+}
+/*endregion*/
+
+.button{
+    -fx-background-color: #04879c;
+    -fx-alignment: baseline_left;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+}
+.button:hover {
+    -fx-effect: dropshadow( three-pass-box, white ,3, 0 , 0 ,0);
+}
+
+.button:pressed {
+    -fx-effect: dropshadow( three-pass-box, primary-color ,7, 0 , 0 ,0);
+}
+
+.label
+{
+    -fx-text-fill: white;
+}
+
+.text-field
+{
+    -fx-text-fill: white;
+    -fx-background-color: primary-back;
+    -fx-background-radius: 5px;
+    -fx-border-color: secondary-back;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box,black,5,0,0,0);
+}
+
+.text-area .content
+{
+    -fx-background-color: primary-back;
+}
+
+
+.text-field:disabled{
+    -fx-effect: dropshadow(three-pass-box,black,1,0,0,0);
+    -fx-opacity: 0.6;
+}
+
+.text-field-error:focused
+{
+    -fx-border-color: #d32f2f;
+    -fx-effect: dropshadow(three-pass-box,#d32f2f,1,0,0,0);
+}

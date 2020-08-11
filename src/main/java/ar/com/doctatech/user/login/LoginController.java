@@ -18,6 +18,8 @@ import javafx.scene.text.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static ar.com.doctatech.shared.utilities.ControlUtil.checkFields;
+
 /**
  * Controller de la interface grafica del Login.
  */
@@ -30,10 +32,10 @@ public class LoginController
     private AnchorPane anchorPane;
 
     @FXML
-    private TextField txtUser;
+    private TextField textfieldUsername;
 
     @FXML
-    private PasswordField txtPassword;
+    private PasswordField passwordField;
 
     @FXML
     private Text txtErrors;
@@ -41,32 +43,29 @@ public class LoginController
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-
+        textfieldUsername.requestFocus();
     }
 
     @FXML
-    public void handleButtonLogin(ActionEvent event)
+    public void onActionButtonLogin()
     {
-        login(txtUser.getText(),txtPassword.getText());
+        login();
     }
 
     @FXML
-    public void handleTextFieldLogin(KeyEvent event)
+    public void onKeyPressedPassword(KeyEvent event)
     {
-        if(event.getCode() == KeyCode.ENTER)
-        {
-            login(txtUser.getText(), txtPassword.getText());
-        }
+        if(event.getCode() == KeyCode.ENTER) { login(); }
     }
 
     @FXML
-    public void handleButtonSettings(ActionEvent event)
+    public void onActionButtonSettings()
     {
         openConnectionSettings();
     }
 
     @FXML
-    public void handleForgetPassword(ActionEvent event)
+    public void onActionEventForgetPass()
     {
         openPasswordRecovery();
     }
@@ -81,12 +80,13 @@ public class LoginController
      * Maneja todas las excepciones que se pueden dar en el proceso.
      * Inicia sesión en el caso de que no haya ningun inconveniente
      * y abre la ventana del HOME.
-     * @param user Nombre de usuario
-     * @param password Contraseña
      */
-    private void login(String user , String password)
+    private void login()
     {
-        if(!user.isEmpty() && !password.isEmpty())
+        String user = textfieldUsername.getText();
+        String password = passwordField.getText();
+
+        if(checkFields(user, password))
         {
             try
             {

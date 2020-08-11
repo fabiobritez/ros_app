@@ -2,10 +2,15 @@ package ar.com.doctatech.customer.model;
 
 import ar.com.doctatech.shared.db.DatabaseConnection;
 import ar.com.doctatech.shared.utilities.FXTool;
+import javafx.collections.ObservableList;
+
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 
 public class CustomerDAOMySQL
 implements CustomerDAO{
@@ -83,7 +88,8 @@ implements CustomerDAO{
     public void save(Customer customer)
             throws SQLException
     {
-        String query = "INSERT INTO customer (name, numberPhone, numberWhatsapp,street,apartment, exist) " +
+        String query =
+                "INSERT INTO customer (name, numberPhone, numberWhatsapp,street,apartment, exist) " +
                 "VALUES (?, ?, ?, ?, ?, true)";
         try(PreparedStatement preparedStatement =
                 connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
@@ -155,7 +161,7 @@ implements CustomerDAO{
     @Override
     public void delete(Integer customerID)
             throws SQLException {
-        String query = "UPDATE customer SET exist = ? WHERE customerID=?";
+        String query = "UPDATE customer SET exist = false WHERE customerID=?";
         try(PreparedStatement preparedStatement =
                 connection.prepareStatement(query))
         {
@@ -167,12 +173,14 @@ implements CustomerDAO{
     //TODO REVISAR UNO A UNO LOS SIGUIENTES
     @Override
     public double getTotalSales(String customerName)
-            throws SQLException {
-        String query = "SELECT SUM(priceAtTheMoment*quantity) FROM itemFood " +
-                "LEFT OUTER JOIN `order` o on itemFood.order_orderID = o.orderID " +
-                "left outer join detailStatus dS on itemFood.order_orderID = dS.order_orderID " +
-                "LEFT OUTER JOIN customer c on o.customer_customerID = c.customerID " +
-                "WHERE  dS.status='ENTREGADO' AND o.exist=true AND c.name=?";
+            throws SQLException
+    {
+        String query =
+        "SELECT SUM(subtotal-discount+surcharge) FROM `order` " +
+        "LEFT OUTER JOIN detailStatus dS on `order`.orderID = dS.order_orderID " +
+        "LEFT OUTER JOIN customer c on c.customerID = `order`.customer_customerID " +
+        "WHERE  dS.status='ENTREGADO' AND `order`.exist=true AND c.name=? ";
+
         try(PreparedStatement preparedStatement = connection.prepareStatement(query))
         {
             preparedStatement.setString(1,customerName);
@@ -185,39 +193,56 @@ implements CustomerDAO{
         }
     }
 
+    /**
+     * SELECT c.name , SUM((priceAtTheMoment*quantity)-discount+surcharge)  FROM itemFood
+     * LEFT OUTER JOIN `order` o       ON itemFood.order_orderID = o.orderID
+     * LEFT OUTER JOIN detailStatus dS ON itemFood.order_orderID = dS.order_orderID
+     * LEFT OUTER JOIN customer c      ON o.customer_customerID = c.customerID
+     * WHERE dS.status='ENTREGADO' AND dS.isPaid AND o.exist=true
+     * GROUP BY c.name;
+     */
+
     @Override
     public double getTotalDebt(String customerName)
             throws SQLException {
+//TODO VERIFICAR BIEN
 
-        String query = "SELECT SUM(priceAtTheMoment*quantity) FROM itemFood " +
-                "LEFT OUTER JOIN `order` o on itemFood.order_orderID = o.orderID "+
-                "LEFT OUTER JOIN detailStatus dS on itemFood.order_orderID = dS.order_orderID " +
-                "LEFT OUTER JOIN customer c on o.customer_customerID = c.customerID " +
-                "WHERE  dS.status='ENTREGADO' AND dS.isPaid=false " +
-                "AND o.exist=true AND c.name=?";
+        /**
+         * SELECT orderID, SUM(priceAtTheMoment*quantity) AS subtotal, discount, surcharge FROM itemFood
+         * LEFT OUTER JOIN `order` o       ON itemFood.order_orderID = o.orderID
+         * LEFT OUTER JOIN detailStatus dS ON itemFood.order_orderID = dS.order_orderID
+         * LEFT OUTER JOIN customer c      ON o.customer_customerID = c.customerID
+         * WHERE dS.status='ENTREGADO' AND dS.isPaid=false AND o.exist=true AND c.name=?
+         * GROUP BY orderID, discount, surcharge
+         */
+
+        String query =
+          "SELECT SUM(subtotal-discount+surcharge) FROM `order` " +
+          "LEFT OUTER JOIN detailStatus dS on `order`.orderID = dS.order_orderID " +
+          "LEFT OUTER JOIN customer c on c.customerID = `order`.customer_customerID " +
+          "WHERE dS.status='ENTREGADO' AND dS.isPaid=false AND `order`.exist=true AND c.name=?";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(query))
         {
             preparedStatement.setString(1, customerName);
-            try(ResultSet resultSet = preparedStatement.executeQuery())
+            try(ResultSet rs = preparedStatement.executeQuery())
             {
-                if(resultSet.next())
-                    return resultSet.getDouble(1);
+                if (rs.next()) return rs.getDouble(1);
                 return 0;
             }
         }
-        //ENTREGADO, ISPAID=FALSE, NAME, EXIST TRUE,
     }
 
     @Override
     public String getLastSale(String customerName)
             throws SQLException
     {
-       String query = "SELECT dateUpdate FROM itemFood " +
-                "LEFT OUTER JOIN `order` o on itemFood.order_orderID = o.orderID " +
-                "LEFT OUTER JOIN detailStatus dS on itemFood.order_orderID = dS.order_orderID " +
-                "LEFT OUTER JOIN customer c on o.customer_customerID = c.customerID " +
-                "WHERE  dS.status='ENTREGADO' AND o.exist=true AND c.name=? ORDER BY dateUpdate DESC";
+       String query =
+         "SELECT dateUpdate FROM detailStatus AS dS " +
+         "LEFT OUTER JOIN `order` o  ON dS.order_orderID = o.orderID " +
+         "LEFT OUTER JOIN customer c ON o.customer_customerID  = c.customerID " +
+         "WHERE dS.status='ENTREGADO' AND o.exist=true AND c.name=? " +
+         "ORDER BY dateUpdate DESC LIMIT 1";
        try(PreparedStatement ps = connection.prepareStatement(query))
        {
            ps.setString(1,customerName);
@@ -225,8 +250,29 @@ implements CustomerDAO{
            {
                if(rs.next())
                    return rs.getTimestamp(1).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yy"));
-               return "NOT FOUND";
+               return "00/00/00";
            }
        }
+    }
+
+    @Override
+    public void payAllBill(String username, List<Integer> orders)
+            throws SQLException
+    {
+        String query =
+                "UPDATE detailStatus SET isPaid=TRUE, comments=? " +
+                        "WHERE isPaid=false AND status='ENTREGADO' AND order_orderID=?";
+
+        try(PreparedStatement ps = connection.prepareStatement(query))
+        {
+            for (Integer orderID: orders)
+            {
+                ps.setInt(2, orderID);
+                ps.setString(1, LocalDate.now().toString()+" : " + username +" pagó la cuenta.");
+                ps.executeUpdate();
+            }
+
+        }
+
     }
 }

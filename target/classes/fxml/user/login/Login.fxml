@@ -7,21 +7,60 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.user.login.LoginController">
+<AnchorPane fx:id="anchorPane" prefHeight="720.0" prefWidth="1080.0" styleClass="panel" stylesheets="@../../../css/dark.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.user.login.LoginController">
    <children>
-      <TextField fx:id="txtUser" layoutX="330.0" layoutY="281.0" prefHeight="31.0" prefWidth="353.0" promptText="Nombre de usuario o correo" AnchorPane.leftAnchor="330.0" AnchorPane.rightAnchor="330.0" />
-      <PasswordField fx:id="txtPassword" layoutX="330.0" layoutY="363.0" onKeyPressed="#handleTextFieldLogin" prefHeight="31.0" prefWidth="355.0" promptText="Clave" AnchorPane.leftAnchor="330.0" AnchorPane.rightAnchor="330.0" />
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="340.0" layoutY="102.0" prefHeight="59.0" prefWidth="320.0" text="¡Bienvenido a RosApp!" textAlignment="CENTER" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="340.0" />
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="340.0" layoutY="162.0" prefHeight="52.0" prefWidth="320.0" text="Antes de comenzar, debes inicia sesión." textAlignment="CENTER" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="340.0" />
-      <Button layoutX="330.0" layoutY="446.0" mnemonicParsing="false" onAction="#handleButtonLogin" prefHeight="31.0" prefWidth="343.0" text="Continuar" AnchorPane.leftAnchor="330.0" AnchorPane.rightAnchor="330.0" />
-      <Hyperlink alignment="CENTER" layoutX="334.0" layoutY="501.0" onAction="#handleForgetPassword" prefHeight="29.0" prefWidth="335.0" text="¿Te olvidaste la contraseña?" AnchorPane.leftAnchor="334.0" AnchorPane.rightAnchor="331.0" />
-      <Button accessibleText="Ajustes de conexión" layoutX="931.0" layoutY="600.0" mnemonicParsing="false" onAction="#handleButtonSettings" prefHeight="40.0" prefWidth="42.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
+      <VBox layoutX="330.0" layoutY="198.0" prefHeight="336.0" prefWidth="420.0" spacing="20.0" AnchorPane.bottomAnchor="186.0" AnchorPane.leftAnchor="330.0" AnchorPane.rightAnchor="330.0" AnchorPane.topAnchor="198.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="80.0" prefWidth="420.0" text="¡Bienvenido a RosApp!  Antes de comenzar, debes inicia sesión." textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <VBox maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" prefHeight="20.0" text="Nombre de usuario" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="textfieldUsername" maxWidth="1.7976931348623157E308" prefHeight="30.0" promptText="Nombre de usuario o correo" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </VBox>
+            <VBox maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" prefHeight="20.0" text="Contraseña" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" onKeyPressed="#onKeyPressedPassword" prefHeight="31.0" promptText="Clave" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </PasswordField>
+               </children>
+            </VBox>
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onActionButtonLogin" prefHeight="32.0" text="Continuar" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Button>
+            <Text fx:id="txtErrors" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" visible="false" wrappingWidth="420.0" VBox.vgrow="ALWAYS" />
+            <Hyperlink alignment="CENTER" maxWidth="1.7976931348623157E308" onAction="#onActionEventForgetPass" prefHeight="29.0" text="¿Te olvidaste la contraseña?" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+      <Button accessibleText="Ajustes de conexión" contentDisplay="GRAPHIC_ONLY" layoutX="931.0" layoutY="600.0" mnemonicParsing="false" onAction="#onActionButtonSettings" prefHeight="40.0" prefWidth="42.0" style="-fx-alignment: center;" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <graphic>
-            <FontAwesomeIconView fill="#0d0d0dd6" glyphName="DATABASE" />
+            <FontAwesomeIconView fill="#0d0d0dd6" glyphName="DATABASE" style="-fx-fill: white;" />
          </graphic>
       </Button>
-      <Text fx:id="txtErrors" fill="RED" layoutX="329.0" layoutY="419.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" visible="false" wrappingWidth="340.0" />
    </children>
 </AnchorPane>

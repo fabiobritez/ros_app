@@ -1,6 +1,7 @@
 package ar.com.doctatech.order.dao;
 
 import ar.com.doctatech.order.model.DetailStatus;
+import ar.com.doctatech.order.model.ItemFood;
 import ar.com.doctatech.order.model.Order;
 import ar.com.doctatech.order.model.OrderModel;
 import com.sun.org.apache.xpath.internal.operations.Or;
@@ -23,4 +24,8 @@ public interface OrderDAO
 
     Set<OrderModel> getOrders(Date start, Date end, Boolean isPaid, String isDelivered)
         throws SQLException;
+
+    void restoreStock(Integer foodID) throws SQLException;
+
+    Set<OrderModel> getOrdersByCustomer(String ID) throws SQLException;
 }

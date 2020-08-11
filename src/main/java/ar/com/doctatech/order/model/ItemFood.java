@@ -2,6 +2,10 @@ package ar.com.doctatech.order.model;
 
 import ar.com.doctatech.food.model.Food;
 import ar.com.doctatech.food.model.ItemRecipe;
+import com.sun.deploy.util.SyncAccess;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 public class ItemFood
 {
@@ -12,6 +16,17 @@ public class ItemFood
     private double priceAtTheMoment;
     private double amount;
 
+    private SimpleIntegerProperty quantityProperty;
+    private SimpleDoubleProperty amountProperty;
+
+
+    public SimpleIntegerProperty quantityProperty() {
+        return quantityProperty;
+    }
+
+    public SimpleDoubleProperty amountProperty() {
+        return amountProperty;
+    }
 
     //PARA MOSTRAR EN LAS LISTAS
     public ItemFood(String description, Integer quantity,
@@ -20,6 +35,10 @@ public class ItemFood
         this.description = description;
         this.quantity = quantity;
         this.priceAtTheMoment = priceAtTheMoment;
+        this.amount = quantity*priceAtTheMoment;
+
+        this.quantityProperty = new SimpleIntegerProperty(this.quantity);
+        this.amountProperty = new SimpleDoubleProperty(this.amount);
     }
 
     /**
@@ -35,6 +54,19 @@ public class ItemFood
         this.costAtTheMoment = food.getCost();
         this.priceAtTheMoment = food.getPrice();
         this.amount = quantity * priceAtTheMoment;
+
+        this.quantityProperty =new SimpleIntegerProperty(this.quantity);
+        this.amountProperty = new SimpleDoubleProperty(this.amount);
+    }
+
+    public void addQuantity(Integer quantityToAdd)
+    {
+        this.quantity+=quantityToAdd;
+
+        this.amount =  this.quantity*priceAtTheMoment;
+
+        this.quantityProperty.set(this.quantity);
+        this.amountProperty.set(this.amount);
     }
 
     public String getDescription()
@@ -57,6 +89,9 @@ public class ItemFood
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
         this.amount =  quantity*priceAtTheMoment;
+
+        this.quantityProperty.set(this.quantity);
+        this.amountProperty.set(this.amount);
     }
 
     public double getCostAtTheMoment() {
@@ -74,6 +109,8 @@ public class ItemFood
     public void setPriceAtTheMoment(double priceAtTheMoment) {
         this.priceAtTheMoment = priceAtTheMoment;
         this.amount = quantity * priceAtTheMoment;
+
+        this.amountProperty.set(amount);
     }
 
     public double getAmount()

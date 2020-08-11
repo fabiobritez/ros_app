@@ -15,36 +15,36 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="676.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.stock.StockController">
+<AnchorPane prefHeight="676.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.ingredient.StockController">
    <children>
       <TabPane prefHeight="676.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-          <Tab text="            General            ">
+          <Tab text=" General ">
                <content>
-                  <SplitPane dividerPositions="0.27" prefHeight="676.0" prefWidth="900.0">
+                  <SplitPane dividerPositions="0.25" prefHeight="676.0" prefWidth="900.0">
                      <items>
-                        <VBox prefHeight="674.0" prefWidth="236.0">
+                        <VBox prefHeight="674.0" prefWidth="236.0" SplitPane.resizableWithParent="false">
                            <children>
-                              <AnchorPane prefHeight="34.0" prefWidth="221.0">
+                              <AnchorPane prefHeight="34.0" prefWidth="221.0" styleClass="panel-back">
                                  <children>
-                                    <TextField fx:id="textfieldSearchEngine" layoutX="5.0" layoutY="2.0" onKeyPressed="#onKeyPressedSearchEngine" prefHeight="28.0" prefWidth="210.0" promptText="Buscar" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0" />
-                                    <Button layoutX="211.0" layoutY="2.0" mnemonicParsing="false" onAction="#onActionClear" prefHeight="27.0" prefWidth="27.0" text="x" />
+                                    <TextField fx:id="textfieldSearchEngine" layoutX="5.0" layoutY="2.0" onKeyPressed="#onKeyPressedSearchEngine" prefHeight="28.0" prefWidth="191.0" promptText="Buscar" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="2.0" />
+                                    <Button layoutX="192.0" layoutY="2.0" mnemonicParsing="false" onAction="#onActionClear" prefHeight="28.0" prefWidth="28.0" style="-fx-border-color: transparent;" text="x" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0" />
                                  </children>
                               </AnchorPane>
-                              <ListView fx:id="listViewIngredients" prefHeight="606.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+                              <ListView fx:id="listViewIngredients" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="671.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="671.0" styleClass="panel-back" SplitPane.resizableWithParent="false">
                            <children>
-                              <TextField fx:id="textfieldDescription" editable="false" layoutX="48.0" layoutY="116.0" prefHeight="31.0" prefWidth="252.0" promptText="Descripción" />
-                              <TextField fx:id="textfieldStockMin" layoutX="292.0" layoutY="195.0" onKeyReleased="#onReleasedTextfieldStockMin" prefHeight="31.0" prefWidth="170.0" promptText="Stock minimo" />
-                              <TextField fx:id="textfieldStock" layoutX="48.0" layoutY="195.0" onKeyReleased="#onReleasedTextfieldStock" prefHeight="31.0" prefWidth="170.0" promptText="Stock actual" />
-                              <ComboBox fx:id="comboboxUnit" layoutX="318.0" layoutY="116.0" prefHeight="31.0" prefWidth="150.0" promptText="Unidad de medida" />
+                              <TextField fx:id="textfieldDescription" layoutX="48.0" layoutY="116.0" prefHeight="30.0" prefWidth="252.0" promptText="Descripción" />
+                              <ComboBox fx:id="comboboxUnit" layoutX="318.0" layoutY="116.0" prefHeight="30.0" prefWidth="150.0" promptText="Unidad de medida" />
+                              <TextField fx:id="textfieldStock" layoutX="48.0" layoutY="195.0" onKeyReleased="#onReleasedTextfieldStock" prefHeight="30.0" prefWidth="170.0" promptText="Stock actual" />
+                              <TextField fx:id="textfieldStockMin" layoutX="292.0" layoutY="195.0" onKeyReleased="#onReleasedTextfieldStockMin" prefHeight="30.0" prefWidth="170.0" promptText="Stock minimo" />
                               <HBox layoutX="300.0" layoutY="587.0" spacing="10.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="28.0">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#onActionNewIngredient" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
-                                    <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#onActionUpdateIngredient" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
                                     <Button fx:id="buttonSave" mnemonicParsing="false" onAction="#onActionSaveIngredient" prefHeight="30.0" prefWidth="120.0" text="Guardar" />
+                                    <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#onActionUpdateIngredient" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
+                                    <Button mnemonicParsing="false" onAction="#onActionNewIngredient" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
                                  </children>
                               </HBox>
                               <Button fx:id="buttonDelete" layoutX="541.0" layoutY="14.0" mnemonicParsing="false" onAction="#onActionDeleteIngredient" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: ff3c3c;" text="Eliminar" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="14.0" />
@@ -52,8 +52,8 @@
                               <Label layoutX="50.0" layoutY="93.0" prefHeight="21.0" prefWidth="249.0" text="Descripción" />
                               <Label layoutX="50.0" layoutY="170.0" prefHeight="21.0" prefWidth="151.0" text="Stock actual" />
                               <Label layoutX="292.0" layoutY="170.0" text="Stock minimo" />
-                              <Text fx:id="textStock" layoutX="48.0" layoutY="251.0" strokeType="OUTSIDE" strokeWidth="0.0" text="En ..." wrappingWidth="169.6708984375" />
-                              <Text fx:id="textStockMin" layoutX="294.0" layoutY="251.0" strokeType="OUTSIDE" strokeWidth="0.0" text="En ..." wrappingWidth="168.6708984375" />
+                              <Text fx:id="textStock" fill="WHITE" layoutX="48.0" layoutY="251.0" strokeType="OUTSIDE" strokeWidth="0.0" text="En ..." wrappingWidth="169.6708984375" />
+                              <Text fx:id="textStockMin" fill="WHITE" layoutX="294.0" layoutY="251.0" strokeType="OUTSIDE" strokeWidth="0.0" text="En ..." wrappingWidth="168.6708984375" />
                            </children>
                         </AnchorPane>
                      </items>
@@ -62,7 +62,7 @@
           </Tab>
           <Tab onSelectionChanged="#onSelectChangedTab" text="Ingredientes faltantes">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="panel-back">
                      <children>
                         <TableView fx:id="tableViewLowStockIngredients" layoutX="35.0" layoutY="30.0" prefHeight="557.0" prefWidth="714.0">
                           <columns>

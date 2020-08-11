@@ -1,0 +1,92 @@
+.root
+{
+    primary-color : #04879c;
+    primary-back  : #15191C;
+    secondary-back: #22282c;
+    tertiary-back : #22282d;
+    color-error : #d32f2f;
+    -fx-font-family: "Ubuntu Mono";
+    -fx-font-size: 14;
+}
+
+.dialog-pane{
+    -fx-border-color: color-error;
+    -fx-border-width: 2px;
+}
+
+/**Costumization of The Bar where the buttons are located**/
+.dialog-pane > .button-bar > .container {
+    -fx-background-color:secondary-back;
+}
+
+.dialog-pane > .content.label {
+    -fx-padding: 0.5em 0.5em 0.5em 0.5em;
+    -fx-background-color: secondary-back;
+    -fx-text-fill:white;
+    -fx-font-size:15px;
+}
+
+/**Costumization of DialogPane Header**/
+.dialog-pane:header .header-panel {
+    -fx-background-color: color-error;
+}
+
+.dialog-pane:header .header-panel .label{
+    -fx-background-color: color-error;
+    -fx-background-radius:10px;
+    -fx-text-fill:white;
+    -fx-font-size:20px;
+}
+
+
+/**Costumization of Buttons**/
+.dialog-pane .button{
+    -fx-background-color: color-error;
+    -fx-text-fill:white;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow( three-pass-box, black, 10.0, 0.0, 0.0, 0.0);
+    -fx-cursor:hand;
+}
+
+.dialog-pane .button:hover{
+    -fx-effect: dropshadow( three-pass-box, color-error, 15, 0.0, 0.0, 0.0);
+    -fx-font-weight:bold;
+}
+
+
+.text-area
+{
+    -fx-text-fill: white;
+    -fx-background-color: secondary-back;
+    -fx-background-radius: 5px;
+    -fx-border-color: secondary-back;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box,black,5,0,0,0);
+}
+
+.text-area .content
+{
+    -fx-background-color: secondary-back;
+}
+
+GridPane
+{
+    -fx-background-color: secondary-back;
+}
+
+/*region scroll-bar*/
+.scroll-bar,
+.scroll-bar .track,
+.scroll-bar .track-background,
+.corner
+{
+    -fx-background-color: primary-back;
+}
+
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .thumb
+{
+    -fx-background-color: secondary-back;
+}

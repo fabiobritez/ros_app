@@ -1,6 +1,6 @@
 package ar.com.doctatech.order;
 
-import ar.com.doctatech.customer.dialog.CustomerDialog;
+import ar.com.doctatech.customer.dialogs.CustomerDialog;
 import ar.com.doctatech.customer.model.Customer;
 import ar.com.doctatech.food.model.Food;
 import ar.com.doctatech.order.model.*;
@@ -37,13 +37,10 @@ public class OrderController
             loadNewOrder();
             addListenersEventsNO();
         });
-
         Platform.runLater(()-> {
                    this.loadOrdersComponents();
                    addListenersEvents();
                 });
-
-        textfieldSearchFood.requestFocus();
     }
 
     //region=================== NEW ORDER =======================
@@ -51,24 +48,24 @@ public class OrderController
     //region FXML NEW ORDER
     @FXML private ListView <String> listViewFood;
     @FXML private void onMouseClickedFoodList(MouseEvent event){
-        if(event.getButton() == MouseButton.PRIMARY
-                && event.getClickCount()==2)
-            addItemFoodToOrder();
+        if(event.getButton() == MouseButton.PRIMARY &&
+                event.getClickCount()==2)  addItemFoodToOrder();
     }
     @FXML private TextField textfieldSearchFood, textfieldSurcharge, textfieldDiscount, textfieldTotalNO;
     @FXML private void onMouseClickedClear(){ textfieldSearchFood.clear();textfieldSearchFood.requestFocus();}
-    @FXML private void onKeyReleasedExtras(){ textfieldTotalNO.setText( calculateTotal() + "" ); }
+    @FXML private void onKeyReleasedExtras(){ textfieldTotalNO.setText( String.format(Locale.US, "%.2f",calculateTotal()) ); }
 
     @FXML private TextField textfieldCustomerName, textfieldWhatsapp, textfieldTelefono, textfieldStreet, textfieldApartment;
     @FXML private Button buttonSaveCustomer, buttonNewCustomer;
-    @FXML private void onActionSaveCustomer() { saveCustomer(); }
-    @FXML private void onActionNewCustomer() { newCustomer(); }
+    @FXML private void onActionSaveCustomer()   { saveCustomer();   }
+    @FXML private void onActionNewCustomer()    { newCustomer();    }
     @FXML private void onActionSelectCustomer() { selectCustomer(); }
+    @FXML private void onActionClearOrder()     { clearOrder();     }
 
 
     @FXML private TableView<ItemFood> tableviewNewOrder;
     @FXML private TableColumn<ItemFood, String> columnDescriptionNO;
-    @FXML private TableColumn<ItemFood, Integer> columnQuantityNO;
+    @FXML private TableColumn<ItemFood, Number> columnQuantityNO;
     @FXML private TableColumn<ItemFood, Double> columnAmountNO, columnPriceNO;
     @FXML private void onActionMenuItemRemove(){ removeItemFromOrder();}
     @FXML private ComboBox<String> comboboxPayment;
@@ -81,11 +78,16 @@ public class OrderController
     private ObservableList<String> obsFood;
     private HashMap<String, Food> mapFood;
     private ObservableList<ItemFood> obsItemsNO;
-
+    private FilteredList<String> flFood;
     private void loadNewOrder()
     {
+        columnDescriptionNO.prefWidthProperty().bind(tableviewNewOrder.widthProperty().divide(2));
+        columnQuantityNO.prefWidthProperty().bind(tableviewNewOrder.widthProperty().divide(6));
+        columnPriceNO.prefWidthProperty().bind(tableviewNewOrder.widthProperty().divide(6));
+        columnAmountNO.prefWidthProperty().bind(tableviewNewOrder.widthProperty().divide(6));
+
         columnDescriptionNO.setCellValueFactory( new PropertyValueFactory<>("description"));
-        columnQuantityNO.setCellValueFactory( new PropertyValueFactory<>("quantity"));
+        columnQuantityNO.setCellValueFactory(value -> value.getValue().quantityProperty());
         columnPriceNO.setCellValueFactory( new PropertyValueFactory<>("priceAtTheMoment"));
         columnAmountNO.setCellValueFactory( new PropertyValueFactory<>("amount"));
 
@@ -93,9 +95,13 @@ public class OrderController
         {
             mapFood = foodDAO.getAll();
             obsFood = FXCollections.observableArrayList(mapFood.keySet());
+            flFood  = new FilteredList<>(obsFood, s -> true);
+
             obsItemsNO = FXCollections.observableArrayList();
 
             tableviewNewOrder.setItems(obsItemsNO);
+            listViewFood.setItems(flFood);
+
             comboboxPayment.setItems( FXCollections.observableArrayList( orderDAO.getAllPaymentTypes() ));
             comboboxPayment.getSelectionModel().select("EFECTIVO");
         }
@@ -117,23 +123,19 @@ public class OrderController
         });
 
         //FOOD BROWSER
-        FilteredList<String> foodFilteredList =
-                new FilteredList<>(obsFood, s -> true);
-        textfieldSearchFood.textProperty().addListener((observable, oldValue, newValue) ->
-                foodFilteredList.setPredicate(foodDescription ->
-                        foodDescription.toLowerCase().contains(newValue.trim().toLowerCase())
-                ));
-        listViewFood.setItems(foodFilteredList);
+
+        textfieldSearchFood.textProperty().addListener((obs, old, value) ->
+                flFood.setPredicate(description ->
+                        description.toLowerCase().contains(value.trim().toLowerCase()) ));
 
         //DOWN KEY, ON TEXT BROWSER
         textfieldSearchFood.setOnKeyReleased(event -> {
-            if(event.getCode()==KeyCode.DOWN)
-            {
+            if(event.getCode()==KeyCode.DOWN) {
                 listViewFood.getSelectionModel().selectFirst();
                 listViewFood.requestFocus();
-            }
+            }} );
 
-        } );
+        textfieldSearchFood.requestFocus();
     }
 
     //region ==== ADD-REMOVE ITEMS ====
@@ -147,10 +149,17 @@ public class OrderController
             if(quantity!=null)
             {
                 ItemFood itemToAdd =  new ItemFood(foodSelected, quantity);
-                //TODO SOLUCIONAR DE UNA FORMA OPTIMA
+
                 if(!obsItemsNO.contains(itemToAdd))
                     obsItemsNO.add(itemToAdd);
-                textfieldTotalNO.setText( calculateTotal() + "");
+                else
+                    obsItemsNO.forEach(itemFood -> {
+                        if (itemFood.equals(itemToAdd))
+                            itemFood.addQuantity(quantity);
+                    });
+                obsItemsNO.removeIf(itemFood -> itemFood.getQuantity()<=0);
+
+                textfieldTotalNO.setText( String.format(Locale.US, "%.2f", calculateTotal()) );
             }
             textfieldSearchFood.requestFocus();
         }
@@ -164,7 +173,7 @@ public class OrderController
         if(itemFood!=null)
         {
             obsItemsNO.remove(itemFood);
-            textfieldTotalNO.setText(calculateTotal() + "");
+            textfieldTotalNO.setText(String.format(Locale.US, "%.2f",calculateTotal()) );
             textfieldSearchFood.requestFocus();
         }
     }
@@ -179,7 +188,7 @@ public class OrderController
         if(textfieldSurcharge.getText().trim().isEmpty()) surcharge = 0.0;
         else surcharge = Double.parseDouble(textfieldSurcharge.getText());
 
-        return getTotal(obsItemsNO) - discount + surcharge;
+        return getSubtotal(obsItemsNO) - discount + surcharge;
     }
 
     //endregion
@@ -307,7 +316,7 @@ public class OrderController
                 Order order = new Order(
                         customer,
                         obsItemsNO,
-                        getTotal(obsItemsNO),
+                        getSubtotal(obsItemsNO),
                         Double.parseDouble(sDiscount),
                         Double.parseDouble(sSurcharge),
                         Double.parseDouble(sTotal),
@@ -335,6 +344,7 @@ public class OrderController
         textfieldApartment.setText("");
         textfieldStreet.setText("");
         textfieldDiscount.setText("");
+        textfieldSurcharge.setText("");
         textfieldSearchFood.setText("");
         textfieldTotalNO.setText("0.00");
         textAreaComments.setText("");
@@ -368,28 +378,39 @@ public class OrderController
     @FXML private ComboBox<String> comboBoxFilter;
     @FXML private CheckBox checkBoxIsPaid;
 
-    @FXML private Button buttonSendOrder, buttonUpdateOrder,
+    @FXML private Button buttonSendOrder, buttonPayOrder,
             buttonDeliverOrder, buttonCancelOrder;
-    @FXML MenuItem menuItemDeliver, menuItemSend;
+    @FXML MenuItem menuItemDeliver, menuItemSend, menuItemPay;
 
     @FXML private void onTabOrderSelected(){Platform.runLater(this::updateOrdersTable);}
     @FXML private void onActionButtonUpdateOrder(){updateOrder();}
     @FXML private void onActionButtonSendOrder(){sendOrder();}
     @FXML private void onActionButtonDeliverOrder(){deliverOrder();}
     @FXML private void onActionButtonCancelOrder(){cancelOrder();}
-    //TODO IMPORTANTE! = VERIFICAR COMO SOLUCIONAR DUPLICIDAD DE ITEMS ADD ITEM
     //endregion
 
     ObservableList<OrderModel> obsInProcessOrder;
 
     private void loadOrdersComponents()
     {
+        columnDate.prefWidthProperty().bind(tableViewOrders.widthProperty()     .divide(5.55)); //18%
+        columnHour.prefWidthProperty().bind(tableViewOrders.widthProperty()     .divide(11.11));// 9%
+        columnCustomer.prefWidthProperty().bind(tableViewOrders.widthProperty() .divide(4    ));//25%
+        columnStatus.prefWidthProperty().bind(tableViewOrders.widthProperty()   .divide(5.55 ));//18%
+        columnIsPaid.prefWidthProperty().bind(tableViewOrders.widthProperty()   .divide(7.5  ));//13.33%
+        columnTotal.prefWidthProperty().bind(tableViewOrders.widthProperty()    .divide(6    ));//16.66%
+
         columnDate.setCellValueFactory(param -> param.getValue().getDate());
         columnHour.setCellValueFactory(param -> param.getValue().getHour());
         columnCustomer.setCellValueFactory(new PropertyValueFactory<>("nameCustomer"));
         columnStatus.setCellValueFactory(new PropertyValueFactory<>("statusDelivery"));
         columnIsPaid.setCellValueFactory(new PropertyValueFactory<>("statusPaid"));
         columnTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+
+        columnNameItem.prefWidthProperty().bind(tableViewItems.widthProperty().divide(1.66)); //60%
+        columnQuantityItem.prefWidthProperty().bind(tableViewItems.widthProperty().divide(6));
+        columnPriceItem.prefWidthProperty().bind(tableViewItems.widthProperty().divide(4.5)); //22
 
         columnNameItem.setCellValueFactory(new PropertyValueFactory<>("description"));
         columnQuantityItem.setCellValueFactory(new PropertyValueFactory<>("quantity"));
@@ -419,7 +440,7 @@ public class OrderController
         SortedList<OrderModel> sortedList = new SortedList<>(flOrderInProcess);
         tableViewOrders.setItems(sortedList);
         sortedList.comparatorProperty().bind(tableViewOrders.comparatorProperty());
-
+        tableViewOrders.getSelectionModel().selectFirst();
     }
 
     private void updateOrdersTable()
@@ -433,7 +454,7 @@ public class OrderController
 
             //HABILITACION ACTUALIZACIÓN
             buttonDeliverOrder.setVisible(!isFinished);
-            buttonUpdateOrder.setVisible(!isFinished);
+            buttonPayOrder.setVisible(!isFinished);
             buttonSendOrder.setVisible(!isFinished);
             buttonCancelOrder.setVisible(!isFinished);
             menuItemDeliver.setVisible(!isFinished);
@@ -453,16 +474,33 @@ public class OrderController
         tableViewItems.getItems().clear();
         if(orderSelected!=null)
         {
-
             tableViewItems.getItems().addAll(orderSelected.getItems());
             textfieldDiscountIP.setText(orderSelected.getDiscount()+"");
             textfieldSurchargeIP.setText(orderSelected.getSurcharge()+"");
-            textfieldTotalIP.setText(orderSelected.getTotal()+"");
+            textfieldTotalIP.setText(String.format(Locale.US, "%.2f",orderSelected.getTotal()) );
             textfieldStreetIP.setText(orderSelected.getStreet());
             textfieldAparmentIP.setText(orderSelected.getApartment());
             textfieldDeliveryPersonIP.setText(orderSelected.getDeliveryPerson());
+
             checkBoxIsPaid.setDisable(orderSelected.isPaid());
             checkBoxIsPaid.setSelected(orderSelected.isPaid());
+
+            buttonPayOrder.setDisable(orderSelected.isPaid());
+            menuItemPay.setDisable(orderSelected.isPaid());
+
+            boolean isDisableDeliver = orderSelected.getStatusDelivery().
+                    equals(OrderStatus.DELIVERED.toString());
+            buttonDeliverOrder.setDisable(isDisableDeliver);
+            menuItemDeliver.setDisable(isDisableDeliver);
+
+            boolean isDisableSend = (
+                    orderSelected.getNameCustomer().equals("CLIENTE FINAL") ||
+                    orderSelected.getStatusDelivery().equals(OrderStatus.DELIVERED.toString()) ||
+                    orderSelected.getStatusDelivery().equals(OrderStatus.ON_THE_WAY.toString()) );
+            buttonSendOrder.setDisable(isDisableSend);
+            menuItemSend.setDisable(isDisableSend);
+
+            buttonCancelOrder.setDisable(false);
             textfieldCommentsIP.setText(orderSelected.getComments());
         }
         else
@@ -475,13 +513,22 @@ public class OrderController
             textfieldDeliveryPersonIP.setText("");
             checkBoxIsPaid.setSelected(false);
             textfieldCommentsIP.setText("");
+            buttonDeliverOrder.setDisable(true);
+            buttonSendOrder.setDisable(true);
+            buttonPayOrder.setDisable(true);
+            buttonCancelOrder.setDisable(true);
+        }
+        if(comboBoxFilter.getSelectionModel().getSelectedItem().equals("FINALIZADO"))
+        {
+            checkBoxIsPaid.setDisable(true);
+
         }
     }
 
     private void updateOrder()
     {
         OrderModel orderModel = tableViewOrders.getSelectionModel().getSelectedItem();
-
+        checkBoxIsPaid.setSelected(true);
         if(orderModel!=null)
         {
             DetailStatus detailStatus = new DetailStatus(
@@ -498,13 +545,8 @@ public class OrderController
                     this.updateOrdersTable();
                     tableViewOrders.getSelectionModel().select(orderModel);
                 });
-                FXTool.alertInformation("Orden actualizada!", "");
-
             }
-            catch (SQLException e)
-            {
-                FXTool.alertException(e);
-            }
+            catch (SQLException e) { FXTool.alertException(e);  }
         }
     }
 
@@ -537,7 +579,7 @@ public class OrderController
             catch (SQLException e) { FXTool.alertException(e); }
         }else
         {
-            FXTool.alertInformation("ERROR", "Debe indicar quien es el repartidor");
+            textfieldDeliveryPersonIP.requestFocus();
         }
     }
 
@@ -547,48 +589,62 @@ public class OrderController
 
         if(orderModel!=null)
         {
-            DetailStatus detailStatus = new DetailStatus(
-                    UserSession.getUser().getUsername(),
-                    OrderStatus.DELIVERED.toString(),
-                    orderModel.getDeliveryPerson(),
-                    checkBoxIsPaid.isSelected(),
-                    textfieldCommentsIP.getText()
-            );
-            try
+            if(!orderModel.getNameCustomer().equals("CLIENTE FINAL") || orderModel.isPaid())
             {
-                orderDAO.updateOrderStatus(orderModel.getOrderID(), detailStatus);
-                FXTool.alertInformation("Orden entregada!", "");
-                this.updateOrdersTable();
+                DetailStatus detailStatus = new DetailStatus(
+                        UserSession.getUser().getUsername(),
+                        OrderStatus.DELIVERED.toString(),
+                        orderModel.getDeliveryPerson(),
+                        checkBoxIsPaid.isSelected(),
+                        textfieldCommentsIP.getText()
+                );
+                try
+                {
+                    orderDAO.updateOrderStatus(orderModel.getOrderID(), detailStatus);
+                    FXTool.alertInformation("Orden entregada!", "");
+                    this.updateOrdersTable();
 
+                }
+                catch (SQLException e)
+                {
+                    FXTool.alertException(e);
+                }
             }
-            catch (SQLException e)
-            {
-                FXTool.alertException(e);
-            }
+            else
+                FXTool.alertInformation("EL CLIENTE FINAL NO PUEDE DEBER",
+                        "Ya que no se puede identificar quien \nes el que debe pagar");
+
         }
     }
 
     private void cancelOrder()
-    {
-             DetailStatus detailStatus = new DetailStatus(
-                UserSession.getUser().getUsername(),//change
-                OrderStatus.CANCELED.toString(),textfieldDeliveryPersonIP.getText(),//change
-                checkBoxIsPaid.isSelected(),
-                textfieldCommentsIP.getText()
-        );
 
-        try
+            //TODO VERIFICAR QUE SEA ADMINISTRADOR Y PEDIR PASSWORD
+            //TODO SUMAR STOCK NUEVAMENTE
+    {
+        if(hasPermissionToCancel())
         {
-            orderDAO.updateOrderStatus(
-                    tableViewOrders.getSelectionModel().getSelectedItem().getOrderID(),
+            DetailStatus detailStatus = new DetailStatus(
+                    UserSession.getUser().getUsername(),//change
+                    OrderStatus.CANCELED.toString(),textfieldDeliveryPersonIP.getText(),//change
+                    checkBoxIsPaid.isSelected(),
+                    textfieldCommentsIP.getText()
+            );
+
+            try
+            {
+                OrderModel orderModel = tableViewOrders.getSelectionModel().getSelectedItem();
+                orderDAO.updateOrderStatus(
+                    orderModel.getOrderID(),
                     detailStatus);
-            Platform.runLater(this::updateOrdersTable);
-            FXTool.alertInformation("Operación realizada",
-                    "Orden cancelada exitosamente!");
+                orderDAO.restoreStock(orderModel.getOrderID());
+                Platform.runLater(this::updateOrdersTable);
+            }
+            catch (SQLException e) { FXTool.alertException(e); }
         }
-        catch (SQLException e) { FXTool.alertException(e); }
 
     }
+
 
     //endregion
 }

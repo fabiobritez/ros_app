@@ -1,4 +1,4 @@
-package ar.com.doctatech.customer.dialog;
+package ar.com.doctatech.customer.dialogs;
 
 import ar.com.doctatech.customer.model.Customer;
 import ar.com.doctatech.customer.model.CustomerDAO;
@@ -24,6 +24,13 @@ public class CustomerDialog extends Dialog<Customer>
 
     public CustomerDialog()
     {
+        getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/dialogs.css").toExternalForm());
+        getDialogPane().getStyleClass().add("panel-back");
+
+
+
+        setTitle("Lista de clientes...");
         textfieldSearch = new TextField();
         textfieldSearch.setPromptText("Buscar cliente..");
         listViewCustomers = new ListView<>();
@@ -34,15 +41,12 @@ public class CustomerDialog extends Dialog<Customer>
             customerMap = customerDAO.getAll();
             setListenersProperties();
         }
-        catch (SQLException e)
-        {
-            FXTool.alertException(e);
-        }
+        catch (SQLException e) { FXTool.alertException(e); }
 
         VBox vBox = new VBox(textfieldSearch,listViewCustomers);
         vBox.setPrefSize(250,250);
         vBox.setPadding(new Insets(8,8,8,8));
-
+        vBox.setSpacing(10);
         getDialogPane().setContent(vBox);
 
         //BUTTON
@@ -55,7 +59,6 @@ public class CustomerDialog extends Dialog<Customer>
             );
             return null;
          });
-
          setOnCloseRequest(event -> close());
     }
 
@@ -103,6 +106,7 @@ public class CustomerDialog extends Dialog<Customer>
 
     public Optional<Customer> showAndStop()
     {
+       this.getDialogPane().requestFocus();
        textfieldSearch.requestFocus();
        return showAndWait();
     }

@@ -102,6 +102,10 @@ public class FXTool
     public static void alertException(Exception exception)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.getDialogPane().getStylesheets().add(
+                FXTool.class.getResource("/css/alerts-error.css").toExternalForm());
+
         alert.setTitle("Exception Dialog");
         alert.setHeaderText("Ha ocurrido un error:");
         alert.setContentText(exception.getMessage());
@@ -159,6 +163,11 @@ public class FXTool
     public static void alertInformation(String header, String content)
     {
         Alert alert = new Alert( Alert.AlertType.CONFIRMATION, content, ButtonType.OK );
+
+        alert.getDialogPane().getStylesheets().add(
+                FXTool.class.getResource("/css/alerts.css").toExternalForm());
+
+
         alert.setHeaderText(header);
         alert.showAndWait();
     }
@@ -184,21 +193,23 @@ public class FXTool
         return FXMLLoader.load(RosApp.class.getResource(urlNode));
     }
 
+    //TODO ENCONTRAR SOLUCION AL TEMA DE DOS DECIMALES, SIN ARRUINAR Y NO ACTUALIZAR
     public static void setTextFieldDouble(TextField textField)
     {
+
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("^\\d*\\.?\\d*$"))
+            if(!newValue.matches("-?\\d{0,8}([\\.]\\d{0,2})?"))
             {
                 textField.setText(oldValue);
             }
         });
-
     }
 
-    public static void setTextFieldInteger(TextField textField)
+    public static void setTextFieldInteger(TextField textField, int maxLength)
     {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("-?[0-9]*"))
+            if(!newValue.matches("-?[0-9]*")
+                    || newValue.length()>=maxLength)
             {
                 textField.setText(oldValue);
             }

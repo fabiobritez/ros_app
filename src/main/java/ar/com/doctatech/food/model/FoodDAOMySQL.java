@@ -1,6 +1,6 @@
 package ar.com.doctatech.food.model;
 
-import ar.com.doctatech.stock.ingredient.Ingredient;
+import ar.com.doctatech.ingredient.model.Ingredient;
 import ar.com.doctatech.shared.db.DatabaseConnection;
 import ar.com.doctatech.shared.exceptions.NotFoundException;
 
@@ -24,7 +24,8 @@ public class FoodDAOMySQL implements FoodDAO
     public void save(Food food) throws SQLException
     {
         //SAVE FOOD
-        String query = "INSERT INTO food (NAME, COST, PROFIT, PRICE, IMAGE) " +
+        String query =
+                "INSERT INTO food (NAME, COST, PROFIT, PRICE, IMAGE) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
 
@@ -43,41 +44,18 @@ public class FoodDAOMySQL implements FoodDAO
                 while (rs.next()){ food.setFoodID(rs.getInt(1)); }
             }
         }
-
-        /*
-         * query = "INSERT INTO recipe (food_foodID, ingredient_description, quantity) " +
-                "VALUES (?, ?, ?)";
-
-        try(PreparedStatement preparedStatement =
-                    connection.prepareStatement(query))
-        {
-            for (ItemRecipe itemRecipe : food.getRecipe())
-            {
-                preparedStatement.setInt   (1, food.getFoodID()           );
-                preparedStatement.setString(2, itemRecipe.getDescription());
-                preparedStatement.setInt   (3, itemRecipe.getQuantity()   );
-                preparedStatement.executeUpdate();
-            }
-
-        }
-         */
     }
 
     @Override
     public void update(Food food) throws SQLException {
-        String query = "UPDATE food SET name = ? , cost = ?, profit = ?, price = ?, " +
-                " image = ? WHERE foodID = ?";
+        String query =
+                "UPDATE food " +
+                "SET name = ? , cost = ?, profit = ?, price = ?, image = ? " +
+                "WHERE foodID = ?";
 
         try (PreparedStatement preparedStatement =
                      connection.prepareStatement(query))
         {
-            System.out.println("NAME: "+ food.getName() );
-            System.out.println("COST: "+ food.getCost() );
-            System.out.println("PROFIT: "+ food.getProfit() );
-            System.out.println("PRICE: "+ food.getPrice() );
-            System.out.println("IMAGE: "+ food.getImage() );
-            System.out.println("ID: "+ food.getFoodID() );
-
             preparedStatement.setString(1, food.getName()  );
             preparedStatement.setDouble(2, food.getCost()  );
             preparedStatement.setDouble(3, food.getProfit());
@@ -104,7 +82,8 @@ public class FoodDAOMySQL implements FoodDAO
 
     @Override
     public void addItemRecipe(int foodID, ItemRecipe itemRecipe) throws SQLException {
-        String  query = "INSERT INTO recipe (food_foodID, ingredient_description, quantity) " +
+        String  query =
+                "INSERT INTO recipe (food_foodID, ingredient_description, quantity) " +
                 "VALUES (?, ?, ?)";
 
         try(PreparedStatement preparedStatement =
@@ -166,11 +145,14 @@ public class FoodDAOMySQL implements FoodDAO
     @Override
     public HashMap<String, Food> getAll() throws SQLException
     {
+        String query =
+        "SELECT foodID, name, cost, profit, price, image, exist, " +
+        "description, quantity, stock, stockMin, unit " +
+        "FROM food "  +
+        "LEFT OUTER JOIN recipe r on food.foodID = r.food_foodID " +
+        "LEFT OUTER JOIN ingredient i on r.ingredient_description = i.description " +
+        "WHERE exist=true";
 
-        String query = "SELECT * FROM food " +
-                       "LEFT OUTER JOIN recipe r on food.foodID = r.food_foodID " +
-                       "LEFT OUTER JOIN ingredient i on r.ingredient_description = i.description" +
-                " WHERE exist=true";
 
         HashMap<String, Food> foodFound = new HashMap<>();
 

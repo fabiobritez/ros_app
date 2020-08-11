@@ -1,12 +1,6 @@
 package ar.com.doctatech.food.model;
 
-import ar.com.doctatech.stock.ingredient.Ingredient;
-import ar.com.doctatech.stock.ingredient.Unit;
-
-import javax.mail.FetchProfile;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 public class Food

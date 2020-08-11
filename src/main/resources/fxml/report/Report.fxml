@@ -15,40 +15,30 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="676.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.reports.ReportsController">
+<AnchorPane prefHeight="676.0" prefWidth="900.0" styleClass="panel-back" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.reports.ReportsController">
    <children>
       <TabPane prefHeight="676.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="      VENTAS     ">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="panel-back">
                      <children>
-                        <HBox layoutX="154.0" layoutY="476.0" prefHeight="100.0" prefWidth="593.0" spacing="10.0">
+                        <HBox layoutX="343.0" layoutY="476.0" prefHeight="100.0" prefWidth="404.0" spacing="10.0">
                            <children>
-                              <Pane prefHeight="100.0" prefWidth="203.0" style="-fx-background-color: #2980b9;">
+                              <Pane prefHeight="100.0" prefWidth="203.0" styleClass="card-primary">
                                  <children>
-                                    <Label layoutX="84.0" layoutY="78.0" text="Total ventas" textFill="WHITE" />
-                                    <Label fx:id="labelTotalSales" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="168.0" text="00000.00" textFill="WHITE">
+                                    <Label layoutX="84.0" layoutY="78.0" text="Total ventas" />
+                                    <Label fx:id="labelTotalSales" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="168.0" styleClass="card-label" text="00000.00">
                                        <font>
                                           <Font size="35.0" />
                                        </font>
                                     </Label>
                                  </children>
                               </Pane>
-                              <Pane layoutX="213.0" layoutY="10.0" prefHeight="100.0" prefWidth="203.0" style="-fx-background-color: #34495e;">
+                              <Pane prefHeight="100.0" prefWidth="203.0" styleClass="card-red">
                                  <children>
-                                    <Label layoutX="51.0" layoutY="78.0" text="Ganancia estimada" textFill="WHITE" />
-                                    <Label fx:id="labelLastSale" alignment="CENTER_RIGHT" layoutX="6.0" layoutY="16.0" prefHeight="54.0" prefWidth="180.0" text="00000.00" textFill="WHITE">
-                                       <font>
-                                          <Font size="36.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </Pane>
-                              <Pane prefHeight="100.0" prefWidth="203.0" style="-fx-background-color: #e74c3c;">
-                                 <children>
-                                    <Label layoutX="105.0" layoutY="78.0" text="Total deben" textFill="WHITE" />
-                                    <Label fx:id="labelTotalDebt" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="171.0" text="00000.00" textFill="WHITE">
+                                    <Label layoutX="105.0" layoutY="78.0" text="Total deben" />
+                                    <Label fx:id="labelTotalDebt" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="171.0" styleClass="card-label" text="00000.00">
                                        <font>
                                           <Font size="35.0" />
                                        </font>
@@ -82,6 +72,7 @@
                         <Label layoutX="333.0" layoutY="6.0" prefHeight="16.0" prefWidth="116.0" text="Estado" />
                         <Label layoutX="470.0" layoutY="4.0" prefHeight="16.0" prefWidth="113.0" text="Pago" />
                         <Button layoutX="770.0" layoutY="75.0" mnemonicParsing="false" onAction="#onActionButtonExport" prefHeight="26.0" prefWidth="110.0" text="Exportar" />
+                        <Label layoutX="43.0" layoutY="601.0" text="Total ventas: incluye ventas que estan pagas y las que no de la lista filtrada" />
                      </children>
                   </AnchorPane>
             </content>

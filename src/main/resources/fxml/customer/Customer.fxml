@@ -9,111 +9,161 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="675.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.customer.CustomerController">
    <children>
-      <SplitPane prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.25" prefHeight="675.0" prefWidth="900.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+            <VBox prefHeight="673.0" prefWidth="371.0" SplitPane.resizableWithParent="false">
                <children>
-                  <ListView fx:id="listViewCustomers" layoutY="37.0" prefHeight="636.0" prefWidth="238.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
-                  <TextField fx:id="textfieldBrowserCustomers" layoutX="1.0" layoutY="4.0" onKeyPressed="#onKeyReleasedTextfieldBrowser" prefHeight="28.0" prefWidth="215.0" promptText="Buscar" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0" />
-                  <TabPane layoutX="240.0" layoutY="-1.0" prefHeight="673.0" prefWidth="659.0" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                      <Tab text="       CLIENTE     ">
-                           <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                 <children>
-                                    <TextField fx:id="textfieldName" layoutX="22.0" layoutY="103.0" prefHeight="28.0" prefWidth="243.0" promptText="Nombre cliente" />
-                                    <TextField fx:id="textfieldNumberPhone" layoutX="295.0" layoutY="103.0" prefHeight="28.0" prefWidth="111.0" promptText="Telefono" />
-                                    <TextField fx:id="textfieldWhatsapp" layoutX="424.0" layoutY="103.0" prefHeight="28.0" prefWidth="125.0" promptText="Whatsapp" />
-                                    <TextField fx:id="textfieldAddress" layoutX="22.0" layoutY="166.0" prefHeight="28.0" prefWidth="293.0" promptText="Direccion" />
-                                    <TextField fx:id="textfieldApartment" layoutX="344.0" layoutY="166.0" prefHeight="28.0" prefWidth="105.0" promptText="Departamento" />
-                                    <HBox layoutX="112.0" layoutY="590.0" spacing="10.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="28.0">
-                                       <children>
-                                          <Button fx:id="buttonNewCustomer" mnemonicParsing="false" onAction="#onClickButtonNew" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
-                                          <Button fx:id="buttonEditCustomer" mnemonicParsing="false" onAction="#onClickButtonEdit" prefHeight="30.0" prefWidth="120.0" text="Editar" />
-                                          <Button fx:id="buttonUpdateCustomer" mnemonicParsing="false" onAction="#onClickButtonUpdate" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
-                                          <Button fx:id="buttonSaveCustomer" mnemonicParsing="false" onAction="#onClickButtonSave" prefHeight="30.0" prefWidth="120.0" text="Guardar" />
-                                       </children>
-                                    </HBox>
-                                    <Button fx:id="buttonDeleteCustomer" layoutX="556.0" layoutY="13.0" mnemonicParsing="false" onAction="#onClickButtonDelete" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: ff3c3c;" text="Eliminar" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="14.0" />
-                                    <Label layoutX="22.0" layoutY="83.0" text="Cliente" />
-                                    <Label layoutX="295.0" layoutY="85.0" text="Telefono" />
-                                    <Label layoutX="425.0" layoutY="83.0" text="Whatsapp" />
-                                    <Label layoutX="23.0" layoutY="146.0" text="Direccion" />
-                                    <Label layoutX="345.0" layoutY="147.0" text="Depto" />
-                                    <HBox layoutX="24.0" layoutY="230.0" prefHeight="100.0" prefWidth="593.0" spacing="10.0">
-                                       <children>
-                                          <Pane prefHeight="100.0" prefWidth="203.0" style="-fx-background-color: #2980b9;">
-                                             <children>
-                                                <Label layoutX="84.0" layoutY="78.0" text="Total compras" textFill="WHITE" />
-                                                <Label fx:id="labelTotalSales" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="168.0" text="00000.00" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="35.0" />
-                                                   </font>
-                                                </Label>
-                                             </children></Pane>
-                                          <Pane layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="203.0" style="-fx-background-color: #e74c3c;">
-                                             <children>
-                                                <Label layoutX="105.0" layoutY="78.0" text="Total deuda" textFill="WHITE" />
-                                                <Label fx:id="labelTotalDebt" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="171.0" text="00000.00" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="35.0" />
-                                                   </font>
-                                                </Label>
-                                             </children></Pane>
-                                          <Pane layoutX="213.0" layoutY="10.0" prefHeight="100.0" prefWidth="203.0" style="-fx-background-color: #34495e;">
-                                             <children>
-                                                <Label layoutX="88.0" layoutY="79.0" text="Ultima compra" textFill="WHITE" />
-                                                <Label fx:id="labelLastSale" alignment="CENTER_RIGHT" layoutX="17.0" layoutY="16.0" prefHeight="54.0" prefWidth="169.0" text="00/00/00" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="36.0" />
-                                                   </font>
-                                                </Label>
-                                             </children></Pane>
-                                       </children>
-                                    </HBox>
-                                    <TextField fx:id="textfieldID" editable="false" layoutX="22.0" layoutY="42.0" prefHeight="28.0" prefWidth="99.0" promptText="ID" />
-                                    <Label layoutX="22.0" layoutY="26.0" text="ID" />
-                                 </children>
-                              </AnchorPane>
-                           </content>
-                      </Tab>
-                      <Tab text="   CUENTA     ">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <TableView layoutX="14.0" layoutY="14.0" prefHeight="437.0" prefWidth="322.0">
-                                      <columns>
-                                        <TableColumn prefWidth="52.0" text="ID" />
-                                        <TableColumn prefWidth="112.0" text="Fecha" />
-                                          <TableColumn prefWidth="83.0" text="Pago" />
-                                          <TableColumn prefWidth="74.0" text="Total" />
-                                      </columns>
-                                    </TableView>
-                                    <Button layoutX="68.0" layoutY="580.0" mnemonicParsing="false" text="Excel" />
-                                    <Button layoutX="68.0" layoutY="580.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="86.0" text="EXCEL" />
-                                    <TableView layoutX="351.0" layoutY="14.0" prefHeight="200.0" prefWidth="291.0" stylesheets="@../order/tableview.css">
-                                      <columns>
-                                        <TableColumn prefWidth="164.0" text="Item" />
-                                        <TableColumn prefWidth="68.0" text="Cant" />
-                                          <TableColumn prefWidth="58.0" text="Precio" />
-                                      </columns>
-                                    </TableView>
-                                 </children>
-                              </AnchorPane>
-                        </content>
-                      </Tab>
-                    </tabs>
-                  </TabPane>
-                  <Button layoutX="210.0" layoutY="2.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="27.0" text="x" AnchorPane.topAnchor="2.0" />
+                  <AnchorPane prefHeight="34.0" prefWidth="221.0" styleClass="panel-back">
+                     <children>
+                        <Button layoutX="194.0" layoutY="1.0" mnemonicParsing="false" onAction="#onActionClear" prefHeight="27.0" prefWidth="27.0" text="x" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0" />
+                        <TextField fx:id="textfieldSearchEngine" onKeyPressed="#onKeyReleasedTextfieldBrowser" prefHeight="28.0" prefWidth="191.0" promptText="Buscar" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="2.0" />
+                     </children>
+                  </AnchorPane>
+                  <ListView fx:id="listViewCustomers" VBox.vgrow="ALWAYS" />
                </children>
-            </AnchorPane>
+            </VBox>
+            <TabPane prefHeight="673.0" prefWidth="659.0" tabClosingPolicy="UNAVAILABLE" SplitPane.resizableWithParent="false">
+               <tabs>
+                  <Tab text=" CLIENTE ">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                           <children>
+                              <TextField fx:id="textfieldName" layoutX="22.0" layoutY="103.0" prefHeight="28.0" prefWidth="243.0" promptText="Nombre cliente" />
+                              <TextField fx:id="textfieldNumberPhone" layoutX="295.0" layoutY="103.0" prefHeight="28.0" prefWidth="111.0" promptText="Telefono" />
+                              <TextField fx:id="textfieldWhatsapp" layoutX="424.0" layoutY="103.0" prefHeight="28.0" prefWidth="125.0" promptText="Whatsapp" />
+                              <TextField fx:id="textfieldAddress" layoutX="22.0" layoutY="166.0" prefHeight="28.0" prefWidth="293.0" promptText="Direccion" />
+                              <TextField fx:id="textfieldApartment" layoutX="344.0" layoutY="166.0" prefHeight="28.0" prefWidth="105.0" promptText="Departamento" />
+                              <HBox layoutX="112.0" layoutY="590.0" spacing="10.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="28.0">
+                                 <children>
+                                    <Button fx:id="buttonSaveCustomer" mnemonicParsing="false" onAction="#onClickButtonSave" prefHeight="30.0" prefWidth="120.0" text="Guardar" />
+                                    <Button fx:id="buttonUpdateCustomer" mnemonicParsing="false" onAction="#onClickButtonUpdate" prefHeight="30.0" prefWidth="120.0" text="Actualizar" />
+                                    <Button fx:id="buttonEditCustomer" mnemonicParsing="false" onAction="#onClickButtonEdit" prefHeight="30.0" prefWidth="120.0" text="Editar" />
+                                    <Button fx:id="buttonNewCustomer" mnemonicParsing="false" onAction="#onClickButtonNew" prefHeight="30.0" prefWidth="120.0" text="Nuevo" />
+                                 </children>
+                              </HBox>
+                              <Button fx:id="buttonDeleteCustomer" layoutX="521.0" layoutY="14.0" mnemonicParsing="false" onAction="#onClickButtonDelete" prefHeight="30.0" prefWidth="121.0" styleClass="button-error" text="Eliminar" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="14.0" />
+                              <Label layoutX="22.0" layoutY="83.0" text="Cliente" />
+                              <Label layoutX="295.0" layoutY="85.0" text="Telefono" />
+                              <Label layoutX="425.0" layoutY="83.0" text="Whatsapp" />
+                              <Label layoutX="23.0" layoutY="146.0" text="Direccion" />
+                              <Label layoutX="345.0" layoutY="147.0" text="Depto" />
+                              <HBox layoutX="24.0" layoutY="230.0" prefHeight="100.0" prefWidth="593.0" spacing="10.0">
+                                 <children>
+                                    <Pane prefHeight="100.0" prefWidth="203.0" styleClass="card-primary">
+                                       <children>
+                                          <Label layoutX="84.0" layoutY="78.0" text="Total compras" textFill="WHITE" />
+                                          <Label fx:id="labelTotalSales" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="168.0" styleClass="card-label" text="00000.00" textFill="WHITE" />
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="203.0" styleClass="card-red">
+                                       <children>
+                                          <Label layoutX="105.0" layoutY="78.0" text="Total deuda" textFill="WHITE" />
+                                          <Label fx:id="labelTotalDebt" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="16.0" prefHeight="54.0" prefWidth="171.0" styleClass="card-label" text="00000.00" textFill="WHITE" />
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutX="213.0" layoutY="10.0" prefHeight="100.0" prefWidth="203.0" styleClass="card-green">
+                                       <children>
+                                          <Label layoutX="88.0" layoutY="79.0" text="Ultima compra" textFill="WHITE" />
+                                          <Label fx:id="labelLastSale" alignment="CENTER_RIGHT" layoutX="17.0" layoutY="16.0" prefHeight="54.0" prefWidth="169.0" styleClass="card-label" text="00/00/00" textFill="WHITE" />
+                                       </children>
+                                    </Pane>
+                                 </children>
+                              </HBox>
+                              <TextField fx:id="textfieldID" disable="true" layoutX="22.0" layoutY="42.0" prefHeight="28.0" prefWidth="99.0" promptText="ID" />
+                              <Label layoutX="22.0" layoutY="26.0" text="ID" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="tabReport" text="  CUENTA  ">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <HBox layoutX="6.0" layoutY="18.0" spacing="10.0">
+                                 <children>
+                                    <TableView fx:id="tableViewOrders" prefHeight="458.0" prefWidth="333.0">
+                                       <columns>
+                                          <TableColumn fx:id="columnID" prefWidth="52.0" text="ID" />
+                                          <TableColumn fx:id="columnDateUpdate" prefWidth="112.0" text="Fecha" />
+                                          <TableColumn fx:id="columnIsPaid" prefWidth="83.0" text="Pago" />
+                                          <TableColumn fx:id="columnTotal" prefWidth="74.0" text="Total" />
+                                       </columns>
+                                    </TableView>
+                                    <TitledPane animated="false" prefHeight="456.0" prefWidth="304.0" text="Detalles">
+                                       <content>
+                                          <VBox maxWidth="1.7976931348623157E308">
+                                             <children>
+                                                <HBox prefHeight="39.0" prefWidth="282.0" spacing="5.0">
+                                                   <children>
+                                                      <Label prefHeight="27.0" prefWidth="56.0" text="Vendedor: ">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="textfieldUser" prefHeight="26.0" prefWidth="96.0" promptText="Usuario" />
+                                                      <Label prefHeight="27.0" prefWidth="34.0" text="Fecha:">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="textfieldDate" prefHeight="26.0" prefWidth="74.0" promptText="00/00/00" />
+                                                   </children>
+                                                </HBox>
+                                                <TableView fx:id="tableViewItems" prefHeight="291.0" prefWidth="282.0" VBox.vgrow="ALWAYS">
+                                                   <columns>
+                                                      <TableColumn fx:id="columnItem" prefWidth="152.0" text="Item" />
+                                                      <TableColumn fx:id="columnQuantity" prefWidth="61.0" text="Cant" />
+                                                      <TableColumn fx:id="columnPrice" prefWidth="77.0" text="Precio" />
+                                                   </columns>
+                                                </TableView>
+                                                <GridPane prefHeight="90.0" prefWidth="273.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Descuento" GridPane.hgrow="ALWAYS" />
+                                                      <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Recargo" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                                                      <Label fx:id="textfieldDiscount" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="0.00" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                                                      <Label fx:id="textfieldSurcharge" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="0.00" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                                                      <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Total" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                                                      <Label fx:id="textfieldTotal" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="card-label" text="0.00" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                                                   </children>
+                                                </GridPane>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
+                                 </children>
+                              </HBox>
+                              <Button layoutX="374.0" layoutY="580.0" mnemonicParsing="false" onAction="#onActionExportTo" prefHeight="26.0" prefWidth="134.0" text="Exportar a excel" />
+                              <Button layoutX="515.0" layoutY="580.0" mnemonicParsing="false" onAction="#onActionPayAll" prefHeight="26.0" prefWidth="130.0" text="Pagar cuenta" />
+                              <TextField fx:id="textfieldDebt" alignment="CENTER_RIGHT" disable="true" layoutX="150.0" layoutY="501.0" prefHeight="34.0" prefWidth="190.0" promptText="000.00" styleClass="card-label" />
+                              <Label alignment="CENTER_RIGHT" layoutX="224.0" layoutY="482.0" prefHeight="16.0" prefWidth="115.0" text="TOTAL DEUDA" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
         </items>
       </SplitPane>
    </children>

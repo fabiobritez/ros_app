@@ -1,11 +1,12 @@
-package ar.com.doctatech.stock;
+package ar.com.doctatech.ingredient;
 
-import ar.com.doctatech.stock.ingredient.Ingredient;
-import ar.com.doctatech.stock.ingredient.IngredientDAO;
-import ar.com.doctatech.stock.ingredient.IngredientDAOMySQL;
-import ar.com.doctatech.stock.ingredient.Unit;
+import ar.com.doctatech.ingredient.model.Ingredient;
+import ar.com.doctatech.ingredient.model.IngredientDAO;
+import ar.com.doctatech.ingredient.model.IngredientDAOMySQL;
+import ar.com.doctatech.ingredient.model.Unit;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
@@ -26,28 +27,21 @@ public class StockServices
     {
         Dialog<Integer> dialog = new Dialog<>();
 
-        dialog.setTitle("Añade stock de tu ingrediente");
+        dialog.setTitle("Agrega stock");
 
-        dialog.setHeaderText("Ingresa el stock que quieres añadir");
+        dialog.setHeaderText("Ingresa cantidad a añadir");
         dialog.setResizable(true);
 
-        Label labelDescription = new Label("Stock por añadir: ");
-        TextField textFieldStock = new TextField("0");
-        ComboBox<Unit> comboBoxUnits = new ComboBox<>();
-        comboBoxUnits.setItems(
-                observableArrayList( Unit.values() )
-        );
-        comboBoxUnits.getSelectionModel().select(Unit.getUnit( ingredient.getUnit() ));
-        comboBoxUnits.setDisable(true);
-
-        Text textDiv = new Text("0 " + getDivUnit(comboBoxUnits));
-
         GridPane grid = new GridPane();
+        Label labelDescription = new Label("Añadir: ");
+        TextField textFieldStock = new TextField("0");
+        Label labelUnit = new Label(ingredient.getUnit());
+        Text textDiv = new Text("0 " + ingredient.getUnitDiv());
+
         grid.add(labelDescription, 1,1);
         grid.add(textFieldStock,2,1);
-        grid.add(comboBoxUnits, 3, 1);
+        grid.add(labelUnit, 3, 1);
         grid.add(textDiv,2,2);
-
         dialog.getDialogPane().setContent(grid);
 
         ButtonType buttonTypeAdd = new ButtonType("Agregar", ButtonBar.ButtonData.APPLY);
@@ -63,14 +57,19 @@ public class StockServices
                 addStockButton.setDisable(
                         oldValue.trim().isEmpty()
                 );
-
             }
-            else
-                {
-                addStockButton.setDisable(newValue.trim().isEmpty());
+            else addStockButton.setDisable(newValue.trim().isEmpty());
+            updateDiv1000(textFieldStock,textDiv,ingredient.getUnitDiv());
+        });
 
+        textFieldStock.setOnKeyPressed(event ->
+        {
+            String sValue =  textFieldStock.getText().trim();
+            if(event.getCode() == KeyCode.ENTER && !sValue.isEmpty())
+            {
+                dialog.setResult( Integer.parseInt(sValue) );
+                dialog.close();
             }
-            updateDiv1000(textFieldStock,textDiv,comboBoxUnits);
         });
 
         dialog.setResultConverter(buttonType ->
@@ -86,6 +85,18 @@ public class StockServices
 
         return result.orElse(0);
     }
+
+    private void updateDiv1000(TextField textField, Text text,String unitDiv)
+    {
+        if(!unitDiv.equals("unidades"))
+            if (!textField.getText().isEmpty()) {
+                double stockmin = Integer.parseInt(textField.getText());
+                text.setText(String.format("%.2f", stockmin / 1000) + " " + unitDiv);
+            } else text.setText("0.00 " + unitDiv);
+        else
+            text.setText(textField.getText() + " unidades");
+    }
+
 
     protected void updateDiv1000(TextField textField, Text text, ComboBox<Unit> comboboxUnit)
     {
@@ -116,4 +127,5 @@ public class StockServices
         }
         return "unidades";
     }
+
 }

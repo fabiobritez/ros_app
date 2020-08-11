@@ -4,7 +4,7 @@ import ar.com.doctatech.food.model.Food;
 import ar.com.doctatech.food.model.ItemRecipe;
 import ar.com.doctatech.shared.PROCESS;
 import ar.com.doctatech.shared.exceptions.NotFoundException;
-import ar.com.doctatech.stock.ingredient.Ingredient;
+import ar.com.doctatech.ingredient.model.Ingredient;
 import ar.com.doctatech.shared.utilities.FXTool;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -18,16 +18,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static ar.com.doctatech.shared.utilities.ControlUtil.checkFields;
-import static ar.com.doctatech.shared.utilities.FXPath.IMAGE_FOOD_DEFAULT;
 import static ar.com.doctatech.shared.utilities.FileUtil.deleteFile;
 
 public class FoodController
@@ -86,7 +87,8 @@ public class FoodController
         {
             double value = Double.parseDouble(textfieldProfit.getText());
             double cost = Double.parseDouble(textfieldCost.getText());
-            textfieldPrice.setText( Double.sum(cost, cost*(value/100) ) + "");
+            double price = Double.sum(cost, cost*(value/100));
+            textfieldPrice.setText( String.format(Locale.US, "%.2f", price));
         }else
         {
          if(textfieldCost.getText().isEmpty())
@@ -102,12 +104,11 @@ public class FoodController
             double price = Double.parseDouble(textfieldPrice.getText());
             double cost = Double.parseDouble(textfieldCost.getText());
             double profit = (price-cost)*100/cost;
-            textfieldProfit.setText(profit+"");
+            textfieldProfit.setText(String.format(Locale.US, "%.2f",profit));
         }else
         {
             textfieldProfit.setText("0.0");
         }
-
     }
 
     @FXML private void onActionButtonSelectImage() { selectImage(); }
@@ -129,7 +130,6 @@ public class FoodController
             loadFoodAndIngredients();
             addListenerEvents();
         });
-        setProcess(PROCESS.VIEWING);
     }
 
     private HashMap<String, Food> mapFood;
@@ -141,8 +141,6 @@ public class FoodController
 
     private FilteredList<String> flFood;
     private FilteredList<String> flIngredients;
-
-    private final String IMAGE_DEFAULT = getClass().getResource(IMAGE_FOOD_DEFAULT).toExternalForm();
 
     private void loadFoodAndIngredients()
     {
@@ -176,39 +174,45 @@ public class FoodController
         FXTool.setTextFieldDouble(textfieldProfit);
         FXTool.setTextFieldDouble(textfieldPrice);
 
-        //SELECTED ITEM PROPERTY
-        listViewFood.getSelectionModel().selectedItemProperty()
-                .addListener((observable) ->
-                        selectFood(listViewFood.getSelectionModel().getSelectedItem()));
-
         //SEARCH
         textfieldSearchFood.textProperty().
-                addListener((observable, oldValue, newValue) ->
+                addListener((obs, old, value) ->
                         flFood.setPredicate(food ->
-                                food.contains( newValue.toUpperCase().trim() )));
+                                food.contains( value.toUpperCase().trim() )));
+
         textfieldSearchIngredient.textProperty().
-                addListener((observable, oldValue, newValue) ->
+                addListener((obs, old, value) ->
                         flIngredients.setPredicate( ingredient ->
-                                ingredient.contains( newValue.toUpperCase().trim() )));
-        //UX
+                                ingredient.contains( value.toUpperCase().trim() )));
+
+        //SELECTED ITEM PROPERTY
+        listViewFood.getSelectionModel().selectedItemProperty()
+                .addListener((observable) -> selectFood());
+
+        listViewFood.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.UP && listViewFood
+                    .getSelectionModel().isSelected(0))
+                textfieldSearchFood.requestFocus(); });
+
         listViewIngredients.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.UP &&
-                    listViewIngredients.getSelectionModel().isSelected(0))
+            if(event.getCode() == KeyCode.UP && listViewIngredients
+                    .getSelectionModel().isSelected(0))
                 textfieldSearchIngredient.requestFocus();
             else if(event.getCode() == KeyCode.ENTER)
-                addIngredientToFood();
-        });
-        listViewFood.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.UP &&
-                    listViewFood.getSelectionModel().isSelected(0))
-                textfieldSearchFood.requestFocus();
-        });
+                addIngredientToFood(); });
 
-        listViewFood.getSelectionModel().selectFirst();
-        listViewFood.requestFocus();
+        listViewIngredients.setOnMouseClicked(event -> {
+            if(event.getClickCount()==2 &&
+                    event.getButton()== MouseButton.PRIMARY)
+                            addIngredientToFood();
+        });
 
         //TEXTFIELD PRICE
-        checkBoxPrice.selectedProperty().addListener((observable, oldValue, newValue) -> textfieldPrice.setDisable(!newValue));
+        checkBoxPrice.selectedProperty().addListener((obs, old, value) -> textfieldPrice.setDisable(!value));
+        checkBoxPrice.setSelected(false);
+
+        listViewFood.getSelectionModel().selectFirst();
+        textfieldSearchFood.requestFocus();
     }
 
     //region FOOD METHODS
@@ -216,19 +220,20 @@ public class FoodController
     /**
      * Obtiene el Food del HashMap y rellena el formulario.
      * Tambien la tabla de ingredientes.
-     * @param name Nombre del plato de comida
      */
-    private void selectFood(String name)
+    private void selectFood()
     {
+        String name = listViewFood.getSelectionModel().getSelectedItem();
+
         if(name !=null)
         {
             Food food = mapFood.get(name);
 
             textfieldID.setText    ( food.getFoodID() + "");
             textfieldName.setText  ( food.getName()   + "");
-            textfieldCost.setText  ( food.getCost()   + "");
-            textfieldProfit.setText( food.getProfit() + "");
-            textfieldPrice.setText ( food.getPrice()  + "");
+            textfieldCost.setText  ( String.format(Locale.US, "%.2f", food.getCost())   );
+            textfieldProfit.setText( String.format(Locale.US, "%.2f", food.getProfit()) );
+            textfieldPrice.setText ( String.format(Locale.US, "%.2f", food.getPrice())  );
             showImage(food.getImage());
 
             obsItemRecipe.clear();
@@ -247,8 +252,8 @@ public class FoodController
         }
         else
         {
-            labelPathImage.setText(IMAGE_DEFAULT);
-            imageView.setImage(new Image(IMAGE_DEFAULT));
+            labelPathImage.setText("");
+            imageView.setImage(null);
         }
     }
 
@@ -290,11 +295,10 @@ public class FoodController
             try
             {
                 String pathImage = labelPathImage.getText();
-
-                if(!pathImage.equals(IMAGE_DEFAULT))
+                if(!pathImage.trim().isEmpty())
                 {
+                    //COPIAR IMAGEN Y SETEAR
                     String copyImage = copyImageToHomeFood(removeProtocolImage(pathImage), name);
-
                     if(copyImage != null)
                     {
                         labelPathImage.setText(addProtocolImage( copyImage ));
@@ -309,22 +313,18 @@ public class FoodController
                         labelPathImage.getText(),
                         true
                 );
-                System.out.println(labelPathImage.getText());
+                System.out.println("image saved: "+ labelPathImage.getText());
 
-                //TODO verificar si el food ya existe.
-                //si es asi actualizar y cambiar exist = true
+                //TODO verificar que no haya con el mismo nombre y exist
                 foodDAO.save(food);
-                textfieldID.setText( food.getFoodID() + "" );
-
                 obsFood.add(name);
                 mapFood.put(name, food);
 
-                setProcess(PROCESS.VIEWING);
+                textfieldID.setText( food.getFoodID() + "" );
+                listViewFood.requestFocus();
+                listViewFood.getSelectionModel().select(food.getName());
             }
-            catch (SQLException e)
-            {
-                FXTool.alertException(e);
-            }
+            catch (SQLException e) { FXTool.alertException(e); }
         }
     }
 
@@ -348,11 +348,8 @@ public class FoodController
                 food.setProfit( Double.parseDouble(profit) );
                 food.setPrice ( Double.parseDouble(price) );
 
-                 if(updateImage( food, labelPathImage.getText() ))
-                 {
-                     labelPathImage.setText(food.getImage());
-                     imageView.setImage( new Image( food.getImage() ) );
-                 }
+                if(!labelPathImage.getText().trim().isEmpty())
+                    updateImage( food, labelPathImage.getText());
 
                 foodDAO.update(food);
 
@@ -363,17 +360,15 @@ public class FoodController
                 }
                 mapFood.put(name, food);
 
+                listViewFood.requestFocus();
+                listViewFood.getSelectionModel().select(name);
                 setProcess(PROCESS.VIEWING);
             }
-            catch (SQLException | NotFoundException exception)
-            {
-                FXTool.alertException(exception);
-            }
-
+            catch (SQLException | NotFoundException e) { FXTool.alertException(e); }
         }
     }
     /** Metodo auxiliar de updateFood() */
-    private boolean updateImage(Food food, String newImagePath)
+    private void updateImage(Food food, String newImagePath)
     {
         String currentImage = food.getImage();
         //si se cambio de foto
@@ -382,41 +377,50 @@ public class FoodController
             String copyNewImage = copyImageToHomeFood(removeProtocolImage(newImagePath), food.getName());
             if (copyNewImage != null) //SI SE LOGRO HACER LA COPIA
             {
-                if (!currentImage.equals(IMAGE_DEFAULT)) //SI LA IMAGEN ANTERIOR NO ES DEFAULT
-                    if (!addProtocolImage(copyNewImage).equals(currentImage)) //VERIFICA SI CAMBIARON EL NOMBRE DE LA COMIDA
-                        deleteFile(removeProtocolImage(currentImage));
+                if (!addProtocolImage(copyNewImage).equals(currentImage)) //VERIFICA SI CAMBIARON EL NOMBRE DE LA COMIDA
+                    deleteFile(removeProtocolImage(currentImage));
 
                 food.setImage(addProtocolImage(copyNewImage));
-            }
-            else
-            {
-                return false;
+                labelPathImage.setText(food.getImage());
+                imageView.setImage( new Image( food.getImage() ) );
             }
         }
-        return true;
     }
 
-
+    //TODO limpiar luego de eliminar
     private void deleteFood()
     {
-        String foodID = textfieldID.getText();
+        String foodID = textfieldID.getText().trim();
         String name = textfieldName.getText().trim();
 
         if(checkFields(foodID, name))
         {
             try
             {
-                foodDAO.remove(  Integer.parseInt(foodID));
+                Alert alert = new Alert(
+                        Alert.AlertType.WARNING,
+                        "Eliminación de plato.",
+                        ButtonType.YES,
+                        ButtonType.CANCEL
+                );
+                alert.getDialogPane().getStylesheets().add(
+                        getClass().getResource("/css/alerts.css").toExternalForm());
 
-                mapFood.remove(name);
-                obsFood.remove(name);
-                deleteFile(removeProtocolImage(labelPathImage.getText() ));
-                FXTool.alertInformation("Operación realizada", "Se ha eliminado con exito");
+                alert.setHeaderText("¿Estas seguro que desea eliminar \na '"+name+"'?");
+                alert.showAndWait();
+
+                if(alert.getResult()==ButtonType.YES)
+                {
+                    foodDAO.remove(  Integer.parseInt(foodID));
+                    mapFood.remove(name);
+                    obsFood.remove(name);
+                    deleteFile(removeProtocolImage(labelPathImage.getText() ));
+
+                    listViewFood.requestFocus();
+                    listViewFood.getSelectionModel().selectNext();
+                }
             }
-            catch (Exception exception)
-            {
-                FXTool.alertException(exception);
-            }
+            catch (Exception e) { FXTool.alertException(e); }
         }
     }
 
@@ -429,23 +433,17 @@ public class FoodController
      */
     private void addNewIngredient()
     {
-
-        try {
-
+        try
+        {
             Ingredient newIngredient = getNewIngredient();
             if(newIngredient!=null)
             {
-
                 ingredientDAO.save(newIngredient);
-
                 mapIngredients.put(newIngredient.getDescription(), newIngredient);
                 obsIngredients.add(newIngredient.getDescription());
-
             }
 
-        } catch (Exception e) {
-            FXTool.alertException(e);
-        }
+        } catch (Exception e) { FXTool.alertException(e); }
     }
 
     /**
@@ -453,11 +451,12 @@ public class FoodController
      */
     private void addIngredientToFood()
     {
-        textMessageItemRecipe.setText("");
-       int foodID = Integer.parseInt(textfieldID.getText());
-       String name = textfieldName.getText();
+       textMessageItemRecipe.setText("");
 
+       int foodID = Integer.parseInt(textfieldID.getText());
+       String foodName = textfieldName.getText();
        String description = listViewIngredients.getSelectionModel().getSelectedItem();
+
        if(description!=null)
        {
            Ingredient ingredient = mapIngredients.get(description);
@@ -466,21 +465,18 @@ public class FoodController
            {
                Integer quantity = getQuantity(ingredient.getUnit());
                if (quantity != null) {
-                   try {
+                   try
+                   {
                        ItemRecipe itemRecipe = new ItemRecipe(ingredient, quantity);
 
-
                        foodDAO.addItemRecipe(foodID, itemRecipe);
-                       mapFood.get(name).addItemRecipe(itemRecipe);
+                       mapFood.get(foodName).addItemRecipe(itemRecipe);
                        obsItemRecipe.add(itemRecipe);
-
-
-                   } catch (SQLException e) {
-                       FXTool.alertException(e);
                    }
+                   catch (SQLException e) { FXTool.alertException(e); }
                }
-           }else
-               {
+           }
+           else {
                textMessageItemRecipe.setText("Ya haz agregado este ingrediente!");
            }
        }
@@ -489,20 +485,18 @@ public class FoodController
     private void removeIngredientFromFood()
     {
         int foodID = Integer.parseInt(textfieldID.getText());
-        String name = textfieldName.getText();
+        String nameFood = textfieldName.getText();
         ItemRecipe itemRecipe = tableViewIngredients.getSelectionModel().getSelectedItem();
+
         if(itemRecipe != null)
         {
             try
             {
                 foodDAO.removeItemRecipe(foodID, itemRecipe);
-                mapFood.get(name).removeItemRecipe(itemRecipe.getDescription());
+                mapFood.get(nameFood).removeItemRecipe(itemRecipe.getDescription());
                 obsItemRecipe.remove(itemRecipe);
             }
-            catch (SQLException e)
-            {
-                FXTool.alertException(e);
-            }
+            catch (SQLException e) { FXTool.alertException(e); }
         }
     }
 
@@ -510,49 +504,45 @@ public class FoodController
 
     private void setProcess(PROCESS process)
     {
+        checkBoxPrice.setSelected(false);
         if(process.equals(PROCESS.VIEWING) )
         {
-            textfieldID.setVisible      (true);
-            textfieldName.setEditable   (false);
-            textfieldCost.setEditable   (false);
-            textfieldProfit.setEditable (false);
-            textfieldPrice.setEditable  (false);
+            textfieldName.setDisable(true);
+            textfieldCost.setDisable(true);
+            textfieldProfit.setDisable(true);
+            textfieldPrice.setDisable(true);
 
             buttonDelete.setDisable (false);
             buttonEdit.setDisable   (false);
             buttonSave.setDisable   (true);
             buttonUpdate.setDisable (true);
 
-            checkBoxPrice.setVisible(false);
             buttonSelectImage.setVisible(false);
             tabIngredient.setDisable(false);
         }
         else if(process.equals(PROCESS.EDITING))
         {
-            textfieldID.setVisible      (true);
-            textfieldName.setEditable   (true);
-            textfieldCost.setEditable   (true);
-            textfieldProfit.setEditable (true);
-            textfieldPrice.setEditable  (true);
+            textfieldName.setDisable(false);
+            textfieldCost.setDisable(false);
+            textfieldProfit.setDisable(false);
 
             buttonDelete.setDisable (true);
             buttonSave.setDisable   (true);
             buttonUpdate.setDisable (false);
             buttonEdit.setDisable   (true);
 
-            checkBoxPrice.setVisible(true);
             buttonSelectImage.setVisible(true);
             tabIngredient.setDisable(false);
             textfieldName.requestFocus();
         }
         else if(process.equals(PROCESS.ADDING))
         {
-            textfieldID.setVisible      (false);
-            textfieldName.setEditable   (true);
-            textfieldCost.setEditable   (true);
-            textfieldProfit.setEditable (true);
-            textfieldPrice.setEditable  (true);
+            textfieldName.setDisable(false);
+            textfieldCost.setDisable(false);
+            textfieldProfit.setDisable(false);
+            textfieldPrice.setDisable(true);
 
+            textfieldID.setText("");
             textfieldName.setText   ("");
             textfieldCost.setText   ("0");
             textfieldProfit.setText ("0");
@@ -563,10 +553,9 @@ public class FoodController
             buttonUpdate.setDisable (true);
             buttonEdit.setDisable   (true);
 
-            checkBoxPrice.setVisible(true);
             buttonSelectImage.setVisible(true);
-            labelPathImage.setText(IMAGE_DEFAULT);
-            imageView.setImage(new Image(IMAGE_DEFAULT));
+            labelPathImage.setText("");
+            imageView.setImage(null);
             tabIngredient.setDisable(true);
 
             textfieldName.requestFocus();

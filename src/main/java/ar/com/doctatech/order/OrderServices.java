@@ -7,7 +7,11 @@ import ar.com.doctatech.food.model.FoodDAOMySQL;
 import ar.com.doctatech.order.dao.OrderDAO;
 import ar.com.doctatech.order.dao.OrderDAOMySQL;
 import ar.com.doctatech.order.model.ItemFood;
+import ar.com.doctatech.shared.exceptions.PrivilegeException;
 import ar.com.doctatech.shared.utilities.FXTool;
+import ar.com.doctatech.user.UserSession;
+import ar.com.doctatech.user.dialogs.AdminUserDialog;
+import ar.com.doctatech.user.model.UserRole;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Font;
@@ -39,7 +43,7 @@ public class OrderServices {
         textInputDialog.setGraphic(null);
         textInputDialog.setResizable(true);
 
-        FXTool.setTextFieldInteger( textInputDialog.getEditor() );
+        FXTool.setTextFieldInteger( textInputDialog.getEditor(), 7);
         Optional<String> result = textInputDialog.showAndWait();
 
         if(result.isPresent())
@@ -51,14 +55,17 @@ public class OrderServices {
             return null;
     }
 
-    protected double getTotal(List<ItemFood> list)
+    protected double getSubtotal(List<ItemFood> list)
     {
-        double total = 0.0;
-        for (ItemFood itemFood : list)
-            total += itemFood.getAmount();
-        return total;
+        return list.stream().mapToDouble(ItemFood::getAmount).sum();
     }
 
+
+    protected boolean hasPermissionToCancel()
+    {
+            AdminUserDialog admdialog = new AdminUserDialog();
+            return admdialog.showAndStop();
+    }
     //endregion
 
 

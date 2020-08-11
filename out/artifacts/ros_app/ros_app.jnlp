@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="ros_app.jnlp">
   <information>
-    <title>fapp</title>
-    <vendor>Unknown</vendor>
-    <description>ros_app</description>
+    <title>RosApp</title>
+    <vendor>ar.com.doctatech</vendor>
+    <description>Aplicación dedicada al control y reporte de ventas</description>
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="fontawesomefx-8.9.jar" size="571068" download="eager" />
-    <jar href="ros_app.jar" size="18821" download="eager" />
+    <jar href=".libraries/activation-1.1.jar" size="62983" download="eager" />
+    <jar href=".libraries/commons-codec-1.13.jar" size="344339" download="eager" />
+    <jar href=".libraries/commons-collections4-4.4.jar" size="751914" download="eager" />
+    <jar href=".libraries/commons-compress-1.19.jar" size="615064" download="eager" />
+    <jar href=".libraries/commons-math3-3.6.1.jar" size="2213560" download="eager" />
+    <jar href=".libraries/curvesapi-1.06.jar" size="111875" download="eager" />
+    <jar href=".libraries/fontawesomefx-8.9.jar" size="571068" download="eager" />
+    <jar href=".libraries/javax.mail-1.6.2.jar" size="659031" download="eager" />
+    <jar href=".libraries/mysql-connector-java-8.0.20.jar" size="2385601" download="eager" />
+    <jar href=".libraries/poi-4.1.1.jar" size="2827712" download="eager" />
+    <jar href=".libraries/poi-ooxml-4.1.1.jar" size="1859884" download="eager" />
+    <jar href=".libraries/poi-ooxml-schemas-4.1.1.jar" size="7884238" download="eager" />
+    <jar href=".libraries/protobuf-java-3.6.1.jar" size="1421323" download="eager" />
+    <jar href=".libraries/xmlbeans-3.1.0.jar" size="2579738" download="eager" />
+    <jar href="ros_app.jar" size="175018" download="eager" />
   </resources>
-  <jfx:javafx-desc  width="600" height="400" main-class="ar.com.doctatech.MainApp"  name="ros_app" />
+  <jfx:javafx-desc  width="600" height="400" main-class="ar.com.doctatech.RosApp"  name="ros_app" />
   <update check="background"/>
 </jnlp>

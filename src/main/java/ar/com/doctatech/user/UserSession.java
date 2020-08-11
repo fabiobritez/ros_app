@@ -49,6 +49,24 @@ public class UserSession
         }
     }
 
+
+
+    public static boolean hasAdminPrivilege(String user, String pass) throws NotFoundException, SQLException, PrivilegeException {
+
+            UserDAO userDAO = new UserDAOMySQL();
+            User userFound = userDAO.get( user ); //dado el caso NotFoundException
+        if(userFound.hasRole(UserRole.ADMIN))
+            if ( userFound.isEnabled() )
+                if ( userFound.getPassword().equals( SecurityUtil.encrypt(pass) ) )
+                    return true;
+                else
+                    throw new PrivilegeException ( "Contraseña incorrecta" );
+            else
+                throw new PrivilegeException ( "El usuario ingresado no esta habilitado" );
+        else
+            throw new PrivilegeException ("El usuario ingresado no tiene permiso de administrador");
+    }
+
     /**
      * Debe verificar si la password pasada como parametro es igual
      * a la password del usuario logueado. Devuelve {@code true} en

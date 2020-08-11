@@ -4,15 +4,13 @@ import ar.com.doctatech.shared.exceptions.NotFoundException;
 import ar.com.doctatech.shared.utilities.FXPath;
 import ar.com.doctatech.shared.utilities.FXTool;
 import ar.com.doctatech.shared.utilities.GoogleMail;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -47,19 +45,19 @@ public class UserAuthenticationController
     }
 
     @FXML
-    public void handleButtonUserCheck(ActionEvent event)
+    public void onActionButtonUserCheck()
     {
         sendRecoveryCodeTo( txtUser.getText() );
     }
 
     @FXML
-    public void handleButtonCodeCheck(ActionEvent event)
+    public void onActionButtonCodeCheck()
     {
         verifyCode( txtCodeEntered.getText() );
     }
 
     @FXML
-    public void handleButtonBack(ActionEvent event)
+    public void onActionButtonBack()
     {
         backToLogin();
     }
@@ -78,55 +76,41 @@ public class UserAuthenticationController
                 email = getUser(username).getEmail();
                 return true;
             }
-            catch (SQLException sqlException)
-            {
-                FXTool.alertException(sqlException);
-            }
-            catch (NotFoundException e)
-            {
-                FXTool.textError(textStatus, e.getMessage());
-            }
+            catch (SQLException e) { FXTool.alertException(e); }
+            catch (NotFoundException e) {FXTool.textError(textStatus, e.getMessage()); }
         }
-        else
-        {
-            FXTool.textError(
-                    textStatus,
-                    "ERROR: Ingrese un usuario."
-            );
-        }
+        else { FXTool.textError(textStatus,"ERROR: Ingrese un usuario"); }
         return false;
     }
 
     private void sendRecoveryCodeTo(String username)
     {
+
+       Task<Void> taskSend = new Task<Void>(){
+           @Override
+           protected Void call() throws Exception {
+               GoogleMail.sendEmail( email, generatedCode );
+               return null;
+           }
+       };
+       taskSend.setOnFailed(e->
+       {
+           FXTool.alertException((Exception) taskSend.getException());
+           setState(State.STARTING);
+       });
+       taskSend.setOnSucceeded(event -> setState(State.VERIFYING_CODE));
+
         if(verifyUser(username))
         {
-                setState(State.SENDING_EMAIL);
-
-                Platform.runLater( ()->
-                        {
-                            try
-                            {
-                                generatedCode = generateRandomCode();
-                                GoogleMail.sendEmail( email, generatedCode );
-                                setState(State.VERIFYING_CODE);
-                            }
-                            catch (MessagingException messagingException)
-                            {
-                                FXTool.alertException(messagingException);
-                                setState(State.STARTING);
-                            }
-                        }
-                );
+            generatedCode = generateRandomCode();
+            setState(State.SENDING_EMAIL);
+            new Thread(taskSend).start();
         }
-
-
     }
 
     private void verifyCode(String codeEntered)
     {
         int attemptsAllowed = 3;
-
         if(attemptsMade < attemptsAllowed)
         {
             attemptsMade++;
@@ -137,15 +121,9 @@ public class UserAuthenticationController
                     ResetPasswordController STNPController = FXTool.replaceScene(anchorPane, FXPath.SET_NEW_PASSWORD);
                     STNPController.setUser(txtUser.getText());
                 }
-                catch (IOException exception)
-                {
-                    FXTool.alertException(exception);
-                }
+                catch (IOException e) { FXTool.alertException(e); }
             }
-            else
-            {
-                FXTool.alertException(new Exception("CODIGO INCORRECTO"));
-            }
+            else { FXTool.alertException(new Exception("CODIGO INCORRECTO")); }
         }
         else
         {
@@ -161,10 +139,7 @@ public class UserAuthenticationController
         {
             FXTool.replaceSceneContent(anchorPane, FXPath.LOGIN);
         }
-        catch (IOException exception)
-        {
-            FXTool.alertException(exception);
-        }
+        catch (IOException e) { FXTool.alertException(e); }
     }
 
     private void setState( State state )

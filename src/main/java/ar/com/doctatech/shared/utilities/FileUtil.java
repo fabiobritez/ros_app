@@ -48,6 +48,25 @@ public class FileUtil {
          return path.toString();
     }
 
+    public static String getConfigDirIfNotExists()
+    {
+        Path path = Paths.get(System.getProperty("user.home")+
+                File.separator + "RosApp" + File.separator + ".config"
+        );
+        if (!Files.exists(path))
+        {
+            try
+            {
+                Files.createDirectories(path);
+            }
+            catch (IOException e)
+            {
+                FXTool.alertException(e);
+            }
+        }
+        return path.toString();
+    }
+
     public static Optional<String> getExtension(String filename)
     {
         return Optional.ofNullable(filename)

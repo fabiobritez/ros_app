@@ -2,14 +2,12 @@ package ar.com.doctatech.reports;
 
 import ar.com.doctatech.order.model.OrderModel;
 import ar.com.doctatech.shared.utilities.FXTool;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 
@@ -28,6 +26,8 @@ public class ReportsController extends ReportServices
     @FXML private ComboBox<String> comboBoxStatus, comboBoxIsPaid;
     @FXML private TableView<OrderModel> tableViewOrders;
     @FXML private TableColumn<OrderModel, String> columnDate,columnCustomer, columnTotal,columnIsPaid, columnIsDelivered, columnUser;
+
+    @FXML private Label labelTotalSales, labelTotalDebt;
 
     @FXML private void onActionButtonFilter(){ filterOrders(); }
     @FXML private void onActionButtonExport(){ exportToExcel(); }
@@ -82,6 +82,18 @@ public class ReportsController extends ReportServices
         try {
             obsOrders.clear();
             obsOrders.addAll( orderDAO.getOrders(dateStart,dateEnd,isPaid,status));
+
+            double total = obsOrders.stream()
+                    .filter(item -> item.getStatusDelivery().equals("ENTREGADO"))
+                    .mapToDouble(OrderModel::getTotal).sum();
+            labelTotalSales.setText(total + "");
+            double debt = obsOrders.stream()
+                    .filter(item -> !item.isPaid() && item.getStatusDelivery().equals("ENTREGADO"))
+                    .mapToDouble(OrderModel::getTotal).sum();
+
+
+            labelTotalDebt.setText(debt + "");
+
         } catch (SQLException e) {
             FXTool.alertException(e);
         }
@@ -93,19 +105,21 @@ public class ReportsController extends ReportServices
         {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel(*.xlsx)", "*.xlsx"));
-            fileChooser.setInitialFileName("*.xlsx");
+            fileChooser.setInitialFileName("VENTAS_" +
+                    comboBoxStatus.getSelectionModel().getSelectedItem() + "_" +
+                    comboBoxIsPaid.getSelectionModel().getSelectedItem() +
+                    ".xlsx");
 
             File fileSaved = fileChooser.showSaveDialog(comboBoxIsPaid.getScene().getWindow());
             if(fileSaved!=null)
             {
                 if(!fileSaved.getName().endsWith(".xlsx"))
                     fileSaved = new File(fileSaved.getAbsolutePath()+ ".xlsx");
-                try {
-                    exportSales(obsOrders, fileSaved);
-                    //TODO LOADING
-                } catch (IOException e) {
-                    FXTool.alertException(e);
-                }
+
+                File finalFileSaved = fileSaved;
+
+                new Thread(exportSalesTask(obsOrders,finalFileSaved)).start();
+              //TODO LOADING
             }
         }
     }

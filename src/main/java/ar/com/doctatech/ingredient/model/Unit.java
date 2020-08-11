@@ -1,6 +1,4 @@
-package ar.com.doctatech.stock.ingredient;
-
-import javax.swing.event.MouseInputListener;
+package ar.com.doctatech.ingredient.model;
 
 public enum Unit {
     GRAMS("GRAMOS"),

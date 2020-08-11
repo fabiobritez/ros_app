@@ -5,22 +5,31 @@
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.user.login.UserAuthenticationController">
+<AnchorPane fx:id="anchorPane" prefHeight="720.0" prefWidth="1080.0" styleClass="panel" stylesheets="@../../../css/dark.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.com.doctatech.user.login.UserAuthenticationController">
    <children>
-      <TextField fx:id="txtUser" layoutX="300.0" layoutY="218.0" prefHeight="31.0" prefWidth="302.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="398.0" />
-      <Text fx:id="textUser" layoutX="300.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ingresa el usuario" wrappingWidth="400.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" />
-      <ProgressIndicator fx:id="progressIndicator" layoutX="427.0" layoutY="318.0" prefHeight="52.0" prefWidth="147.0" />
-      <Text fx:id="textStatus" layoutX="300.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Verificando usuario..." wrappingWidth="400.0" />
-      <Button fx:id="buttonUserCheck" layoutX="622.0" layoutY="218.0" mnemonicParsing="false" onAction="#handleButtonUserCheck" prefHeight="31.0" prefWidth="81.0" text="Verificar" AnchorPane.rightAnchor="300.0" />
-      <TextField fx:id="txtCodeEntered" layoutX="300.0" layoutY="318.0" prefHeight="26.0" prefWidth="302.0" />
-      <Button fx:id="buttonCodeVerification" layoutX="619.0" layoutY="315.0" mnemonicParsing="false" onAction="#handleButtonCodeCheck" prefHeight="32.0" prefWidth="81.0" text="Verificar" />
-      <Text fx:id="textCodeVerification" layoutX="301.0" layoutY="305.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ingresa el codigo enviado" wrappingWidth="400.0" />
-      <Button layoutX="899.0" layoutY="547.0" mnemonicParsing="false" onAction="#handleButtonBack">
+      <Text fx:id="textUser" fill="WHITE" layoutX="340.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ingresa el usuario" wrappingWidth="400.0" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="340.0" />
+      <ProgressIndicator fx:id="progressIndicator" layoutX="467.0" layoutY="289.0" prefHeight="52.0" prefWidth="147.0" AnchorPane.leftAnchor="467.0" AnchorPane.rightAnchor="466.0" />
+      <Text fx:id="textStatus" fill="WHITE" layoutX="340.0" layoutY="281.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Verificando usuario..." wrappingWidth="400.0" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="340.0" />
+      <Text fx:id="textCodeVerification" fill="WHITE" layoutX="340.0" layoutY="357.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Se ha enviado un codigo a tu correo. Ingresalo aqui" wrappingWidth="400.0" />
+      <Button layoutX="980.0" layoutY="642.0" mnemonicParsing="false" onAction="#onActionButtonBack" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="70.0">
          <graphic>
-            <FontAwesomeIconView glyphName="ARROW_LEFT" />
+            <FontAwesomeIconView fill="WHITE" glyphName="ARROW_LEFT" />
          </graphic>
       </Button>
+      <HBox layoutX="340.0" layoutY="231.0" prefWidth="400.0" spacing="10.0" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="340.0">
+         <children>
+            <TextField fx:id="txtUser" prefHeight="30.0" prefWidth="308.0" />
+            <Button fx:id="buttonUserCheck" mnemonicParsing="false" onAction="#onActionButtonUserCheck" prefHeight="30.0" prefWidth="90.0" text="Verificar" />
+         </children>
+      </HBox>
+      <HBox layoutX="340.0" layoutY="370.0" prefWidth="400.0" spacing="10.0">
+         <children>
+            <TextField fx:id="txtCodeEntered" prefHeight="30.0" prefWidth="300.0" />
+            <Button fx:id="buttonCodeVerification" mnemonicParsing="false" onAction="#onActionButtonCodeCheck" prefHeight="30.0" prefWidth="90.0" text="Verificar" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

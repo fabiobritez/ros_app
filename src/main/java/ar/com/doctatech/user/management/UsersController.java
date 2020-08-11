@@ -2,6 +2,7 @@ package ar.com.doctatech.user.management;
 
 import ar.com.doctatech.shared.PROCESS;
 import ar.com.doctatech.shared.utilities.FXTool;
+import ar.com.doctatech.user.UserSession;
 import ar.com.doctatech.user.model.User;
 import ar.com.doctatech.user.model.UserRole;
 import javafx.application.Platform;
@@ -17,6 +18,7 @@ import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -30,7 +32,7 @@ public class UsersController
 {
     //region FXML REFERENCES
     @FXML private Button buttonEditUser, buttonUpdateUser, buttonSaveUser,
-                  buttonAddRole, buttonRemoveRole, buttonDeleteUser;
+                  buttonDeleteUser;
 
     @FXML private TextField textfieldSearchEngine, textfieldUsername, textfieldEmail;
 
@@ -71,11 +73,6 @@ public class UsersController
         setProcess(EDITING);
     }
 
-    @FXML private void onActionAddRole()
-    {
-        addRoleSelected();
-    }
-
     @FXML private void onActionDeleteUser()
     {
         deleteUser();
@@ -100,7 +97,6 @@ public class UsersController
         Platform.runLater(()->{
             loadUsers();
             addListenerEvents();
-            setProcess(VIEWING);
         });
     }
 
@@ -135,21 +131,28 @@ public class UsersController
     {
         //USERS SEARCHER
         textfieldSearchEngine.textProperty()
-                .addListener( (observable, oldValue, newValue) ->
+                .addListener( (obs, old, value) ->
                         flUsers.setPredicate(user ->
-                                user.contains(newValue.trim().toUpperCase()))
-        );
+                                user.contains(value.trim().toUpperCase())) );
 
         //ITEMS SELECTION
         listViewUsers.getSelectionModel().selectedItemProperty().
                 addListener(event -> selectUser() );
-
         //UX
         listViewUsers.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.UP &&
                     listViewUsers.getSelectionModel().isSelected(0))
             { textfieldSearchEngine.requestFocus(); }
         });
+
+        //ENABLED/DISABLED USERS
+        checkBoxEnabled.selectedProperty()
+                .addListener((obs, old, value) -> {
+                    if (value) checkBoxEnabled.setText("USUARIO HABILITADO");
+                    if(!value) checkBoxEnabled.setText("USUARIO DESHABILITADO"); } );
+
+        comboboxRoles.getSelectionModel().selectedItemProperty()
+                .addListener(observable -> addRoleSelected());
 
         //TO START WITH FIRST
         listViewUsers.getSelectionModel().selectFirst();
@@ -160,7 +163,6 @@ public class UsersController
      * Obtiene el usuario seleccionado
      * Muestra sus detalles en el formulario.
      * VIEWING
-     *
      */
     private void selectUser()
     {
@@ -170,11 +172,11 @@ public class UsersController
         {
             User userSelected = mapUsers.get(username);
 
+            listViewRoles.getItems().clear();
+
             textfieldUsername.setText  (userSelected.getUsername());
             textfieldEmail.setText     (userSelected.getEmail()   );
             checkBoxEnabled.setSelected(userSelected.isEnabled()  );
-
-            listViewRoles.getItems().clear();
             listViewRoles.getItems().addAll( userSelected.getUserRoles() );
 
             setProcess(VIEWING);
@@ -204,7 +206,9 @@ public class UsersController
 
                 newUser.getUserRoles().addAll( listViewRoles.getItems() );
 
+                //TODO version 2.0: si error de dupicado, preguntar si sobreescribir
                 userDAO.save(newUser);
+
 
                 mapUsers.put(newUser.getUsername(), newUser);
                 obsUsers.add(newUser.getUsername());
@@ -213,6 +217,12 @@ public class UsersController
                 listViewUsers.getSelectionModel().select(username);
 
                 setProcess(VIEWING);
+            }
+            catch (SQLIntegrityConstraintViolationException e)
+            {
+                FXTool.alertInformation("El usuario ya fue creado",
+                "'"+username+"' ya fue creado. \nSi no lo encontras en la lista es porque \n" +
+                        "lo eliminaste. Cambia el nombre");
             }
             catch (Exception e) { FXTool.alertException(e); }
         }
@@ -258,33 +268,36 @@ public class UsersController
      */
     private void deleteUser()
     {
-        try
+        String username = textfieldUsername.getText().trim();
+        if(!username.isEmpty() &&
+                !username.equals(UserSession.getUser().getUsername()))
         {
-            String username = textfieldUsername.getText().trim();
-
-            Alert alert = new Alert(
-                    Alert.AlertType.CONFIRMATION,
-                    "Si elimina el usuario, eliminará todos su historial",
-                    ButtonType.YES,
-                    ButtonType.CANCEL
-            );
-
-            alert.setHeaderText("¿Estas seguro que desea eliminar a '"+username+"'?");
-            alert.showAndWait();
-
-            if (alert.getResult().equals(ButtonType.YES))
+            try
             {
-                userDAO.delete(username);
-                obsUsers.remove(username);
-                mapUsers.remove(username);
+                Alert alert = new Alert(
+                        Alert.AlertType.WARNING,
+                        "Si elimina el usuario, eliminará todos su historial",
+                        ButtonType.YES,
+                        ButtonType.CANCEL
+                );
+                alert.getDialogPane().getStylesheets().add(
+                        getClass().getResource("/css/alerts.css").toExternalForm());
 
-                FXTool.alertInformation("Eliminado","Usuario eliminado correctamente!");
+                alert.setHeaderText("¿Estas seguro que desea eliminar a '"+username+"'?");
+                alert.showAndWait();
 
-                listViewUsers.getSelectionModel().selectFirst();
-                listViewUsers.requestFocus();
+                if (alert.getResult().equals(ButtonType.YES))
+                {
+                    userDAO.delete(username);
+                    obsUsers.remove(username);
+                    mapUsers.remove(username);
+
+                    listViewUsers.getSelectionModel().selectNext();
+                    listViewUsers.requestFocus();
+                }
             }
+            catch (SQLException e) { FXTool.alertException(e);}
         }
-        catch (SQLException e) { FXTool.alertException(e);}
     }
 
     /**
@@ -351,17 +364,18 @@ public class UsersController
      */
     private void setProcess(PROCESS process)
     {
+        boolean addingOrEditing = (process.equals(ADDING) || process.equals(EDITING));
+
+        //COMMONS
+        textfieldEmail.setDisable   (!addingOrEditing);
+        checkBoxEnabled.setDisable  (!addingOrEditing);
+       // buttonAddRole.setDisable    (!addingOrEditing);
+        listViewRoles.setDisable    (!addingOrEditing);
+        comboboxRoles.setDisable    (!addingOrEditing);
+
         if(process.equals(ADDING))
         {
-            textfieldUsername.setEditable(true);
-            textfieldUsername.requestFocus();
-            textfieldEmail.setEditable(true);
-
-            buttonAddRole.setVisible(true);
-            buttonRemoveRole.setVisible(true);
-            comboboxRoles.setVisible(true);
-
-            checkBoxEnabled.setDisable(false);
+            textfieldUsername.setDisable(false);
 
             buttonSaveUser.setDisable(false);
             buttonUpdateUser.setDisable(true);
@@ -372,17 +386,14 @@ public class UsersController
             textfieldUsername.setText("");
             textfieldEmail.setText("");
             checkBoxEnabled.setSelected(false);
+            comboboxRoles.getSelectionModel().clearSelection();
             listViewRoles.getItems().clear();
 
+            textfieldUsername.requestFocus();
         }
         else if(process.equals(EDITING))
         {
-            textfieldUsername.setEditable(false);
-            textfieldEmail.setEditable(true);
-            buttonAddRole.setVisible(true);
-            buttonRemoveRole.setVisible(true);
-            checkBoxEnabled.setDisable(false);
-            comboboxRoles.setVisible(true);
+            textfieldUsername.setDisable(true);
 
             buttonSaveUser.setDisable(true);
             buttonUpdateUser.setDisable(false);
@@ -391,12 +402,7 @@ public class UsersController
         }
         else if(process.equals(VIEWING))
         {
-            textfieldUsername.setEditable(false);
-            textfieldEmail.setEditable(false);
-            buttonAddRole.setVisible(false);
-            buttonRemoveRole.setVisible(false);
-            checkBoxEnabled.setDisable(true);
-            comboboxRoles.setVisible(false);
+            textfieldUsername.setDisable(true);
 
             buttonSaveUser.setDisable(true);
             buttonUpdateUser.setDisable(true);

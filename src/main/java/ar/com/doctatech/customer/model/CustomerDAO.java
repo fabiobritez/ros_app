@@ -4,6 +4,7 @@ import com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 
 public interface CustomerDAO
 {
@@ -27,5 +28,6 @@ public interface CustomerDAO
 
     String getLastSale(String customerName) throws SQLException;
 
+    void payAllBill(String username, List<Integer> ordersID) throws SQLException;
     
 }

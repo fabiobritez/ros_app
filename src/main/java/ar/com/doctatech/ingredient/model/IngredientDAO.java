@@ -1,4 +1,4 @@
-package ar.com.doctatech.stock.ingredient;
+package ar.com.doctatech.ingredient.model;
 
 import java.sql.SQLException;
 import java.util.HashMap;
